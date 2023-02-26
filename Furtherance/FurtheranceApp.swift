@@ -17,7 +17,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 @main
 struct FurtheranceApp: App {
     let persistenceController = PersistenceController.shared
-    let contentView = ContentView.sharedInstance
+    
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var showDialog = false
     @State private var dialogTitle = ""
@@ -26,7 +26,7 @@ struct FurtheranceApp: App {
 
     var body: some Scene {
         WindowGroup {
-            contentView
+            ContentView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .onAppear {
                     NSWindow.allowsAutomaticWindowTabbing = false

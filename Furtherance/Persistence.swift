@@ -7,7 +7,7 @@
 
 import CoreData
 
-struct PersistenceController {
+class PersistenceController: ObservableObject {
     static let shared = PersistenceController()
 
     static var preview: PersistenceController = {

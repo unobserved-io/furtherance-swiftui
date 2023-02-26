@@ -9,7 +9,7 @@ import CoreData
 import SwiftUI
 
 struct ContentView: View {
-    static let sharedInstance = ContentView()
+//    static let sharedInstance = ContentView()
     
     @Environment(\.managedObjectContext) private var viewContext
     @SectionedFetchRequest(
@@ -179,11 +179,11 @@ private let itemFormatter: DateFormatter = {
     return formatter
 }()
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-    }
-}
+//struct ContentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+//    }
+//}
 
 extension FurTask {
     /// Return the string representation of the relative date for the supported range (year, month, and day)
