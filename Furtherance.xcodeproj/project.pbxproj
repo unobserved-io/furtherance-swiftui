@@ -7,15 +7,37 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9C27D34629A8B2630012C274 /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C27D34529A8B2630012C274 /* GroupView.swift */; };
+		9C27D34829A8B5460012C274 /* ClickedGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C27D34729A8B5460012C274 /* ClickedGroup.swift */; };
+		9C4F069E29A9282D009D1AFE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4F069D29A9282D009D1AFE /* SettingsView.swift */; };
+		9C4F06A229A928E8009D1AFE /* StoreModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4F06A129A928E8009D1AFE /* StoreModel.swift */; };
+		9C98E11129A8BFF70064F63F /* ClickedTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11029A8BFF70064F63F /* ClickedTask.swift */; };
+		9C98E11329A8C0790064F63F /* TaskEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11229A8C0790064F63F /* TaskEditView.swift */; };
+		9C98E11529A8F6B80064F63F /* GroupEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11429A8F6B80064F63F /* GroupEditView.swift */; };
+		9C98E11729A918BC0064F63F /* Autosave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11629A918BC0064F63F /* Autosave.swift */; };
 		9CA84E1129A7721200A28FDA /* FurtheranceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */; };
 		9CA84E1329A7721200A28FDA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1229A7721200A28FDA /* ContentView.swift */; };
 		9CA84E1529A7721300A28FDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CA84E1429A7721300A28FDA /* Assets.xcassets */; };
 		9CA84E1829A7721300A28FDA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CA84E1729A7721300A28FDA /* Preview Assets.xcassets */; };
 		9CA84E1A29A7721300A28FDA /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1929A7721300A28FDA /* Persistence.swift */; };
 		9CA84E1D29A7721300A28FDA /* Furtherance.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1B29A7721300A28FDA /* Furtherance.xcdatamodeld */; };
+		9CA84E2729A7767500A28FDA /* TaskTagsInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E2629A7767500A28FDA /* TaskTagsInput.swift */; };
+		9CA84E2929A777E800A28FDA /* StopWatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E2829A777E800A28FDA /* StopWatch.swift */; };
+		9CA84E3029A79EE600A28FDA /* TaskRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E2F29A79EE600A28FDA /* TaskRow.swift */; };
+		9CA84E3429A7A4F500A28FDA /* FurTaskGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */; };
+		9CA84E3629A7AE0600A28FDA /* TimerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9C27D34529A8B2630012C274 /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
+		9C27D34729A8B5460012C274 /* ClickedGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickedGroup.swift; sourceTree = "<group>"; };
+		9C4F069D29A9282D009D1AFE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		9C4F06A029A928A1009D1AFE /* Furtherance.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Furtherance.storekit; sourceTree = "<group>"; };
+		9C4F06A129A928E8009D1AFE /* StoreModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreModel.swift; sourceTree = "<group>"; };
+		9C98E11029A8BFF70064F63F /* ClickedTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickedTask.swift; sourceTree = "<group>"; };
+		9C98E11229A8C0790064F63F /* TaskEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditView.swift; sourceTree = "<group>"; };
+		9C98E11429A8F6B80064F63F /* GroupEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupEditView.swift; sourceTree = "<group>"; };
+		9C98E11629A918BC0064F63F /* Autosave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autosave.swift; sourceTree = "<group>"; };
 		9CA84E0D29A7721200A28FDA /* Furtherance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Furtherance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurtheranceApp.swift; sourceTree = "<group>"; };
 		9CA84E1229A7721200A28FDA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -24,6 +46,11 @@
 		9CA84E1929A7721300A28FDA /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		9CA84E1C29A7721300A28FDA /* Furtherance.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Furtherance.xcdatamodel; sourceTree = "<group>"; };
 		9CA84E1E29A7721300A28FDA /* Furtherance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Furtherance.entitlements; sourceTree = "<group>"; };
+		9CA84E2629A7767500A28FDA /* TaskTagsInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTagsInput.swift; sourceTree = "<group>"; };
+		9CA84E2829A777E800A28FDA /* StopWatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopWatch.swift; sourceTree = "<group>"; };
+		9CA84E2F29A79EE600A28FDA /* TaskRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRow.swift; sourceTree = "<group>"; };
+		9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurTaskGroup.swift; sourceTree = "<group>"; };
+		9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,6 +64,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9C4F069F29A9287B009D1AFE /* Store */ = {
+			isa = PBXGroup;
+			children = (
+				9C4F06A029A928A1009D1AFE /* Furtherance.storekit */,
+				9C4F06A129A928E8009D1AFE /* StoreModel.swift */,
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
 		9CA84E0429A7721200A28FDA = {
 			isa = PBXGroup;
 			children = (
@@ -56,6 +92,10 @@
 		9CA84E0F29A7721200A28FDA /* Furtherance */ = {
 			isa = PBXGroup;
 			children = (
+				9C4F069F29A9287B009D1AFE /* Store */,
+				9CA84E2E29A79ECC00A28FDA /* Views */,
+				9CA84E2B29A77A8000A28FDA /* Helpers */,
+				9CA84E2529A7766000A28FDA /* Objects */,
 				9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */,
 				9CA84E1229A7721200A28FDA /* ContentView.swift */,
 				9CA84E1429A7721300A28FDA /* Assets.xcassets */,
@@ -73,6 +113,39 @@
 				9CA84E1729A7721300A28FDA /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		9CA84E2529A7766000A28FDA /* Objects */ = {
+			isa = PBXGroup;
+			children = (
+				9CA84E2629A7767500A28FDA /* TaskTagsInput.swift */,
+				9CA84E2829A777E800A28FDA /* StopWatch.swift */,
+				9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */,
+				9C27D34729A8B5460012C274 /* ClickedGroup.swift */,
+				9C98E11029A8BFF70064F63F /* ClickedTask.swift */,
+			);
+			path = Objects;
+			sourceTree = "<group>";
+		};
+		9CA84E2B29A77A8000A28FDA /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */,
+				9C98E11629A918BC0064F63F /* Autosave.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
+		9CA84E2E29A79ECC00A28FDA /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				9CA84E2F29A79EE600A28FDA /* TaskRow.swift */,
+				9C27D34529A8B2630012C274 /* GroupView.swift */,
+				9C98E11229A8C0790064F63F /* TaskEditView.swift */,
+				9C98E11429A8F6B80064F63F /* GroupEditView.swift */,
+				9C4F069D29A9282D009D1AFE /* SettingsView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -145,9 +218,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9C4F06A229A928E8009D1AFE /* StoreModel.swift in Sources */,
+				9CA84E2729A7767500A28FDA /* TaskTagsInput.swift in Sources */,
+				9C27D34829A8B5460012C274 /* ClickedGroup.swift in Sources */,
+				9CA84E3629A7AE0600A28FDA /* TimerHelper.swift in Sources */,
+				9C98E11729A918BC0064F63F /* Autosave.swift in Sources */,
+				9C98E11329A8C0790064F63F /* TaskEditView.swift in Sources */,
 				9CA84E1A29A7721300A28FDA /* Persistence.swift in Sources */,
 				9CA84E1329A7721200A28FDA /* ContentView.swift in Sources */,
+				9CA84E2929A777E800A28FDA /* StopWatch.swift in Sources */,
 				9CA84E1129A7721200A28FDA /* FurtheranceApp.swift in Sources */,
+				9C4F069E29A9282D009D1AFE /* SettingsView.swift in Sources */,
+				9C98E11529A8F6B80064F63F /* GroupEditView.swift in Sources */,
+				9CA84E3029A79EE600A28FDA /* TaskRow.swift in Sources */,
+				9CA84E3429A7A4F500A28FDA /* FurTaskGroup.swift in Sources */,
+				9C27D34629A8B2630012C274 /* GroupView.swift in Sources */,
+				9C98E11129A8BFF70064F63F /* ClickedTask.swift in Sources */,
 				9CA84E1D29A7721300A28FDA /* Furtherance.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -274,6 +360,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Furtherance/Furtherance.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -282,13 +369,15 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Furtherance;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lakoliu.Furtherance;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lakoliu.furtherance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -301,6 +390,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Furtherance/Furtherance.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -309,13 +399,15 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Furtherance;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lakoliu.Furtherance;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lakoliu.furtherance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

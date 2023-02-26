@@ -1,0 +1,35 @@
+{
+  "identifier" : "336F6CBC",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "9.99",
+      "familyShareable" : true,
+      "internalID" : "6445757497",
+      "localizations" : [
+        {
+          "description" : "Idle detection, etc.",
+          "displayName" : "Furtherance Pro",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "pro",
+      "referenceName" : "furtherance-pro",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "1659277200",
+    "_developerTeamID" : "Z5MKQX2NCZ",
+    "_lastSynchronizedDate" : 699036321.12098205
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}
