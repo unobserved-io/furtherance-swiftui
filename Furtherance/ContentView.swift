@@ -82,13 +82,28 @@ struct ContentView: View {
                     GroupView()
                 }
             }
+            // Task edit sheet
             .sheet(isPresented: $showingSheet) {
                 TaskEditView().environmentObject(clickedTask)
             }
+            // Autosave alert
             .alert("Autosave Restored", isPresented: $autosave.showAlert) {
                 Button("OK") { autosave.read(viewContext: viewContext) }
             } message: {
                 Text("Furtherance shut down improperly. An autosave was restored.")
+            }
+            // Idle alert
+            .alert(isPresented: $stopWatch.showingAlert) {
+                Alert(
+                    title: Text("You have been idle for \(stopWatch.howLongIdle)"),
+                    message: Text("Would you like to discard that time, or continue the clock?"),
+                    primaryButton: .default(Text("Discard"), action: {
+                        stopTimer(stopTime: stopWatch.idleStartTime)
+                    }),
+                    secondaryButton: .cancel(Text("Continue"), action: {
+                        stopWatch.resetIdle()
+                    })
+                )
             }
             .padding()
             .frame(minWidth: 360, idealWidth: 400, minHeight: 170, idealHeight: 600)
