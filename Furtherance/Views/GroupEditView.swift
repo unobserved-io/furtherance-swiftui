@@ -50,19 +50,19 @@ struct GroupEditView: View {
             Spacer()
                 .frame(height: 15)
             LazyVGrid(columns: buttonColumns, spacing: 10) {
-                Button(action:{
+                Button(action: {
                     dismiss()
                 }) {
                     Text("Cancel")
                 }
                 .keyboardShortcut(.cancelAction)
-                Button(action:{
+                Button(action: {
                     errorMessage = ""
                     var error = [String]()
                     var updateName = false
                     var updateTags = false
                     var newTags = ""
-                    if !titleField.trimmingCharacters(in: .whitespaces).isEmpty && titleField != clickedGroup.taskGroup!.name {
+                    if !titleField.trimmingCharacters(in: .whitespaces).isEmpty, titleField != clickedGroup.taskGroup!.name {
                         if titleField.contains("#") {
                             error.append("Title cannot contain a '#'. Those are reserved for tags.")
                         } else {
@@ -70,7 +70,7 @@ struct GroupEditView: View {
                         }
                     } // else not changed (don't update)
                     
-                    if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty && tagsField != clickedGroup.taskGroup!.tags {
+                    if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty, tagsField != clickedGroup.taskGroup!.tags {
                         if !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
                             error.append("Tags must start with a '#'.")
                         } else {

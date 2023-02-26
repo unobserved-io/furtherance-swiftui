@@ -90,19 +90,19 @@ struct TaskEditView: View {
             Spacer()
                 .frame(height: 15)
             LazyVGrid(columns: buttonColumns, spacing: 10) {
-                Button(action:{
+                Button(action: {
                     dismiss()
                 }) {
                     Text("Cancel")
                 }
                 .keyboardShortcut(.cancelAction)
-                Button(action:{
+                Button(action: {
                     let newTask: FurTask = clickedTask.task!
                     
                     errorMessage = ""
                     var error = [String]()
                     var updated = false
-                    if !titleField.trimmingCharacters(in: .whitespaces).isEmpty && titleField != clickedTask.task!.name {
+                    if !titleField.trimmingCharacters(in: .whitespaces).isEmpty, titleField != clickedTask.task!.name {
                         if titleField.contains("#") {
                             error.append("Title cannot contain a '#'. Those are reserved for tags.")
                         } else {
@@ -111,7 +111,7 @@ struct TaskEditView: View {
                         }
                     } // else not changed (don't update)
                     
-                    if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty && tagsField != clickedTask.task!.tags {
+                    if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty, tagsField != clickedTask.task!.tags {
                         if !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
                             error.append("Tags must start with a '#'.")
                         } else {
@@ -153,8 +153,8 @@ struct TaskEditView: View {
                 .keyboardShortcut(.defaultAction)
             }
         }
-        .confirmationDialog("Delete task?", isPresented: $showDialog){
-            Button("Delete", role: .destructive){
+        .confirmationDialog("Delete task?", isPresented: $showDialog) {
+            Button("Delete", role: .destructive) {
                 viewContext.delete(clickedTask.task!)
                 do {
                     try viewContext.save()
@@ -163,7 +163,7 @@ struct TaskEditView: View {
                 }
                 dismiss()
             }
-            Button("Cancel", role: .cancel){}
+            Button("Cancel", role: .cancel) {}
         }
         .padding()
         .onAppear {

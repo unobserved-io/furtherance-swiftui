@@ -23,7 +23,7 @@ final class StopWatch: ObservableObject {
     @AppStorage("pomodoro") private var pomodoro = false
     @AppStorage("pomodoroTime") private var pomodoroTime = 25
     
-    let usbInfoRaw : io_service_t = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOHIDSystem"))
+    let usbInfoRaw: io_service_t = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOHIDSystem"))
     
     var startTime = Date.now
     var completedSecondsElapsed = 0
@@ -129,7 +129,7 @@ final class StopWatch: ObservableObject {
         /// Start the timer
         isRunning = true
         startTime = Date.now
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             if self.pomodoro {
                 self.secondsElapsed = (self.pomodoroTime * 60) - (Calendar.current.dateComponents([.second], from: self.startTime, to: Date.now).second ?? 0)
             } else {
@@ -197,7 +197,7 @@ final class StopWatch: ObservableObject {
         let usbInfoAsString = IORegistryEntryCreateCFProperty(usbInfoRaw, kIOHIDIdleTimeKey as CFString, kCFAllocatorDefault, 0)
         let usbInfoVal: CFTypeRef = usbInfoAsString!.takeUnretainedValue()
         let idleTime = Int("\(usbInfoVal)")
-        let idleTimeSecs = idleTime!/1000000000
+        let idleTimeSecs = idleTime! / 1000000000
         return idleTimeSecs
     }
     
@@ -243,4 +243,3 @@ final class StopWatch: ObservableObject {
         center.removeAllPendingNotificationRequests()
     }
 }
-

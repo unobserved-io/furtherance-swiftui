@@ -57,9 +57,8 @@ struct TaskRow: View {
     }
 }
 
-//struct TaskRow_Previews: PreviewProvider {
-//    static var previews: some View {
-////        TaskRow(taskGroup: FurTaskGroup(task: FurTask(id: 0, name: "Task Name", startTime: Date.now, stopTime: Calendar.current.date(byAdding: .second, value: 5, to: Date.now)!, tags: "#tag1 #tag2")))
-//        TaskRow(taskGroup: FurTaskGroup(task: FurTask()))
-//    }
-//}
+struct TaskRow_Previews: PreviewProvider {
+    static var previews: some View {
+        TaskRow(taskGroup: FurTaskGroup(task: FurTask()))
+    }
+}

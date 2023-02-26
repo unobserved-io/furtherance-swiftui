@@ -13,14 +13,14 @@ class FurTaskGroup: Identifiable, ObservableObject {
     var tags: String
     var tasks: [FurTask] = []
     var totalTime: Int
-    
+
     init(task: FurTask) {
         name = task.name!
         tags = task.tags!
         tasks.append(task)
         totalTime = Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0
     }
-    
+
     func add(task: FurTask) {
         totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
         tasks.append(task)

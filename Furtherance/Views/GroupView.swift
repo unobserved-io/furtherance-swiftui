@@ -16,25 +16,27 @@ struct GroupView: View {
     @State private var showingSheet = false
     @State private var overallEditSheet = false
     @State private var showDialog = false
-    
+
     private let totalFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute, .second]
         formatter.zeroFormattingBehavior = .pad
         return formatter
     }()
+
     private let dateFormatter: DateFormatter = {
         let dateformat = DateFormatter()
         dateformat.dateFormat = "HH:mm:ss"
         return dateformat
     }()
+
     private let columns: [GridItem] = [
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible(maximum: 50))
     ]
-    
+
     var body: some View {
         VStack {
             HStack {
@@ -117,8 +119,8 @@ struct GroupView: View {
         .sheet(isPresented: $overallEditSheet) {
             GroupEditView()
         }
-        .confirmationDialog("Delete all?", isPresented: $showDialog){
-            Button("Delete", role: .destructive){
+        .confirmationDialog("Delete all?", isPresented: $showDialog) {
+            Button("Delete", role: .destructive) {
                 for task in clickedGroup.taskGroup!.tasks {
                     viewContext.delete(task)
                 }
@@ -129,14 +131,14 @@ struct GroupView: View {
                 }
                 presentationMode.wrappedValue.dismiss()
             }
-            Button("Cancel", role: .cancel){}
-        }message: {
+            Button("Cancel", role: .cancel) {}
+        } message: {
             Text("This will delete all of the tasks listed here.")
         }
         .padding()
         .frame(minWidth: 360, idealWidth: 400, idealHeight: 600)
     }
-    
+
     func formatTime(totalSeconds: Int) -> String {
         let hours = totalSeconds / 3600
         let hoursString = (hours < 10) ? "0\(hours)" : "\(hours)"
@@ -146,7 +148,7 @@ struct GroupView: View {
         let secondsString = (seconds < 10) ? "0\(seconds)" : "\(seconds)"
         return hoursString + ":" + minutesString + ":" + secondsString
     }
-    
+
     func refreshGroup() {
         if clickedGroup.taskGroup != nil {
             for task in clickedGroup.taskGroup!.tasks {
@@ -172,4 +174,3 @@ struct GroupView_Previews: PreviewProvider {
         GroupView()
     }
 }
-

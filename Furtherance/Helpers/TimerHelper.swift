@@ -11,8 +11,8 @@ import SwiftUI
 final class TimerHelper {
     static let sharedInstance = TimerHelper()
     
-    var startTime: Date = Date.now
-    var stopTime: Date = Date.now
+    var startTime: Date = .now
+    var stopTime: Date = .now
     var taskName: String = ""
     var taskTags: String = ""
     var nameAndTags: String = ""
@@ -46,7 +46,7 @@ final class TimerHelper {
     func separateTags() {
         var splitTags = nameAndTags.trimmingCharacters(in: .whitespaces).split(separator: "#")
         // Get and remove task name from tags list
-        taskName = splitTags[0].trimmingCharacters(in: .whitespaces);
+        taskName = splitTags[0].trimmingCharacters(in: .whitespaces)
         splitTags.remove(at: 0)
         // Trim each element and lowercase them
         for i in splitTags.indices {
@@ -69,4 +69,3 @@ extension Sequence where Element: Hashable {
         return filter { set.insert($0).inserted }
     }
 }
-

@@ -20,9 +20,6 @@ struct FurtheranceApp: App {
     let contentView = ContentView.sharedInstance
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @State private var showDialog = false
-    @State private var backupFailed = false
-    @State private var importFailed = false
-    @State private var backupSucceeded = false
     @State private var dialogTitle = ""
     @State private var dialogMessage = ""
     @State private var confirmBtn = ""
@@ -33,28 +30,6 @@ struct FurtheranceApp: App {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .onAppear {
                     NSWindow.allowsAutomaticWindowTabbing = false
-                }
-                // Backup failed alert
-                .alert("Backup Failed", isPresented: $backupFailed) {
-                    Button("OK") {}
-                } message: {
-                    Text("A backup was not created.")
-                }
-                // Backup succeeded alert
-                .alert("Backup Succeeded", isPresented: $backupSucceeded) {
-                    Button("OK") {}
-                } message: {
-                    let backUpFolderUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                    let backupUrl = backUpFolderUrl.appendingPathComponent("FurtheranceBackup.sqlite")
-                    Text("A backup was created at \(backupUrl.path())")
-                }
-                // Import failed alert
-                .alert("Import Failed", isPresented: $backupSucceeded) {
-                    Button("OK") {}
-                } message: {
-                    let backUpFolderUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-                    let backupUrl = backUpFolderUrl.appendingPathComponent("FurtheranceBackup.sqlite")
-                    Text("Please make sure your Furtherance backup is located at \(backupUrl.path())")
                 }
                 .confirmationDialog(dialogTitle, isPresented: $showDialog) {
                     Button(confirmBtn, role: .destructive) {

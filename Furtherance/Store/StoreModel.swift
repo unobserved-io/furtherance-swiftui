@@ -16,7 +16,7 @@ class StoreModel: ObservableObject {
     @Published var products: [Product] = []
     @Published var purchasedIds: [String] = []
     
-    var updateListenerTask: Task<Void, Error>? = nil
+    var updateListenerTask: Task<Void, Error>?
     
     init() {
         updateListenerTask = listenForTransactions()
@@ -38,7 +38,7 @@ class StoreModel: ObservableObject {
                 await isPurchased(product: product)
             }
         } catch {
-             print("Error fetching products: \(error)")
+            print("Error fetching products: \(error)")
         }
     }
     
@@ -50,7 +50,7 @@ class StoreModel: ObservableObject {
             DispatchQueue.main.async {
                 self.purchasedIds.append(transaction.productID)
             }
-        case .unverified(_, _):
+        case .unverified:
             break
         }
     }
@@ -61,15 +61,14 @@ class StoreModel: ObservableObject {
         do {
             let result = try await product.purchase()
             switch result {
-                
             case .success(let verificationResult):
-                //Transaction will be verified for automatically using JWT(jwsRepresentation) - we can check the result
+                // Transaction will be verified for automatically using JWT(jwsRepresentation) - we can check the result
                 let transaction = try checkVerified(verificationResult)
                 
-                //the transaction is verified, deliver the content to the user
+                // the transaction is verified, deliver the content to the user
                 await updateProductStatus()
                 
-                //always finish a transaction - performance
+                // always finish a transaction - performance
                 await transaction.finish()
             case .userCancelled:
                 break
@@ -114,7 +113,7 @@ class StoreModel: ObservableObject {
         for await result in Transaction.currentEntitlements {
             do {
                 let transaction = try checkVerified(result)
-                if let _ = products.first(where: { $0.id == transaction.productID}) {
+                if let _ = products.first(where: { $0.id == transaction.productID }) {
                     DispatchQueue.main.async {
                         self.purchasedIds.append(transaction.productID)
                     }
@@ -124,5 +123,4 @@ class StoreModel: ObservableObject {
             }
         }
     }
-
 }

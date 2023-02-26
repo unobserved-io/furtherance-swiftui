@@ -108,7 +108,6 @@ struct SettingsView: View {
                         }) {
                             Text("Restore Purchase")
                         }
-//                        .frame(maxWidth: .infinity, alignment: .center)
                     }
                     .frame(maxWidth: .infinity, alignment: .center)
                 }

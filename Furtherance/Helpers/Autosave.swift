@@ -42,7 +42,8 @@ class Autosave: ObservableObject {
             task.tags = inputSplit[3]
             do {
                 try viewContext.save()
-            } catch {
+            }
+            catch {
                 print("Error writing autosave: \(error)")
             }
             delete()

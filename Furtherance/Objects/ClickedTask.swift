@@ -9,7 +9,7 @@ import Foundation
 
 class ClickedTask: ObservableObject {
     @Published var task: FurTask?
-    
+
     init(task: FurTask?) {
         self.task = task
     }
