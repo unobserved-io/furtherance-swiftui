@@ -23,6 +23,7 @@ struct FurtheranceApp: App {
     @State private var dialogTitle = ""
     @State private var dialogMessage = ""
     @State private var confirmBtn = ""
+    @State var tasksEmpty = false
 
     var body: some Scene {
         WindowGroup {

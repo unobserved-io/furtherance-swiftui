@@ -24,6 +24,7 @@ struct ContentView: View {
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
     @State private var showingSheet = false
+    @State var tasksEmpty = false
     @State private var navPath = [String]()
     @State var sortedTasks = [String: [FurTaskGroup]]()
     let timerHelper = TimerHelper.sharedInstance
@@ -179,11 +180,11 @@ private let itemFormatter: DateFormatter = {
     return formatter
 }()
 
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
-//    }
-//}
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+    }
+}
 
 extension FurTask {
     /// Return the string representation of the relative date for the supported range (year, month, and day)
