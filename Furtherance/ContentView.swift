@@ -9,13 +9,14 @@ import CoreData
 import SwiftUI
 
 struct ContentView: View {
-//    static let sharedInstance = ContentView()
+    @Binding var tasksCount: Int
     
     @Environment(\.managedObjectContext) private var viewContext
     @SectionedFetchRequest(
         sectionIdentifier: \.startDateRelative,
         sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
-        animation: .default)
+        animation: .default
+    )
     var tasks: SectionedFetchResults<String, FurTask>
     
     @ObservedObject var stopWatch = StopWatch.sharedInstance
@@ -24,14 +25,9 @@ struct ContentView: View {
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
     @State private var showingSheet = false
-    @State var tasksEmpty = false
     @State private var navPath = [String]()
     @State var sortedTasks = [String: [FurTaskGroup]]()
     let timerHelper = TimerHelper.sharedInstance
-
-    init() {
-        checkForAutosave()
-    }
     
     var body: some View {
         NavigationStack(path: $navPath) {
@@ -78,6 +74,12 @@ struct ContentView: View {
                     }
                 }
             }
+            .onAppear {
+                checkForAutosave()
+            }
+            .onReceive(tasks.publisher.count()) { _ in
+                tasksCount = tasks.count
+            }
             .navigationDestination(for: String.self) { s in
                 if s == "group" {
                     GroupView()
@@ -109,21 +111,6 @@ struct ContentView: View {
             .padding()
             .frame(minWidth: 360, idealWidth: 400, minHeight: 170, idealHeight: 600)
         }
-//        .onReceive(tasks.publisher.count()) { _ in
-//            if tasks.isEmpty {
-//                tasksEmpty = true
-//            } else if tasksEmpty {
-//                tasksEmpty = false
-//            }
-//        }
-//        .onChange(of: sortedTasks) { _ in
-//            print("Refreshed")
-//            if tasks.isEmpty {
-//                tasksEmpty = true
-//            } else if tasksEmpty {
-//                tasksEmpty = false
-//            }
-//        }
         .environmentObject(clickedGroup)
     }
         
@@ -182,7 +169,7 @@ private let itemFormatter: DateFormatter = {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ContentView(tasksCount: .constant(0)).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
 
