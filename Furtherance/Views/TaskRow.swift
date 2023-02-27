@@ -27,6 +27,7 @@ struct TaskRow: View {
 
     var body: some View {
         HStack(alignment: .center) {
+            taskGroup.tasks.count == 1 ? nil : Image(systemName: taskGroup.tasks.count <= 50 ? "\(taskGroup.tasks.count).circle.fill" : "ellipsis.circle.fill").foregroundColor(.gray)
             VStack(alignment: .leading) {
                 Text(taskGroup.name)
                     .fontWeight(.bold)
