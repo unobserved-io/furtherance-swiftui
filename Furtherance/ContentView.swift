@@ -27,6 +27,7 @@ struct ContentView: View {
     @State private var showingSheet = false
     @State private var navPath = [String]()
     @State var sortedTasks = [String: [FurTaskGroup]]()
+    @State private var hashtagAlert = false
     let timerHelper = TimerHelper.sharedInstance
     
     init(tasksCount: Binding<Int>) {
@@ -55,6 +56,7 @@ struct ContentView: View {
                     } label: {
                         Image(systemName: stopWatch.isRunning ? "stop.fill" : "play.fill")
                     }
+                    .disabled(taskTagsInput.text.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
                 tasks.isEmpty ? nil : ScrollView {
                     Form {
@@ -98,6 +100,11 @@ struct ContentView: View {
             } message: {
                 Text("Furtherance shut down improperly. An autosave was restored.")
             }
+            .alert("Improper Task Name", isPresented: $hashtagAlert) {
+                Button("OK") { }
+            } message: {
+                Text("A task name must be provided before tags. The first character cannot be a '#'.")
+            }
             // Idle alert
             .alert(isPresented: $stopWatch.showingAlert) {
                 Alert(
@@ -126,9 +133,11 @@ struct ContentView: View {
     }
     
     private func startTimer() {
-        if !taskTagsInput.text.trimmingCharacters(in: .whitespaces).isEmpty {
+        if taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "#" {
             stopWatch.start()
             timerHelper.onStart(nameAndTags: taskTagsInput.text)
+        } else {
+            hashtagAlert.toggle()
         }
     }
     

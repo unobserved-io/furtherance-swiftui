@@ -26,6 +26,7 @@
 		9CA84E3029A79EE600A28FDA /* TaskRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E2F29A79EE600A28FDA /* TaskRow.swift */; };
 		9CA84E3429A7A4F500A28FDA /* FurTaskGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */; };
 		9CA84E3629A7AE0600A28FDA /* TimerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */; };
+		9CD1EEDB29ACBBC70044B9E4 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9CD1EEDA29ACBBC70044B9E4 /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		9CA84E2F29A79EE600A28FDA /* TaskRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRow.swift; sourceTree = "<group>"; };
 		9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurTaskGroup.swift; sourceTree = "<group>"; };
 		9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerHelper.swift; sourceTree = "<group>"; };
+		9CD1EEDA29ACBBC70044B9E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 				9CA84E1E29A7721300A28FDA /* Furtherance.entitlements */,
 				9CA84E1B29A7721300A28FDA /* Furtherance.xcdatamodeld */,
 				9CA84E1629A7721300A28FDA /* Preview Content */,
+				9CD1EEDA29ACBBC70044B9E4 /* Info.plist */,
 			);
 			path = Furtherance;
 			sourceTree = "<group>";
@@ -208,6 +211,7 @@
 			files = (
 				9CA84E1829A7721300A28FDA /* Preview Assets.xcassets in Resources */,
 				9CA84E1529A7721300A28FDA /* Assets.xcassets in Resources */,
+				9CD1EEDB29ACBBC70044B9E4 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
