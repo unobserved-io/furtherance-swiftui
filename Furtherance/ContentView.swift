@@ -29,6 +29,11 @@ struct ContentView: View {
     @State var sortedTasks = [String: [FurTaskGroup]]()
     let timerHelper = TimerHelper.sharedInstance
     
+    init(tasksCount: Binding<Int>) {
+        self._tasksCount = tasksCount
+        checkForAutosave()
+    }
+    
     var body: some View {
         NavigationStack(path: $navPath) {
             VStack {
@@ -73,9 +78,6 @@ struct ContentView: View {
                         }
                     }
                 }
-            }
-            .onAppear {
-                checkForAutosave()
             }
             .onReceive(tasks.publisher.count()) { _ in
                 tasksCount = tasks.count
