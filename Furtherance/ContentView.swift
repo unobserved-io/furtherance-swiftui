@@ -81,14 +81,18 @@ struct ContentView: View {
                     }
                 }
             }
-            // Update tasks count every time the view is updated
-            .onReceive(tasks.publisher.count()) { _ in
+            // Update tasks count every time tasks is changed
+            .onChange(of: tasks.count) { newValue in
                 tasksCount = tasks.count
             }
             .navigationDestination(for: String.self) { s in
                 if s == "group" {
                     GroupView()
                 }
+            }
+            // Initial task count update when view is loaded
+            .onAppear() {
+                tasksCount = tasks.count
             }
             // Task edit sheet
             .sheet(isPresented: $showingSheet) {

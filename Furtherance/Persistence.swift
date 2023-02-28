@@ -33,6 +33,15 @@ struct PersistenceController {
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
+        
+        // CloudKit history and update handling
+        guard let description = container.persistentStoreDescriptions.first else {
+            fatalError("Failed to initialize persistent container")
+        }
+        description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
+        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        container.viewContext.automaticallyMergesChangesFromParent = true
+        
         container.loadPersistentStores(completionHandler: { _, error in
             if let error = error as NSError? {
                 print("Unresolved data error \(error), \(error.userInfo)")
