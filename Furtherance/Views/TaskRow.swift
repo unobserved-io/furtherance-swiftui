@@ -33,12 +33,14 @@ struct TaskRow: View {
                     .fontWeight(.bold)
                     .truncationMode(.tail)
                     .frame(minWidth: 20)
+                    .help(taskGroup.name)
 
                 if !taskGroup.tags.isEmpty {
                     Text(taskGroup.tags)
                         .opacity(0.626)
                         .frame(minWidth: 20)
                         .truncationMode(.middle)
+                        .help(taskGroup.tags)
                 }
             }
 
