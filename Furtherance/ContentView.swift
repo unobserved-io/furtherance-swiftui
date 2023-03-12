@@ -173,12 +173,16 @@ struct ContentView: View {
     
     private func formatTime(_ totalSeconds: Int) -> String {
         let hours = totalSeconds / 3600
-        let hoursString = (hours < 10) ? "0\(hours)" : "\(hours)"
+        let hoursString = String(hours)
         let minutes = (totalSeconds % 3600) / 60
         let minutesString = (minutes < 10) ? "0\(minutes)" : "\(minutes)"
         let seconds = totalSeconds % 60
         let secondsString = (seconds < 10) ? "0\(seconds)" : "\(seconds)"
-        return hoursString + ":" + minutesString + ":" + secondsString
+        if hours > 0 {
+            return hoursString + ":" + minutesString + ":" + secondsString
+        } else {
+            return minutesString + ":" + secondsString
+        }
     }
     
     private func sortTasks(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> [FurTaskGroup] {

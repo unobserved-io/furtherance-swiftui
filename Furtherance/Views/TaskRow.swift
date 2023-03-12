@@ -17,12 +17,16 @@ struct TaskRow: View {
 
     func formatTime(totalSeconds: Int) -> String {
         let hours = totalSeconds / 3600
-        let hoursString = (hours < 10) ? "0\(hours)" : "\(hours)"
+        let hoursString = String(hours)
         let minutes = (totalSeconds % 3600) / 60
         let minutesString = (minutes < 10) ? "0\(minutes)" : "\(minutes)"
         let seconds = totalSeconds % 60
         let secondsString = (seconds < 10) ? "0\(seconds)" : "\(seconds)"
-        return hoursString + ":" + minutesString + ":" + secondsString
+        if hours > 0 {
+            return hoursString + ":" + minutesString + ":" + secondsString
+        } else {
+            return minutesString + ":" + secondsString
+        }
     }
 
     var body: some View {
@@ -47,6 +51,7 @@ struct TaskRow: View {
             Spacer()
 
             Text(formatTime(totalSeconds: taskGroup.totalTime))
+                .font(.system(.body).monospacedDigit())
             Image(systemName: "arrow.counterclockwise.circle")
                 .contentShape(Circle())
                 .onTapGesture {
