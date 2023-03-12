@@ -14,7 +14,6 @@ struct SettingsView: View {
     @StateObject var storeModel = StoreModel()
     @Environment(\.colorScheme) var colorScheme
     
-    @AppStorage("dbPath") private var dbPath = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].path + "/Furtherance/furtherance.db"
     @AppStorage("idleDetect") private var idleDetect = false
     @AppStorage("idleLimit") private var idleLimit = 6
     @AppStorage("pomodoro") private var pomodoro = false
