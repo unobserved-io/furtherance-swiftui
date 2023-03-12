@@ -15,20 +15,6 @@ struct TaskRow: View {
         self.taskGroup = taskGroup
     }
 
-    func formatTime(totalSeconds: Int) -> String {
-        let hours = totalSeconds / 3600
-        let hoursString = String(hours)
-        let minutes = (totalSeconds % 3600) / 60
-        let minutesString = (minutes < 10) ? "0\(minutes)" : "\(minutes)"
-        let seconds = totalSeconds % 60
-        let secondsString = (seconds < 10) ? "0\(seconds)" : "\(seconds)"
-        if hours > 0 {
-            return hoursString + ":" + minutesString + ":" + secondsString
-        } else {
-            return minutesString + ":" + secondsString
-        }
-    }
-
     var body: some View {
         HStack(alignment: .center) {
             taskGroup.tasks.count == 1 ? nil : Image(systemName: taskGroup.tasks.count <= 50 ? "\(taskGroup.tasks.count).circle.fill" : "ellipsis.circle.fill").foregroundColor(.gray)
@@ -50,7 +36,7 @@ struct TaskRow: View {
 
             Spacer()
 
-            Text(formatTime(totalSeconds: taskGroup.totalTime))
+            Text(formatTimeShort(taskGroup.totalTime))
                 .font(.system(.body).monospacedDigit())
             Image(systemName: "arrow.counterclockwise.circle")
                 .contentShape(Circle())

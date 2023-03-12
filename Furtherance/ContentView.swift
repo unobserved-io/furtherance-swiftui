@@ -168,21 +168,7 @@ struct ContentView: View {
         for task in taskSection {
             totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
         }
-        return formatTime(totalTime)
-    }
-    
-    private func formatTime(_ totalSeconds: Int) -> String {
-        let hours = totalSeconds / 3600
-        let hoursString = String(hours)
-        let minutes = (totalSeconds % 3600) / 60
-        let minutesString = (minutes < 10) ? "0\(minutes)" : "\(minutes)"
-        let seconds = totalSeconds % 60
-        let secondsString = (seconds < 10) ? "0\(seconds)" : "\(seconds)"
-        if hours > 0 {
-            return hoursString + ":" + minutesString + ":" + secondsString
-        } else {
-            return minutesString + ":" + secondsString
-        }
+        return formatTimeShort(totalTime)
     }
     
     private func sortTasks(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> [FurTaskGroup] {

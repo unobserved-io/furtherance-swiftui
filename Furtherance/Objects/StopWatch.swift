@@ -125,6 +125,7 @@ final class StopWatch: ObservableObject {
         UNUserNotificationCenter.current().add(request)
     }
 
+    // TODO: Change to a formatter like totalFormatter in GroupView
     func start() {
         /// Start the timer
         isRunning = true

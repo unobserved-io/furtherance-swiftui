@@ -139,16 +139,6 @@ struct GroupView: View {
         .frame(minWidth: 360, idealWidth: 400, idealHeight: 600)
     }
 
-    func formatTime(totalSeconds: Int) -> String {
-        let hours = totalSeconds / 3600
-        let hoursString = (hours < 10) ? "0\(hours)" : "\(hours)"
-        let minutes = (totalSeconds % 3600) / 60
-        let minutesString = (minutes < 10) ? "0\(minutes)" : "\(minutes)"
-        let seconds = totalSeconds % 60
-        let secondsString = (seconds < 10) ? "0\(seconds)" : "\(seconds)"
-        return hoursString + ":" + minutesString + ":" + secondsString
-    }
-
     func refreshGroup() {
         if clickedGroup.taskGroup != nil {
             for task in clickedGroup.taskGroup!.tasks {
