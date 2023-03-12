@@ -23,11 +23,12 @@ struct FurtheranceApp: App {
     @State private var dialogTitle = ""
     @State private var dialogMessage = ""
     @State private var confirmBtn = ""
-    @State(initialValue: 0) var tasksCount
+    @State(initialValue: 0) var tasksCount: Int
+    @State(initialValue: []) var navPath: [String]
 
     var body: some Scene {
         WindowGroup {
-            ContentView(tasksCount: $tasksCount)
+            ContentView(tasksCount: $tasksCount, navPath: $navPath)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .onAppear {
                     NSWindow.allowsAutomaticWindowTabbing = false
@@ -83,6 +84,12 @@ struct FurtheranceApp: App {
             CommandGroup(replacing: CommandGroupPlacement.windowList) {}
             CommandGroup(replacing: CommandGroupPlacement.windowArrangement) {}
             CommandGroup(replacing: CommandGroupPlacement.singleWindowList) {}
+            CommandGroup(before: CommandGroupPlacement.newItem) {
+                Button("Reports") {
+                    navPath.append("reports")
+                }
+                .keyboardShortcut("R", modifiers: EventModifiers.command)
+            }
         }
         .defaultSize(width: 360, height: 600)
         

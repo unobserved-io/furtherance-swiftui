@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
     @Binding var tasksCount: Int
+    @Binding var navPath: [String]
     
     @Environment(\.managedObjectContext) private var viewContext
     @SectionedFetchRequest(
@@ -25,13 +26,14 @@ struct ContentView: View {
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
     @State private var showingSheet = false
-    @State private var navPath = [String]()
+//    @State private var navPath = [String]()
     @State var sortedTasks = [String: [FurTaskGroup]]()
     @State private var hashtagAlert = false
     let timerHelper = TimerHelper.sharedInstance
     
-    init(tasksCount: Binding<Int>) {
+    init(tasksCount: Binding<Int>, navPath: Binding<[String]>) {
         self._tasksCount = tasksCount
+        self._navPath = navPath
         checkForAutosave()
     }
     
@@ -91,6 +93,8 @@ struct ContentView: View {
             .navigationDestination(for: String.self) { s in
                 if s == "group" {
                     GroupView()
+                } else if s == "reports" {
+                    ReportsView()
                 }
             }
             // Initial task count update when view is loaded
@@ -198,7 +202,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(tasksCount: .constant(0)).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ContentView(tasksCount: .constant(0), navPath: .constant([""])).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
 
