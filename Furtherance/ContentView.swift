@@ -44,6 +44,7 @@ struct ContentView: View {
                     .lineSpacing(0)
                     .allowsTightening(false)
                     .frame(maxHeight: 90)
+                    .padding(.horizontal)
                 HStack {
                     TextField("Task Name #tag #another tag", text: $taskTagsInput.text)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -58,11 +59,12 @@ struct ContentView: View {
                     }
                     .disabled(taskTagsInput.text.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
+                .padding(.horizontal)
                 tasks.isEmpty ? nil : ScrollView {
                     Form {
                         ForEach(tasks) { section in
-                            Section(header: Text(section.id.capitalized).font(.headline).padding(.top).padding(.bottom)) {
-                                ForEach(sortTasks(taskSection: section)) { taskGroup in
+                            Section(header: sectionHeader(section)) {
+                                ForEach(sortTasks(section)) { taskGroup in
                                     TaskRow(taskGroup: taskGroup)
                                         .padding(.bottom, 5)
                                         .contentShape(Rectangle())
@@ -79,6 +81,7 @@ struct ContentView: View {
                             }
                         }
                     }
+                    .padding(.horizontal)
                 }
             }
             // Update tasks count every time tasks is changed
@@ -122,7 +125,6 @@ struct ContentView: View {
                     })
                 )
             }
-            .padding()
             .frame(minWidth: 360, idealWidth: 400, minHeight: 170, idealHeight: 600)
         }
         .environmentObject(clickedGroup)
@@ -151,7 +153,35 @@ struct ContentView: View {
         taskTagsInput.text = ""
     }
     
-    private func sortTasks(taskSection: SectionedFetchResults<String, FurTask>.Element) -> [FurTaskGroup] {
+    private func sectionHeader(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> some View {
+        return HStack {
+            Text(taskSection.id.capitalized)
+            Spacer()
+            Text(totalSectionTime(taskSection))
+        }
+        .font(.headline)
+        .padding(.top).padding(.bottom)
+    }
+    
+    private func totalSectionTime(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> String {
+        var totalTime = 0
+        for task in taskSection {
+            totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+        }
+        return formatTime(totalTime)
+    }
+    
+    private func formatTime(_ totalSeconds: Int) -> String {
+        let hours = totalSeconds / 3600
+        let hoursString = (hours < 10) ? "0\(hours)" : "\(hours)"
+        let minutes = (totalSeconds % 3600) / 60
+        let minutesString = (minutes < 10) ? "0\(minutes)" : "\(minutes)"
+        let seconds = totalSeconds % 60
+        let secondsString = (seconds < 10) ? "0\(seconds)" : "\(seconds)"
+        return hoursString + ":" + minutesString + ":" + secondsString
+    }
+    
+    private func sortTasks(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> [FurTaskGroup] {
         var newGroups = [FurTaskGroup]()
         for task in taskSection {
             var foundGroup = false
