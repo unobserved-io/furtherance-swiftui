@@ -8,6 +8,12 @@
 import SwiftUI
 
 struct ReportsView: View {
+    @FetchRequest(
+        entity: FurTask.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
+        animation: .default
+    )
+    var allTasks: FetchedResults<FurTask>
     private enum Timeframe {
         case week
         case month
@@ -55,9 +61,54 @@ struct ReportsView: View {
                 }
                 
                 Button("Refresh") {
-                    
+                    sortedByTask()
                 }
             }
+            
+            Section {
+                Text("Total time: 9:29:48")
+                // TODO: ForEach that is expandable
+                if sortByTask {
+                    // Sorted by task
+                } else {
+                    // Sorted by tag
+                }
+            }
+        }
+    }
+    
+    private func sortedByTask() {
+//        var uniqueList: [String: [FurTask]] = [:]
+//        var uniqueTaskNames: [String] = []
+//        var reportsByTask: [ReportByTask] = []
+        var uniqueList: [String: ReportByTask] = [:]
+        
+        for task in allTasks {
+            if uniqueList.keys.contains(task.name ?? "Unknown") {
+                uniqueList[task.name ?? "Unknown"]?.addTask(task)
+            } else {
+//                uniqueTaskNames.append(task.name ?? "Unknown")
+//                uniqueList[task.name ?? "Unknown"]?.append(task)
+                uniqueList[task.name ?? "Unknown"] = ReportByTask(task)
+            }
+        }
+    }
+}
+
+struct ReportByTask {
+    @State var totalSeconds: Int = 0
+    @State var tags: [String: Int] = [:]
+    
+    init(_ task: FurTask) {
+        addTask(task)
+    }
+    
+    func addTask(_ task: FurTask) {
+        // add total time to total seconds
+        totalSeconds += (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+        // check if tags contains tags. Either way, add time
+        if task.tags != nil && !(task.tags?.isEmpty ?? true) {
+            tags[task.tags!] = (tags[task.tags!] ?? 0) + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
         }
     }
 }

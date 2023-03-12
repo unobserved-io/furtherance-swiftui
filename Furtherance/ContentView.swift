@@ -26,8 +26,7 @@ struct ContentView: View {
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
     @State private var showingSheet = false
-//    @State private var navPath = [String]()
-    @State var sortedTasks = [String: [FurTaskGroup]]()
+//    @State var sortedTasks = [String: [FurTaskGroup]]()
     @State private var hashtagAlert = false
     let timerHelper = TimerHelper.sharedInstance
     
