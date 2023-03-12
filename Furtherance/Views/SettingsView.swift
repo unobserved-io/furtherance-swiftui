@@ -12,6 +12,7 @@ import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @StateObject var storeModel = StoreModel()
+    @Environment(\.colorScheme) var colorScheme
     
     @AppStorage("dbPath") private var dbPath = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0].path + "/Furtherance/furtherance.db"
     @AppStorage("idleDetect") private var idleDetect = false
@@ -32,7 +33,7 @@ struct SettingsView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
                 .padding()
-                .background(.white.opacity(0.50))
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
                 .cornerRadius(20)
                 
                 HStack {
@@ -46,7 +47,7 @@ struct SettingsView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
                 .padding()
-                .background(.white.opacity(0.50))
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
                 .cornerRadius(20)
             }
 
@@ -63,7 +64,7 @@ struct SettingsView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
                 .padding()
-                .background(.white.opacity(0.50))
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
                 .cornerRadius(20)
                 
                 HStack {
@@ -79,7 +80,7 @@ struct SettingsView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
                 .padding()
-                .background(.white.opacity(0.50))
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
                 .cornerRadius(20)
             }
             
