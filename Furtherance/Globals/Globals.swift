@@ -21,14 +21,3 @@ func formatTimeShort(_ totalSeconds: Int) -> String {
         return minutesString + ":" + secondsString
     }
 }
-
-func formatTimeLong(_ totalSeconds: Int) -> String {
-    /// Format input seconds into a time format that includes padded hours
-    let hours = totalSeconds / 3600
-    let hoursString = (hours < 10) ? "0\(hours)" : "\(hours)"
-    let minutes = (totalSeconds % 3600) / 60
-    let minutesString = (minutes < 10) ? "0\(minutes)" : "\(minutes)"
-    let seconds = totalSeconds % 60
-    let secondsString = (seconds < 10) ? "0\(seconds)" : "\(seconds)"
-    return hoursString + ":" + minutesString + ":" + secondsString
-}
