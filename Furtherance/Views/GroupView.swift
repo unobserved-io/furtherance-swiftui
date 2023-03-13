@@ -86,6 +86,7 @@ struct GroupView: View {
                         .font(Font.monospacedDigit(.system(size: 15))())
                     Text(totalFormatter.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now)!)
                         .font(Font.monospacedDigit(.system(size: 15))())
+                        .bold()
                     Image(systemName: "pencil")
                         .bold()
                         .contentShape(Rectangle())
