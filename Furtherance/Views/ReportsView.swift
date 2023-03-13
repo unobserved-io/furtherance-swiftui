@@ -73,7 +73,9 @@ struct ReportsView: View {
             
             Divider().padding(.bottom)
             
-            Text("Total time: \(formatTimeLong(getTotalTime()))").bold()
+            Text("Total time:   \(formatTimeLong(getTotalTime()))")
+                .font(Font.monospacedDigit(.system(.body))())
+                .bold()
             
             if sortByTask {
                 List {
@@ -84,6 +86,7 @@ struct ReportsView: View {
                                     Text(tagKey)
                                     Spacer()
                                     Text(formatTimeLong(tagInt))
+                                        .font(Font.monospacedDigit(.system(.body))())
                                 }
                                 .listRowInsets(EdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24))
                             }
@@ -101,6 +104,7 @@ struct ReportsView: View {
                                     Text(taskKey)
                                     Spacer()
                                     Text(formatTimeLong(taskInt))
+                                        .font(Font.monospacedDigit(.system(.body))())
                                 }
                                 .listRowInsets(EdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24))
                             }
@@ -242,27 +246,12 @@ struct ReportsView: View {
         return totalTaskTime
     }
     
-    private func taskAndTime(_ reportByTask: ReportByTask) -> some View {
-        return HStack {
-            Text(reportByTask.heading)
-            Spacer()
-            Text(formatTimeLong(reportByTask.totalSeconds))
-        }
-    }
-    
-    private func tagAndTime(_ reportByTags: ReportByTags) -> some View {
-        return HStack {
-            Text(reportByTags.heading)
-            Spacer()
-            Text(formatTimeLong(reportByTags.totalSeconds))
-        }
-    }
-    
     private func sectionHeader(heading: String, totalSeconds: Int) -> some View{
         return HStack {
             Text(heading)
             Spacer()
             Text(formatTimeLong(totalSeconds))
+                .font(Font.monospacedDigit(.system(.body))())
         }
     }
 }
