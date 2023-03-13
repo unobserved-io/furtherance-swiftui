@@ -34,6 +34,7 @@ struct ReportsView: View {
     @State private var filter: Bool = false
     @State private var exactMatch: Bool = false
     @State private var filterInput: String = ""
+    private var allListedTime: Int = 0
     
     var body: some View {
         VStack(spacing: 5) {
@@ -204,8 +205,38 @@ struct ReportsView: View {
     
     private func getTotalTime() -> Int {
         var totalTaskTime = 0
+
         for task in allTasks {
-            totalTaskTime += (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+            var match = false
+            
+            if filterBy == .task && !filterInput.isEmpty {
+                if exactMatch {
+                    if task.name?.lowercased() == filterInput.lowercased() {
+                        match = true
+                    }
+                } else {
+                    if task.name?.lowercased().contains(filterInput.lowercased()) ?? false {
+                        match = true
+                    }
+                }
+            } else if filterBy == .tags && !filterInput.isEmpty {
+                // TODO: Breakdown tags to see if they match one of the filter input
+                if exactMatch {
+                    if task.tags == filterInput.lowercased() {
+                        match = true
+                    }
+                } else {
+                    if task.tags?.contains(filterInput.lowercased()) ?? false {
+                        match = true
+                    }
+                }
+            } else {
+                match = true
+            }
+            
+            if match {
+                totalTaskTime += (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+            }
         }
         return totalTaskTime
     }
