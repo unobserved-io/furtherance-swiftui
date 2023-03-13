@@ -67,6 +67,7 @@ struct ReportsView: View {
                 Toggle(isOn: $exactMatch) {
                     Text("Exact match")
                 }
+                .disabled(filterBy == .none)
             }
             .padding()
             
