@@ -11,7 +11,7 @@ struct ReportsView: View {
     @FetchRequest(
         entity: FurTask.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
-        animation: .none
+        animation: .default
     )
     var allTasks: FetchedResults<FurTask>
     private enum Timeframe {
@@ -32,6 +32,7 @@ struct ReportsView: View {
     @State private var sortByTask: Bool = true
     @State private var filterBy: FilterBy = .none
     @State private var filter: Bool = false
+    @State private var exactMatch: Bool = false
     @State private var filterInput: String = ""
     
     var body: some View {
@@ -60,6 +61,10 @@ struct ReportsView: View {
                     }
                     TextField("", text: $filterInput)
                         .disabled(filterBy == .none)
+                }
+                
+                Toggle(isOn: $exactMatch) {
+                    Text("Exact match")
                 }
             }
             .padding()
@@ -102,54 +107,49 @@ struct ReportsView: View {
                 }
             }
         }
+        .frame(minWidth: 360, idealWidth: 400, minHeight: 170, idealHeight: 600)
     }
     
     private func sortedByTask() -> [ReportByTask] {
         var uniqueList: [ReportByTask] = []
         
-//        for task in allTasks {
-//            if filterBy == .task && !filterInput.isEmpty {
-//                if task.name?.lowercased() == filterInput.lowercased() {
-//                    let index = uniqueList.firstIndex { $0.heading == task.name }
-//                    if index != nil {
-//                        // Task was found
-//                        uniqueList[index!].addTask(task)
-//                    } else {
-//                        // Task not found
-//                        uniqueList.append(ReportByTask(task))
-//                    }
-//                }
-//            } else if filterBy == .tags && !filterInput.isEmpty {
-//                // TODO: Breakdown tags to see if they match one of the filter input
-//                if task.tags == filterInput.lowercased() {
-//                    let index = uniqueList.firstIndex { $0.heading == task.name }
-//                    if index != nil {
-//                        // Task was found
-//                        uniqueList[index!].addTask(task)
-//                    } else {
-//                        // Task not found
-//                        uniqueList.append(ReportByTask(task))
-//                    }
-//                }
-//            } else {
-//                let index = uniqueList.firstIndex { $0.heading == task.name }
-//                if index != nil {
-//                    // Task was found
-//                    uniqueList[index!].addTask(task)
-//                } else {
-//                    // Task not found
-//                    uniqueList.append(ReportByTask(task))
-//                }
-//            }
-//        }
         for task in allTasks {
-            let index = uniqueList.firstIndex { $0.heading == task.name }
-            if index != nil {
-                // Task was found
-                uniqueList[index!].addTask(task)
+            var match = false
+            
+            if filterBy == .task && !filterInput.isEmpty {
+                if exactMatch {
+                    if task.name?.lowercased() == filterInput.lowercased() {
+                        match = true
+                    }
+                } else {
+                    if task.name?.lowercased().contains(filterInput.lowercased()) ?? false {
+                        match = true
+                    }
+                }
+            } else if filterBy == .tags && !filterInput.isEmpty {
+                // TODO: Breakdown tags to see if they match one of the filter input
+                if exactMatch {
+                    if task.tags == filterInput.lowercased() {
+                        match = true
+                    }
+                } else {
+                    if task.tags?.contains(filterInput.lowercased()) ?? false {
+                        match = true
+                    }
+                }
             } else {
-                // Task not found
-                uniqueList.append(ReportByTask(task))
+                match = true
+            }
+            
+            if match {
+                let index = uniqueList.firstIndex { $0.heading == task.name }
+                if index != nil {
+                    // Task was found
+                    uniqueList[index!].addTask(task)
+                } else {
+                    // Task not found
+                    uniqueList.append(ReportByTask(task))
+                }
             }
         }
         
@@ -160,13 +160,42 @@ struct ReportsView: View {
         var uniqueList: [ReportByTags] = []
         
         for task in allTasks {
-            let index = uniqueList.firstIndex { $0.heading == task.tags }
-            if index != nil {
-                // Task was found
-                uniqueList[index!].addTask(task)
+            var match = false
+            
+            if filterBy == .task && !filterInput.isEmpty {
+                if exactMatch {
+                    if task.name?.lowercased() == filterInput.lowercased() {
+                        match = true
+                    }
+                } else {
+                    if task.name?.lowercased().contains(filterInput.lowercased()) ?? false {
+                        match = true
+                    }
+                }
+            } else if filterBy == .tags && !filterInput.isEmpty {
+                // TODO: Breakdown tags to see if they match one of the filter input
+                if exactMatch {
+                    if task.tags == filterInput.lowercased() {
+                        match = true
+                    }
+                } else {
+                    if task.tags?.contains(filterInput.lowercased()) ?? false {
+                        match = true
+                    }
+                }
             } else {
-                // Task not found
-                uniqueList.append(ReportByTags(task))
+                match = true
+            }
+            
+            if match {
+                let index = uniqueList.firstIndex { $0.heading == task.tags }
+                if index != nil {
+                    // Task was found
+                    uniqueList[index!].addTask(task)
+                } else {
+                    // Task not found
+                    uniqueList.append(ReportByTags(task))
+                }
             }
         }
         
@@ -210,7 +239,6 @@ struct ReportByTask: Identifiable {
     var id = UUID()
     let heading: String
     var totalSeconds: Int = 0
-//    var tags: [String: Int] = [:]
     var tags: [(String, Int)] = []
     
     init(_ task: FurTask) {
