@@ -11,7 +11,7 @@ struct ReportsView: View {
     @FetchRequest(
         entity: FurTask.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
-        animation: .default
+        animation: .none
     )
     var allTasks: FetchedResults<FurTask>
     private enum Timeframe {
@@ -22,16 +22,21 @@ struct ReportsView: View {
         case year
         case custom
     }
+    private enum FilterBy {
+        case none
+        case task
+        case tags
+    }
     
     @State private var timeframe: Timeframe = .thirtyDays
     @State private var sortByTask: Bool = true
-    @State private var filterByTask: Bool = true
-    @State private var filter: Bool = true
+    @State private var filterBy: FilterBy = .none
+    @State private var filter: Bool = false
     @State private var filterInput: String = ""
     
     var body: some View {
-        List {
-            Section {
+        VStack(spacing: 5) {
+            VStack(alignment: .leading) {
                 Picker("Timeframe", selection: $timeframe) {
                     Text("Past week").tag(Timeframe.week)
                     Text("This month").tag(Timeframe.month)
@@ -40,75 +45,218 @@ struct ReportsView: View {
                     Text("Past year").tag(Timeframe.year)
                     Text("Date range").tag(Timeframe.custom)
                 }
-                
+
                 Picker("Sort by", selection: $sortByTask) {
                     Text("Task").tag(true)
                     Text("Tag").tag(false)
                 }
                 .pickerStyle(.segmented)
-                
-                Toggle("Filter", isOn: $filter)
-                    .toggleStyle(.switch)
-                
-                if filter {
-                    HStack {
-                        Picker("", selection: $filterByTask) {
-                            Text("Task").tag(true)
-                            Text("Tag").tag(false)
-                        }
-                        TextField("", text: $filterInput)
+
+                HStack {
+                    Picker("Filter by:", selection: $filterBy) {
+                        Text("None").tag(FilterBy.none)
+                        Text("Task").tag(FilterBy.task)
+                        Text("Tag").tag(FilterBy.tags)
                     }
-                }
-                
-                Button("Refresh") {
-                    sortedByTask()
+                    TextField("", text: $filterInput)
+                        .disabled(filterBy == .none)
                 }
             }
+            .padding()
             
-            Section {
-                Text("Total time: 9:29:48")
-                // TODO: ForEach that is expandable
-                if sortByTask {
-                    // Sorted by task
-                } else {
-                    // Sorted by tag
+            Divider().padding(.bottom)
+            
+            Text("Total time: \(formatTimeLong(getTotalTime()))").bold()
+            
+            if sortByTask {
+                List {
+                    ForEach(sortedByTask()) { reportedTask in
+                        Section(header: sectionHeader(heading: reportedTask.heading, totalSeconds: reportedTask.totalSeconds)) {
+                            ForEach(Array(reportedTask.tags), id: \.0) { tagKey, tagInt in
+                                HStack {
+                                    Text(tagKey)
+                                    Spacer()
+                                    Text(formatTimeLong(tagInt))
+                                }
+                                .listRowInsets(EdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24))
+                            }
+                        }
+                    }
+                }
+                    
+            } else {
+                // Sorted by tag
+                List {
+                    ForEach(sortedByTag()) { reportedTag in
+                        Section(header: sectionHeader(heading: reportedTag.heading, totalSeconds: reportedTag.totalSeconds)) {
+                            ForEach(reportedTag.taskNames, id:\.0) { taskKey, taskInt in
+                                HStack {
+                                    Text(taskKey)
+                                    Spacer()
+                                    Text(formatTimeLong(taskInt))
+                                }
+                                .listRowInsets(EdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24))
+                            }
+                        }
+                    }
                 }
             }
         }
     }
     
-    private func sortedByTask() {
-//        var uniqueList: [String: [FurTask]] = [:]
-//        var uniqueTaskNames: [String] = []
-//        var reportsByTask: [ReportByTask] = []
-        var uniqueList: [String: ReportByTask] = [:]
+    private func sortedByTask() -> [ReportByTask] {
+        var uniqueList: [ReportByTask] = []
+        
+//        for task in allTasks {
+//            if filterBy == .task && !filterInput.isEmpty {
+//                if task.name?.lowercased() == filterInput.lowercased() {
+//                    let index = uniqueList.firstIndex { $0.heading == task.name }
+//                    if index != nil {
+//                        // Task was found
+//                        uniqueList[index!].addTask(task)
+//                    } else {
+//                        // Task not found
+//                        uniqueList.append(ReportByTask(task))
+//                    }
+//                }
+//            } else if filterBy == .tags && !filterInput.isEmpty {
+//                // TODO: Breakdown tags to see if they match one of the filter input
+//                if task.tags == filterInput.lowercased() {
+//                    let index = uniqueList.firstIndex { $0.heading == task.name }
+//                    if index != nil {
+//                        // Task was found
+//                        uniqueList[index!].addTask(task)
+//                    } else {
+//                        // Task not found
+//                        uniqueList.append(ReportByTask(task))
+//                    }
+//                }
+//            } else {
+//                let index = uniqueList.firstIndex { $0.heading == task.name }
+//                if index != nil {
+//                    // Task was found
+//                    uniqueList[index!].addTask(task)
+//                } else {
+//                    // Task not found
+//                    uniqueList.append(ReportByTask(task))
+//                }
+//            }
+//        }
+        for task in allTasks {
+            let index = uniqueList.firstIndex { $0.heading == task.name }
+            if index != nil {
+                // Task was found
+                uniqueList[index!].addTask(task)
+            } else {
+                // Task not found
+                uniqueList.append(ReportByTask(task))
+            }
+        }
+        
+        return uniqueList
+    }
+    
+    private func sortedByTag() -> [ReportByTags] {
+        var uniqueList: [ReportByTags] = []
         
         for task in allTasks {
-            if uniqueList.keys.contains(task.name ?? "Unknown") {
-                uniqueList[task.name ?? "Unknown"]?.addTask(task)
+            let index = uniqueList.firstIndex { $0.heading == task.tags }
+            if index != nil {
+                // Task was found
+                uniqueList[index!].addTask(task)
             } else {
-//                uniqueTaskNames.append(task.name ?? "Unknown")
-//                uniqueList[task.name ?? "Unknown"]?.append(task)
-                uniqueList[task.name ?? "Unknown"] = ReportByTask(task)
+                // Task not found
+                uniqueList.append(ReportByTags(task))
             }
+        }
+        
+        return uniqueList
+    }
+    
+    private func getTotalTime() -> Int {
+        var totalTaskTime = 0
+        for task in allTasks {
+            totalTaskTime += (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+        }
+        return totalTaskTime
+    }
+    
+    private func taskAndTime(_ reportByTask: ReportByTask) -> some View {
+        return HStack {
+            Text(reportByTask.heading)
+            Spacer()
+            Text(formatTimeLong(reportByTask.totalSeconds))
+        }
+    }
+    
+    private func tagAndTime(_ reportByTags: ReportByTags) -> some View {
+        return HStack {
+            Text(reportByTags.heading)
+            Spacer()
+            Text(formatTimeLong(reportByTags.totalSeconds))
+        }
+    }
+    
+    private func sectionHeader(heading: String, totalSeconds: Int) -> some View{
+        return HStack {
+            Text(heading)
+            Spacer()
+            Text(formatTimeLong(totalSeconds))
         }
     }
 }
 
-struct ReportByTask {
-    @State var totalSeconds: Int = 0
-    @State var tags: [String: Int] = [:]
+struct ReportByTask: Identifiable {
+    var id = UUID()
+    let heading: String
+    var totalSeconds: Int = 0
+//    var tags: [String: Int] = [:]
+    var tags: [(String, Int)] = []
     
     init(_ task: FurTask) {
+        heading = task.name ?? "Unknown"
         addTask(task)
     }
     
-    func addTask(_ task: FurTask) {
+    mutating func addTask(_ task: FurTask) {
         // add total time to total seconds
-        totalSeconds += (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+        totalSeconds = totalSeconds + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
         // check if tags contains tags. Either way, add time
-        if task.tags != nil && !(task.tags?.isEmpty ?? true) {
-            tags[task.tags!] = (tags[task.tags!] ?? 0) + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+        var unwrappedTags = "No tags"
+        if !(task.tags?.isEmpty ?? true) {
+            unwrappedTags = task.tags ?? "No tags"
+        }
+        
+        let index = tags.firstIndex { $0.0 == unwrappedTags }
+        if index != nil {
+            tags[index!].1 += (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+        } else {
+            tags.append((unwrappedTags, Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0))
+        }
+    }
+}
+
+struct ReportByTags: Identifiable {
+    var id = UUID()
+    let heading: String
+    var totalSeconds: Int = 0
+    var taskNames: [(String, Int)] = []
+    
+    init(_ task: FurTask) {
+        heading = task.tags ?? "Unknown"
+        addTask(task)
+    }
+    
+    mutating func addTask(_ task: FurTask) {
+        // add total time to total seconds
+        totalSeconds = totalSeconds + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+
+        // check if tags contains tags. Either way, add time
+        let index = taskNames.firstIndex { $0.0 == task.name }
+        if index != nil {
+            taskNames[index!].1 += (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+        } else {
+            taskNames.append((task.name ?? "Unknown", Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0))
         }
     }
 }

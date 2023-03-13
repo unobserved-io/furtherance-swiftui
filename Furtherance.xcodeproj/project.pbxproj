@@ -181,6 +181,8 @@
 			dependencies = (
 			);
 			name = Furtherance;
+			packageProductDependencies = (
+			);
 			productName = Furtherance;
 			productReference = 9CA84E0D29A7721200A28FDA /* Furtherance.app */;
 			productType = "com.apple.product-type.application";
@@ -209,6 +211,8 @@
 				Base,
 			);
 			mainGroup = 9CA84E0429A7721200A28FDA;
+			packageReferences = (
+			);
 			productRefGroup = 9CA84E0E29A7721200A28FDA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
