@@ -292,7 +292,11 @@ struct ReportByTags: Identifiable {
     var taskNames: [(String, Int)] = []
     
     init(_ task: FurTask) {
-        heading = task.tags ?? "Unknown"
+        if task.tags?.isEmpty ?? true {
+            heading = "No tags"
+        } else {
+            heading = task.tags ?? "No tags"
+        }
         addTask(task)
     }
     

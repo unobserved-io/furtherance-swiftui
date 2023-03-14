@@ -221,6 +221,7 @@ final class StopWatch: ObservableObject {
     
     func resumeFromIdle() {
         /// Runs when user comes back after being idle
+        // TODO: add if !showingAlert to make sure this only appears once
         let resumeTime = Date.now
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute, .second]
