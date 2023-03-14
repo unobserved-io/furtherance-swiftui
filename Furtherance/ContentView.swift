@@ -93,6 +93,7 @@ struct ContentView: View {
                     GroupView()
                 } else if s == "reports" {
                     ReportsView()
+                        .navigationTitle("Time Reports")
                 }
             }
             // Initial task count update when view is loaded
