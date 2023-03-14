@@ -11,8 +11,9 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct SettingsView: View {
-    @StateObject var storeModel = StoreModel()
+    @ObservedObject var storeModel = StoreModel.sharedInstance
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.scenePhase) var scenePhase
     
     @AppStorage("idleDetect") private var idleDetect = false
     @AppStorage("idleLimit") private var idleLimit = 6
@@ -85,7 +86,7 @@ struct SettingsView: View {
             
             if storeModel.purchasedIds.isEmpty {
                 if let product = storeModel.products.first {
-                    Text("Idle detection is available in the Pro version only.")
+                    Text("Idle detection and time reports are available in the Pro version only.")
                         .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity, alignment: .center)
                         .padding(.top)

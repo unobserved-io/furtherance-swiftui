@@ -19,7 +19,9 @@ struct FurtheranceApp: App {
     let persistenceController = PersistenceController.shared
     
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @ObservedObject var storeModel = StoreModel.sharedInstance
     @State private var showDialog = false
+    @State private var showProAlert = false
     @State private var dialogTitle = ""
     @State private var dialogMessage = ""
     @State private var confirmBtn = ""
@@ -32,6 +34,9 @@ struct FurtheranceApp: App {
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .onAppear {
                     NSWindow.allowsAutomaticWindowTabbing = false
+                    Task {
+                        try await storeModel.fetchProducts()
+                    }
                 }
                 .confirmationDialog(dialogTitle, isPresented: $showDialog) {
                     Button(confirmBtn, role: .destructive) {
@@ -69,6 +74,11 @@ struct FurtheranceApp: App {
                 } message: {
                     Text(dialogMessage)
                 }
+                .alert("Upgrade to Pro", isPresented: $showProAlert) {
+                    Button("OK") {}
+                } message: {
+                    Text("Time reports are only available in Furtherance Pro. Please upgrade in Settings.")
+                }
         }
         .commands {
             CommandMenu("Database") {
@@ -86,7 +96,11 @@ struct FurtheranceApp: App {
             CommandGroup(replacing: CommandGroupPlacement.singleWindowList) {}
             CommandGroup(before: CommandGroupPlacement.newItem) {
                 Button("Reports") {
-                    navPath.append("reports")
+                    if storeModel.purchasedIds.isEmpty {
+                        showProAlert.toggle()
+                    } else {
+                        navPath.append("reports")
+                    }
                 }
                 .keyboardShortcut("R", modifiers: EventModifiers.command)
             }

@@ -5,12 +5,12 @@
   ],
   "products" : [
     {
-      "displayPrice" : "4.99",
+      "displayPrice" : "9.99",
       "familyShareable" : true,
       "internalID" : "6445757497",
       "localizations" : [
         {
-          "description" : "Idle detection and all future Pro features.",
+          "description" : "Idle detection, reports, and future features.",
           "displayName" : "Furtherance Pro Upgrade",
           "locale" : "en_US"
         }
@@ -23,7 +23,7 @@
   "settings" : {
     "_applicationInternalID" : "1659277200",
     "_developerTeamID" : "Z5MKQX2NCZ",
-    "_lastSynchronizedDate" : 699100743.51212597
+    "_lastSynchronizedDate" : 700474901.93873096
   },
   "subscriptionGroups" : [
 
