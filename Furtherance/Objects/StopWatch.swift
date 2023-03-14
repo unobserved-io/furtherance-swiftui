@@ -221,18 +221,20 @@ final class StopWatch: ObservableObject {
     
     func resumeFromIdle() {
         /// Runs when user comes back after being idle
-        // TODO: add if !showingAlert to make sure this only appears once
-        let resumeTime = Date.now
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.hour, .minute, .second]
-        formatter.unitsStyle = .short
-        howLongIdle = formatter.string(from: idleStartTime, to: resumeTime)!
-        
-        // Show notification
-        registerLocal(notificationType: "idle")
+        // Check if an idle alert is already showing to make sure this only happens once
+        if !showingAlert {
+            let resumeTime = Date.now
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.hour, .minute, .second]
+            formatter.unitsStyle = .short
+            howLongIdle = formatter.string(from: idleStartTime, to: resumeTime)!
+            
+            // Show notification
+            registerLocal(notificationType: "idle")
 
-        // Open idle dialog in ContentView
-        showingAlert = true
+            // Open idle dialog in ContentView
+            showingAlert = true
+        }
     }
     
     func resetIdle() {
