@@ -54,7 +54,7 @@ struct GroupEditView: View {
                 .frame(height: 50)
             Spacer()
                 .frame(height: 15)
-            LazyVGrid(columns: buttonColumns, spacing: 10) {
+            HStack {
                 Button(action: {
                     dismiss()
                 }) {
