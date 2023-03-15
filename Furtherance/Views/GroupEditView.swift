@@ -39,7 +39,12 @@ struct GroupEditView: View {
     
     var body: some View {
         VStack(spacing: 10) {
-            TextField(clickedGroup.taskGroup?.name ?? "Unknown", text: $titleField)
+            TextField(clickedGroup.taskGroup?.name ?? "Unknown", text: Binding(
+                get: { titleField },
+                set: { newValue in
+                    titleField = newValue.trimmingCharacters(in: ["#"])
+                }
+            ))
                 .frame(minWidth: 200)
             TextField(clickedGroup.taskGroup!.tags.isEmpty ? "#add #tags" : clickedGroup.taskGroup!.tags, text: $tagsField)
                 .frame(minWidth: 200)

@@ -63,7 +63,12 @@ struct TaskEditView: View {
                     Image(systemName: "trash.fill")
                 }
             }
-            TextField(clickedTask.task?.name ?? "Unknown", text: $titleField)
+            TextField(clickedTask.task?.name ?? "Unknown", text: Binding(
+                get: { titleField },
+                set: { newValue in
+                    titleField = newValue.trimmingCharacters(in: ["#"])
+                }
+            ))
                 .frame(minWidth: 200)
             TextField((clickedTask.task?.tags?.isEmpty) ?? true ? "#tags" : clickedTask.task!.tags!, text: $tagsField)
                 .frame(minWidth: 200)

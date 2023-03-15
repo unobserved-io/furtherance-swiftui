@@ -60,7 +60,16 @@ struct ReportsView: View {
                         Text("Task").tag(FilterBy.task)
                         Text("Tag").tag(FilterBy.tags)
                     }
-                    TextField("", text: $filterInput)
+                    TextField("", text: Binding(
+                        get: { filterInput },
+                        set: { newValue in
+                            if filterBy == .task {
+                                filterInput = newValue.trimmingCharacters(in: ["#"])
+                            } else {
+                                filterInput = newValue
+                            }
+                        }
+                    ))
                         .disabled(filterBy == .none)
                 }
                 

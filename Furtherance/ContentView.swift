@@ -46,7 +46,16 @@ struct ContentView: View {
                     .frame(maxHeight: 90)
                     .padding(.horizontal)
                 HStack {
-                    TextField("Task Name #tag #another tag", text: $taskTagsInput.text)
+                    TextField("Task Name #tag #another tag", text: Binding(
+                        get: { taskTagsInput.text },
+                        set: { newValue in
+                            if taskTagsInput.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                taskTagsInput.text = newValue.trimmingCharacters(in: ["#"])
+                            } else {
+                                taskTagsInput.text = newValue
+                            }
+                        }
+                    ))
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .disabled(stopWatch.isRunning)
                         .onSubmit {
