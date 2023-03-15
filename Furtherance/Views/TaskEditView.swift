@@ -22,10 +22,6 @@ struct TaskEditView: View {
         GridItem(.fixed(70)),
         GridItem(.fixed(70)),
     ]
-    private let timeColumns: [GridItem] = [
-        GridItem(.flexible()),
-        GridItem(.flexible()),
-    ]
     
     func getStartRange() -> ClosedRange<Date> {
         let min = Date(timeIntervalSinceReferenceDate: 0)
@@ -89,7 +85,7 @@ struct TaskEditView: View {
                 .frame(height: 50)
             Spacer()
                 .frame(height: 15)
-            LazyVGrid(columns: buttonColumns, spacing: 10) {
+            HStack(spacing: 10) {
                 Button(action: {
                     dismiss()
                 }) {
