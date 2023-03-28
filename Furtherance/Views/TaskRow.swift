@@ -41,10 +41,12 @@ struct TaskRow: View {
             Image(systemName: "arrow.counterclockwise.circle")
                 .contentShape(Circle())
                 .onTapGesture {
-                    let taskTagsInput = TaskTagsInput.sharedInstance
-                    taskTagsInput.text = taskGroup.name + " " + taskGroup.tags
-                    StopWatch.sharedInstance.start()
-                    TimerHelper.sharedInstance.onStart(nameAndTags: taskTagsInput.text)
+                    if !StopWatch.sharedInstance.isRunning {
+                        let taskTagsInput = TaskTagsInput.sharedInstance
+                        taskTagsInput.text = taskGroup.name + " " + taskGroup.tags
+                        StopWatch.sharedInstance.start()
+                        TimerHelper.sharedInstance.onStart(nameAndTags: taskTagsInput.text)
+                    }
                 }
         }
         .frame(height: 25)
