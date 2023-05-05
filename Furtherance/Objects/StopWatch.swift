@@ -34,6 +34,7 @@ final class StopWatch: ObservableObject {
     var howLongIdle = ""
     var timeAtSleep = Date.now
     var idleAtSleep = 0
+    var timeUntilFire: TimeInterval = 0.0
     
     init() {
         getPomodoroTime()
@@ -170,6 +171,27 @@ final class StopWatch: ObservableObject {
         center.removeAllPendingNotificationRequests()
         // Reset Pomodoro time
         getPomodoroTime()
+    }
+    
+    func pause() {
+        //Get the difference in seconds between now and the future fire date
+        timeUntilFire = timer.fireDate.timeIntervalSinceNow
+        //Stop the timer
+        timer.invalidate()
+    }
+    
+    func resume() {
+        // TODO: This doesn't work because the timer is based on time and not seconds.
+        timer = Timer.scheduledTimer(withTimeInterval: timeUntilFire, repeats: true) { _ in
+            self.secondsElapsed = (self.pomodoroTime * 60) - (Calendar.current.dateComponents([.second], from: self.startTime, to: Date.now).second ?? 0)
+            self.formatTime()
+            if self.idleDetect {
+                self.checkUserIdle()
+            }
+            if self.secondsElapsed != 0 && self.secondsElapsed % 60 == 0 {
+                Autosave().write()
+            }
+        }
     }
 
     func formatTime() {
