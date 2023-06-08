@@ -11,12 +11,16 @@ struct ReportsView: View {
     @FetchRequest(
         entity: FurTask.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
+        predicate: NSPredicate(format: "(startTime > %@) AND (startTime <= %@)", (Calendar.current.date(byAdding: .day, value: -29, to: Calendar.current.startOfDay(for: Date.now)) ?? Date.now) as NSDate, Date.now as NSDate),
         animation: .default
     )
     var allTasks: FetchedResults<FurTask>
     private enum Timeframe {
-        case week
-        case month
+        case thisWeek
+        case lastWeek
+        case past7Days
+        case thisMonth
+        case lastMonth
         case thirtyDays
         case oneEightyDays
         case year
@@ -34,18 +38,85 @@ struct ReportsView: View {
     @State private var filter: Bool = false
     @State private var exactMatch: Bool = false
     @State private var filterInput: String = ""
+    @State private var customStartDate: Date = Calendar.current.date(byAdding: .day, value: -6, to: Date.now.startOfDay) ?? Date.now
+    @State private var customStopDate: Date = .now.endOfDay
     private var allListedTime: Int = 0
     
     var body: some View {
         VStack(spacing: 5) {
             VStack(alignment: .leading) {
                 Picker("Timeframe", selection: $timeframe) {
-                    Text("Past week").tag(Timeframe.week)
-                    Text("This month").tag(Timeframe.month)
+                    Text("This week").tag(Timeframe.thisWeek)
+                    Text("Last week").tag(Timeframe.lastWeek)
+                    Text("Past 7 days").tag(Timeframe.past7Days)
+                    Text("This month").tag(Timeframe.thisMonth)
+                    Text("Last month").tag(Timeframe.lastMonth)
                     Text("Past 30 days").tag(Timeframe.thirtyDays)
                     Text("Past 180 days").tag(Timeframe.oneEightyDays)
                     Text("Past year").tag(Timeframe.year)
                     Text("Date range").tag(Timeframe.custom)
+                }
+                .onChange(of: timeframe) { newTimeframe in
+                    var newStartDate = Calendar.current.startOfDay(for: Date.now)
+                    var newStopDate = Date.now
+                    switch newTimeframe {
+                    case .thisWeek:
+                        newStartDate = newStartDate.startOfWeek
+                    case .lastWeek:
+                        newStartDate = Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: (Calendar.current.date(byAdding: .weekOfYear, value: -1, to: newStartDate) ?? Date.now)).date ?? Date.now
+                        newStopDate = newStartDate.endOfWeek
+                    case .past7Days:
+                        newStartDate = Calendar.current.date(byAdding: .day, value: -6, to: newStartDate) ?? Date.now
+                    case .thisMonth:
+                        newStartDate = Date.now.startOfMonth
+                    case .lastMonth:
+                        let endOfLastMonth = Calendar.current.date(byAdding: .day, value: -1, to: Date.now.startOfMonth) ?? Date.now
+                        newStartDate = endOfLastMonth.startOfMonth
+                        newStopDate = newStartDate.endOfMonth
+                    case .thirtyDays:
+                        newStartDate = Calendar.current.date(byAdding: .day, value: -29, to: newStartDate) ?? Date.now
+                    case .oneEightyDays:
+                        newStartDate = Calendar.current.date(byAdding: .day, value: -179, to: newStartDate) ?? Date.now
+                    case .year:
+                        newStartDate = Calendar.current.date(byAdding: .day, value: -364, to: newStartDate) ?? Date.now
+                    case .custom:
+                        newStartDate = customStartDate
+                        newStopDate = customStopDate
+                    }
+                    print("Start: \(newStartDate)")
+                    print("Stop: \(newStopDate)")
+                    allTasks.nsPredicate = NSPredicate(format: "(startTime > %@) AND (startTime <= %@)", newStartDate as NSDate, newStopDate as NSDate)
+                }
+                
+                if timeframe == .custom {
+                    HStack {
+                        DatePicker(
+                            selection: $customStartDate,
+                            in: Date(timeIntervalSinceReferenceDate: 0) ... customStopDate,
+                            displayedComponents: [.date],
+                            label: {}
+                        )
+                        .labelsHidden()
+                        .onChange(of: customStartDate) { newStartDate in
+                            customStartDate = newStartDate.startOfDay
+                            print("Start: \(customStartDate)")
+                            print("Stop: \(customStopDate)")
+                            allTasks.nsPredicate = NSPredicate(format: "(startTime > %@) AND (startTime <= %@)", customStartDate as NSDate, customStopDate as NSDate)
+                        }
+                        Text("to")
+                        DatePicker(
+                            selection: $customStopDate,
+                            in: customStartDate ... Date.now.endOfDay,
+                            displayedComponents: [.date],
+                            label: {}
+                        )
+                        .frame(minHeight: 35)
+                        .labelsHidden()
+                        .onChange(of: customStopDate) { newStopDate in
+                            customStopDate = newStopDate.endOfDay
+                            allTasks.nsPredicate = NSPredicate(format: "(startTime > %@) AND (startTime <= %@)", customStartDate as NSDate, customStopDate as NSDate)
+                        }
+                    }
                 }
 
                 Picker("Sort by", selection: $sortByTask) {
@@ -142,7 +213,7 @@ struct ReportsView: View {
                     }
                 }
             } else if filterBy == .tags && !filterInput.isEmpty {
-                // TODO: Breakdown tags to see if they match one of the filter input
+                // Breakdown tags to see if they match one of the filter input
                 if exactMatch {
                     if task.tags == filterInput.lowercased() {
                         match = true
@@ -188,7 +259,7 @@ struct ReportsView: View {
                     }
                 }
             } else if filterBy == .tags && !filterInput.isEmpty {
-                // TODO: Breakdown tags to see if they match one of the filter input
+                // Breakdown tags to see if they match one of the filter input
                 if exactMatch {
                     if task.tags == filterInput.lowercased() {
                         match = true
@@ -234,7 +305,7 @@ struct ReportsView: View {
                     }
                 }
             } else if filterBy == .tags && !filterInput.isEmpty {
-                // TODO: Breakdown tags to see if they match one of the filter input
+                // Breakdown tags to see if they match one of the filter input
                 if exactMatch {
                     if task.tags == filterInput.lowercased() {
                         match = true
