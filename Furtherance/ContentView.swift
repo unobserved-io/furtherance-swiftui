@@ -13,6 +13,8 @@ struct ContentView: View {
     @Binding var navPath: [String]
     
     @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.requestReview) private var requestReview
+    @AppStorage("launchCount") private var launchCount = 0
     @SectionedFetchRequest(
         sectionIdentifier: \.startDateRelative,
         sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
@@ -108,6 +110,13 @@ struct ContentView: View {
             // Initial task count update when view is loaded
             .onAppear() {
                 tasksCount = tasks.count
+                
+                // Ask for in-app review
+                if launchCount > 0 && launchCount % 10 == 0 {
+                    DispatchQueue.main.async {
+                        requestReview()
+                    }
+                }
             }
             // Task edit sheet
             .sheet(isPresented: $showingSheet) {

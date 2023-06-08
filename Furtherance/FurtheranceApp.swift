@@ -19,6 +19,7 @@ struct FurtheranceApp: App {
     let persistenceController = PersistenceController.shared
     
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @AppStorage("launchCount") private var launchCount = 0
     @ObservedObject var storeModel = StoreModel.sharedInstance
     @State private var showDialog = false
     @State private var showProAlert = false
@@ -27,6 +28,10 @@ struct FurtheranceApp: App {
     @State private var confirmBtn = ""
     @State(initialValue: 0) var tasksCount: Int
     @State(initialValue: []) var navPath: [String]
+    
+    init() {
+        launchCount += 1
+    }
 
     var body: some Scene {
         WindowGroup {
