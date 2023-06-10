@@ -185,7 +185,7 @@ struct ContentView: View {
     
     private func sectionHeader(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> some View {
         return HStack {
-            Text(taskSection.id.capitalized)
+            Text(taskSection.id.localizedCapitalized)
             Spacer()
             Text(totalSectionTime(taskSection))
         }
