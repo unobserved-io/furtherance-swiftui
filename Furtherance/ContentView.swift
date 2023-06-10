@@ -171,6 +171,15 @@ struct ContentView: View {
     private func stopTimer(stopTime: Date) {
         stopWatch.stop()
         timerHelper.onStop(context: viewContext, taskStopTime: stopTime)
+        
+        // Refresh the viewContext if the timer goes past midnight
+        // This prevents the task from going under yesterday, while yesterday remains as today
+        let startDate = Calendar.current.dateComponents([.year, .month, .day], from: timerHelper.startTime)
+        let stopDate = Calendar.current.dateComponents([.year, .month, .day], from: Date.now)
+        if startDate.day != stopDate.day {
+            viewContext.refreshAllObjects()
+        }
+        
         taskTagsInput.text = ""
     }
     
