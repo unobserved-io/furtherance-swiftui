@@ -179,20 +179,6 @@ final class StopWatch: ObservableObject {
         //Stop the timer
         timer.invalidate()
     }
-    
-    func resume() {
-        // TODO: This doesn't work because the timer is based on time and not seconds.
-        timer = Timer.scheduledTimer(withTimeInterval: timeUntilFire, repeats: true) { _ in
-            self.secondsElapsed = (self.pomodoroTime * 60) - (Calendar.current.dateComponents([.second], from: self.startTime, to: Date.now).second ?? 0)
-            self.formatTime()
-            if self.idleDetect {
-                self.checkUserIdle()
-            }
-            if self.secondsElapsed != 0 && self.secondsElapsed % 60 == 0 {
-                Autosave().write()
-            }
-        }
-    }
 
     func formatTime() {
         /// Format time for stop watch clock
