@@ -113,6 +113,7 @@ struct FurtheranceApp: App {
                     }
                 }
                 .keyboardShortcut("R", modifiers: EventModifiers.command)
+                .disabled(stopWatch.isRunning)
             }
             CommandGroup(before: CommandGroupPlacement.newItem) {
                 Button("Add Task") {
