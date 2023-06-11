@@ -88,6 +88,7 @@ struct ContentView: View {
                                                 showingSheet.toggle()
                                             }
                                         }
+                                        .disabled(stopWatch.isRunning)
                                 }
                             }
                         }
