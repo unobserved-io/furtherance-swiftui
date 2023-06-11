@@ -17,12 +17,11 @@ struct GroupAddView: View {
     @State var selectedStop: Date
     @State private var titleField = ""
     @State private var tagsField = ""
-    @State private var showDialog = false
     private let buttonColumns: [GridItem] = [
         GridItem(.fixed(70)),
         GridItem(.fixed(70)),
     ]
-    
+
     var body: some View {
         VStack(spacing: 10) {
             TextField(taskName, text: $titleField)
@@ -71,7 +70,7 @@ struct GroupAddView: View {
         }
         .padding()
     }
-    
+
     func getStartRange() -> ClosedRange<Date> {
         let min = Date(timeIntervalSinceReferenceDate: 0)
         let max = selectedStop
@@ -83,7 +82,7 @@ struct GroupAddView: View {
         let max = Date.now
         return min...max
     }
-    
+
     func separateTags(rawString: String) -> String {
         var splitTags = rawString.trimmingCharacters(in: .whitespaces).split(separator: "#")
         // Trim each element and lowercase them
