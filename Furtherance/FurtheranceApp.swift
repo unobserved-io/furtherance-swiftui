@@ -98,7 +98,7 @@ struct FurtheranceApp: App {
                     dialogMessage = "This will delete all of your saved tasks."
                     confirmBtn = "Delete"
                 }
-                .disabled(tasksCount == 0)
+                .disabled(tasksCount == 0 || stopWatch.isRunning)
             }
             CommandGroup(replacing: CommandGroupPlacement.newItem) {}
             CommandGroup(replacing: CommandGroupPlacement.windowList) {}
