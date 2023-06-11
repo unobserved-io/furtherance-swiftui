@@ -11,7 +11,7 @@ struct AddTaskView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) var dismiss
     @State private var selectedStart: Date = Calendar.current.date(byAdding: .hour, value: -1, to: Date.now) ?? Date.now
-    @State private var selectedStop: Date = Date.now
+    @State private var selectedStop: Date = .now
     @State private var titleField = ""
     @State private var tagsField = ""
     @State private var errorMessage = ""
@@ -19,7 +19,7 @@ struct AddTaskView: View {
         GridItem(.fixed(70)),
         GridItem(.fixed(70)),
     ]
-    
+
     var body: some View {
         VStack(spacing: 10) {
             TextField("Task name", text: $titleField)
@@ -61,13 +61,13 @@ struct AddTaskView: View {
                             error.append("Title cannot contain a '#'. Those are reserved for tags.")
                         }
                     }
-                    
+
                     if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty {
                         if !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
                             error.append("Tags must start with a '#'.")
                         }
                     }
-                    
+
                     if error.isEmpty {
                         let task = FurTask(context: viewContext)
                         task.id = UUID()
@@ -92,7 +92,7 @@ struct AddTaskView: View {
         }
         .padding()
     }
-    
+
     func getStartRange() -> ClosedRange<Date> {
         let min = Date(timeIntervalSinceReferenceDate: 0)
         let max = selectedStop
@@ -104,7 +104,7 @@ struct AddTaskView: View {
         let max = Date.now
         return min...max
     }
-    
+
     func separateTags(rawString: String) -> String {
         var splitTags = rawString.trimmingCharacters(in: .whitespaces).split(separator: "#")
         // Trim each element and lowercase them
@@ -129,4 +129,3 @@ struct AddTaskView_Previews: PreviewProvider {
         AddTaskView()
     }
 }
-
