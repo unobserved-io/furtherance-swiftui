@@ -15,6 +15,7 @@ struct GroupView: View {
     @State private var clickedID = UUID()
     @State private var showingSheet = false
     @State private var overallEditSheet = false
+    @State private var groupAddSheet = false
     @State private var showDialog = false
 
     private let totalFormatter: DateComponentsFormatter = {
@@ -92,7 +93,7 @@ struct GroupView: View {
                         .contentShape(Rectangle())
                         .onTapGesture {
                             clickedTask.task = task
-                            clickedID = clickedTask.task?.id ?? UUID()
+                            clickedID = clickedTask.task?.id ?? UUID() //TODO: Can this be removed?
                             showingSheet.toggle()
                         }
                         .onHover { inside in
@@ -108,6 +109,11 @@ struct GroupView: View {
             HStack {
                 Spacer()
                 Button(action: {
+                    groupAddSheet.toggle()
+                }) {
+                    Image(systemName: "plus")
+                }
+                Button(action: {
                     showDialog.toggle()
                 }) {
                     Image(systemName: "trash.fill")
@@ -119,6 +125,10 @@ struct GroupView: View {
         }
         .sheet(isPresented: $overallEditSheet) {
             GroupEditView()
+        }
+        .sheet(isPresented: $groupAddSheet, onDismiss: refreshGroup) {
+            GroupAddView(taskName: clickedGroup.taskGroup?.name ?? "Unknown", taskTags: clickedGroup.taskGroup?.tags ?? "#tags", selectedStart: clickedGroup.taskGroup?.tasks.first?.stopTime ?? Date.now, selectedStop: Calendar.current.date(byAdding: .hour, value: 1, to: clickedGroup.taskGroup?.tasks.first?.stopTime ?? Date.now) ?? Date.now)
+                .environmentObject(clickedGroup)
         }
         .confirmationDialog("Delete all?", isPresented: $showDialog) {
             Button("Delete", role: .destructive) {
