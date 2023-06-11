@@ -24,6 +24,7 @@ struct ReportsView: View {
         case thirtyDays
         case oneEightyDays
         case year
+        case allTime
         case custom
     }
     private enum FilterBy {
@@ -54,6 +55,7 @@ struct ReportsView: View {
                     Text("Past 30 days").tag(Timeframe.thirtyDays)
                     Text("Past 180 days").tag(Timeframe.oneEightyDays)
                     Text("Past year").tag(Timeframe.year)
+                    Text("All time").tag(Timeframe.allTime)
                     Text("Date range").tag(Timeframe.custom)
                 }
                 .onChange(of: timeframe) { newTimeframe in
@@ -79,12 +81,12 @@ struct ReportsView: View {
                         newStartDate = Calendar.current.date(byAdding: .day, value: -179, to: newStartDate) ?? Date.now
                     case .year:
                         newStartDate = Calendar.current.date(byAdding: .day, value: -364, to: newStartDate) ?? Date.now
+                    case .allTime:
+                        newStartDate = Date(timeIntervalSince1970: 0)
                     case .custom:
                         newStartDate = customStartDate
                         newStopDate = customStopDate
                     }
-                    print("Start: \(newStartDate)")
-                    print("Stop: \(newStopDate)")
                     allTasks.nsPredicate = NSPredicate(format: "(startTime > %@) AND (startTime <= %@)", newStartDate as NSDate, newStopDate as NSDate)
                 }
                 
@@ -99,8 +101,6 @@ struct ReportsView: View {
                         .labelsHidden()
                         .onChange(of: customStartDate) { newStartDate in
                             customStartDate = newStartDate.startOfDay
-                            print("Start: \(customStartDate)")
-                            print("Stop: \(customStopDate)")
                             allTasks.nsPredicate = NSPredicate(format: "(startTime > %@) AND (startTime <= %@)", customStartDate as NSDate, customStopDate as NSDate)
                         }
                         Text("to")
