@@ -21,11 +21,13 @@ struct FurtheranceApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @AppStorage("launchCount") private var launchCount = 0
     @ObservedObject var storeModel = StoreModel.sharedInstance
+    @ObservedObject var stopWatch = StopWatch.sharedInstance
     @State private var showDialog = false
     @State private var showProAlert = false
     @State private var dialogTitle = ""
     @State private var dialogMessage = ""
     @State private var confirmBtn = ""
+    @State private var addTaskSheet = false
     @State(initialValue: 0) var tasksCount: Int
     @State(initialValue: []) var navPath: [String]
     
@@ -79,6 +81,9 @@ struct FurtheranceApp: App {
                 } message: {
                     Text(dialogMessage)
                 }
+                .sheet(isPresented: $addTaskSheet) {
+                    AddTaskView().environment(\.managedObjectContext, persistenceController.container.viewContext)
+                }
                 .alert("Upgrade to Pro", isPresented: $showProAlert) {
                     Button("OK") {}
                 } message: {
@@ -108,6 +113,12 @@ struct FurtheranceApp: App {
                     }
                 }
                 .keyboardShortcut("R", modifiers: EventModifiers.command)
+            }
+            CommandGroup(before: CommandGroupPlacement.newItem) {
+                Button("Add Task") {
+                    addTaskSheet.toggle()
+                }
+                .disabled(stopWatch.isRunning)
             }
         }
         .defaultSize(width: 360, height: 600)
