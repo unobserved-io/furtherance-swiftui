@@ -22,6 +22,7 @@ final class StopWatch: ObservableObject {
     @AppStorage("idleLimit") private var idleLimit = 6
     @AppStorage("pomodoro") private var pomodoro = false
     @AppStorage("pomodoroTime") private var pomodoroTime = 25
+    @AppStorage("showIconBadge") private var showIconBadge = false
     
     let usbInfoRaw: io_service_t = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOHIDSystem"))
     
@@ -169,6 +170,8 @@ final class StopWatch: ObservableObject {
         // Delete any pending notifications
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
+        // Remove dock icon badge
+        NSApp.dockTile.badgeLabel = nil
         // Reset Pomodoro time
         getPomodoroTime()
     }
@@ -189,6 +192,9 @@ final class StopWatch: ObservableObject {
         let seconds = secondsElapsed % 60
         let secondsString = (seconds < 10) ? "0\(seconds)" : "\(seconds)"
         timeElapsedFormatted = hoursString + ":" + minutesString + ":" + secondsString
+        if showIconBadge {
+            NSApp.dockTile.badgeLabel = timeElapsedFormatted
+        }
         
         // Stop pomodoro timer if time is up
         if pomodoro && secondsElapsed == 0 {
