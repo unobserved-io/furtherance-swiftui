@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UniformTypeIdentifiers
 
 class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
@@ -23,7 +22,6 @@ struct FurtheranceApp: App {
     @ObservedObject var storeModel = StoreModel.sharedInstance
     @ObservedObject var stopWatch = StopWatch.sharedInstance
     @State private var showDeleteDialog = false
-    @State private var showExportCSV = false
     @State private var showProAlert = false
     @State private var dialogTitle = ""
     @State private var dialogMessage = ""
@@ -31,6 +29,7 @@ struct FurtheranceApp: App {
     @State private var addTaskSheet = false
     @State(initialValue: 0) var tasksCount: Int
     @State(initialValue: []) var navPath: [String]
+    @State(initialValue: false) var showExportCSV: Bool
     
     init() {
         launchCount += 1
@@ -38,7 +37,7 @@ struct FurtheranceApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView(tasksCount: $tasksCount, navPath: $navPath)
+            ContentView(tasksCount: $tasksCount, navPath: $navPath, showExportCSV: $showExportCSV)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .onAppear {
                     NSWindow.allowsAutomaticWindowTabbing = false
@@ -102,12 +101,6 @@ struct FurtheranceApp: App {
                 } message: {
                     Text("That feature is only available in Furtherance Pro.")
                 }
-                .fileExporter(
-                    isPresented: $showExportCSV,
-                    document: CSVFile(initialText: getDataAsCSV()),
-                    contentType: UTType.commaSeparatedText,
-                    defaultFilename: "Furtherance.csv"
-                ) { _ in }
         }
         .commands {
             CommandMenu("Database") {
@@ -157,28 +150,5 @@ struct FurtheranceApp: App {
         }
         .defaultSize(width: 400, height: 450)
 #endif
-    }
-    
-    private func getDataAsCSV() -> String {
-        let fetchRequest: NSFetchRequest<FurTask> = FurTask.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)]
-        var allData: [FurTask] = []
-        do {
-            allData = try persistenceController.container.viewContext.fetch(fetchRequest)
-        } catch {
-            print(error)
-        }
-        var csvString = "Name,Tags,Start Time,Stop Time,Total Seconds\n"
-        
-        allData.forEach() { task in
-            let totalSeconds = task.stopTime?.timeIntervalSince(task.startTime ?? Date.now)
-            let localDateFormatter = DateFormatter()
-            localDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            let startString = localDateFormatter.string(from: task.startTime ?? Date.now)
-            let stopString = localDateFormatter.string(from: task.stopTime ?? Date.now)
-            csvString += "\(task.name ?? "Unknown"),\(task.tags ?? ""),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
-        }
-        
-        return csvString
     }
 }

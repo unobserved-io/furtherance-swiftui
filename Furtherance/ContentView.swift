@@ -7,10 +7,12 @@
 
 import CoreData
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct ContentView: View {
     @Binding var tasksCount: Int
     @Binding var navPath: [String]
+    @Binding var showExportCSV: Bool
     
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.requestReview) private var requestReview
@@ -31,9 +33,10 @@ struct ContentView: View {
     @State private var hashtagAlert = false
     let timerHelper = TimerHelper.sharedInstance
     
-    init(tasksCount: Binding<Int>, navPath: Binding<[String]>) {
+    init(tasksCount: Binding<Int>, navPath: Binding<[String]>, showExportCSV: Binding<Bool>) {
         self._tasksCount = tasksCount
         self._navPath = navPath
+        self._showExportCSV = showExportCSV
         checkForAutosave()
     }
     
@@ -147,6 +150,13 @@ struct ContentView: View {
                     })
                 )
             }
+            // CSV Export
+            .fileExporter(
+                isPresented: $showExportCSV,
+                document: CSVFile(initialText: getDataAsCSV()),
+                contentType: UTType.commaSeparatedText,
+                defaultFilename: "Furtherance.csv"
+            ) { _ in }
             .frame(minWidth: 360, idealWidth: 400, minHeight: 170, idealHeight: 600)
         }
         .environmentObject(clickedGroup)
@@ -225,11 +235,34 @@ struct ContentView: View {
             autosave.asAlert()
         }
     }
+    
+    private func getDataAsCSV() -> String {
+        let fetchRequest: NSFetchRequest<FurTask> = FurTask.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)]
+        var allData: [FurTask] = []
+        do {
+            allData = try viewContext.fetch(fetchRequest)
+        } catch {
+            print(error)
+        }
+        var csvString = "Name,Tags,Start Time,Stop Time,Total Seconds\n"
+        
+        allData.forEach() { task in
+            let totalSeconds = task.stopTime?.timeIntervalSince(task.startTime ?? Date.now)
+            let localDateFormatter = DateFormatter()
+            localDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            let startString = localDateFormatter.string(from: task.startTime ?? Date.now)
+            let stopString = localDateFormatter.string(from: task.stopTime ?? Date.now)
+            csvString += "\(task.name ?? "Unknown"),\(task.tags ?? ""),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
+        }
+        
+        return csvString
+    }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(tasksCount: .constant(0), navPath: .constant([""])).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ContentView(tasksCount: .constant(0), navPath: .constant([""]), showExportCSV: .constant(false)).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
 
