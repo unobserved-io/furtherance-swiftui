@@ -86,9 +86,21 @@ struct FurtheranceApp: App {
                     AddTaskView().environment(\.managedObjectContext, persistenceController.container.viewContext)
                 }
                 .alert("Upgrade to Pro", isPresented: $showProAlert) {
-                    Button("OK") {}
+                    Button("Cancel") {}
+                    if let product = storeModel.products.first {
+                        Button(action: {
+                            Task {
+                                if storeModel.purchasedIds.isEmpty {
+                                    try await storeModel.purchase()
+                                }
+                            }
+                        }) {
+                            Text("Buy Pro \(product.displayPrice)")
+                        }
+                        .keyboardShortcut(.defaultAction)
+                    }
                 } message: {
-                    Text("Time reports are only available in Furtherance Pro. Please upgrade in Settings.")
+                    Text("That feature is only available in Furtherance Pro.")
                 }
                 .fileExporter(
                     isPresented: $showExportCSV,
@@ -100,7 +112,11 @@ struct FurtheranceApp: App {
         .commands {
             CommandMenu("Database") {
                 Button("Export as CSV") {
-                    showExportCSV.toggle()
+                    if storeModel.purchasedIds.isEmpty {
+                        showProAlert.toggle()
+                    } else {
+                        showExportCSV.toggle()
+                    }
                 }
                 .disabled(tasksCount == 0 || stopWatch.isRunning)
                 Button("Delete All") {
