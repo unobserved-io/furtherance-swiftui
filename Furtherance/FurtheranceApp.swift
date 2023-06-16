@@ -22,7 +22,8 @@ struct FurtheranceApp: App {
     @AppStorage("launchCount") private var launchCount = 0
     @ObservedObject var storeModel = StoreModel.sharedInstance
     @ObservedObject var stopWatch = StopWatch.sharedInstance
-    @State private var showDialog = false
+    @State private var showDeleteDialog = false
+    @State private var showExportCSV = false
     @State private var showProAlert = false
     @State private var dialogTitle = ""
     @State private var dialogMessage = ""
@@ -45,7 +46,7 @@ struct FurtheranceApp: App {
                         try await storeModel.fetchProducts()
                     }
                 }
-                .confirmationDialog(dialogTitle, isPresented: $showDialog) {
+                .confirmationDialog(dialogTitle, isPresented: $showDeleteDialog) {
                     Button(confirmBtn, role: .destructive) {
                         if confirmBtn == "Delete" {
                             do {
@@ -89,11 +90,21 @@ struct FurtheranceApp: App {
                 } message: {
                     Text("Time reports are only available in Furtherance Pro. Please upgrade in Settings.")
                 }
+                .fileExporter(
+                    isPresented: $showExportCSV,
+                    document: CSVFile(initialText: getDataAsCSV()),
+                    contentType: UTType.commaSeparatedText,
+                    defaultFilename: "Furtherance.csv"
+                ) { _ in }
         }
         .commands {
             CommandMenu("Database") {
+                Button("Export as CSV") {
+                    showExportCSV.toggle()
+                }
+                .disabled(tasksCount == 0 || stopWatch.isRunning)
                 Button("Delete All") {
-                    showDialog = true
+                    showDeleteDialog = true
                     dialogTitle = "Delete all data?"
                     dialogMessage = "This will delete all of your saved tasks."
                     confirmBtn = "Delete"
@@ -130,5 +141,28 @@ struct FurtheranceApp: App {
         }
         .defaultSize(width: 400, height: 450)
 #endif
+    }
+    
+    private func getDataAsCSV() -> String {
+        let fetchRequest: NSFetchRequest<FurTask> = FurTask.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)]
+        var allData: [FurTask] = []
+        do {
+            allData = try persistenceController.container.viewContext.fetch(fetchRequest)
+        } catch {
+            print(error)
+        }
+        var csvString = "Name,Tags,Start Time,Stop Time,Total Seconds\n"
+        
+        allData.forEach() { task in
+            let totalSeconds = task.stopTime?.timeIntervalSince(task.startTime ?? Date.now)
+            let localDateFormatter = DateFormatter()
+            localDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            let startString = localDateFormatter.string(from: task.startTime ?? Date.now)
+            let stopString = localDateFormatter.string(from: task.stopTime ?? Date.now)
+            csvString += "\(task.name ?? "Unknown"),\(task.tags ?? ""),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
+        }
+        
+        return csvString
     }
 }

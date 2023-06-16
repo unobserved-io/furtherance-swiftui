@@ -33,6 +33,7 @@
 		9CA84E3629A7AE0600A28FDA /* TimerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */; };
 		9CAB8E3229C1331C00610E6E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CAB8E3129C1331C00610E6E /* StoreKit.framework */; };
 		9CD1EEDB29ACBBC70044B9E4 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9CD1EEDA29ACBBC70044B9E4 /* Info.plist */; };
+		9CE227322A3C3DD50008032D /* CSVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE227312A3C3DD50008032D /* CSVFile.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,6 +66,7 @@
 		9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerHelper.swift; sourceTree = "<group>"; };
 		9CAB8E3129C1331C00610E6E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		9CD1EEDA29ACBBC70044B9E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9CE227312A3C3DD50008032D /* CSVFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVFile.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -159,6 +161,7 @@
 			children = (
 				9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */,
 				9C98E11629A918BC0064F63F /* Autosave.swift */,
+				9CE227312A3C3DD50008032D /* CSVFile.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -279,6 +282,7 @@
 				9C98E11529A8F6B80064F63F /* GroupEditView.swift in Sources */,
 				9CA84E3029A79EE600A28FDA /* TaskRow.swift in Sources */,
 				9C4074C92A31E26A00C989CF /* Extensions.swift in Sources */,
+				9CE227322A3C3DD50008032D /* CSVFile.swift in Sources */,
 				9CA84E3429A7A4F500A28FDA /* FurTaskGroup.swift in Sources */,
 				9C27D34629A8B2630012C274 /* GroupView.swift in Sources */,
 				9C98E11129A8BFF70064F63F /* ClickedTask.swift in Sources */,
