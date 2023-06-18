@@ -40,61 +40,28 @@ struct GroupView: View {
 
     var body: some View {
         VStack {
-            HStack {
-                VStack {
-                    Text(clickedGroup.taskGroup?.name ?? "Unknown")
-                        .font(.system(size: 30, weight: .bold))
-                        .padding(.bottom, 3)
-                    if (clickedGroup.taskGroup?.tags.isEmpty) ?? true {
-                        Text("Add tags...")
-                            .font(.system(size: 20))
-                            .italic()
-                    } else {
-                        Text(clickedGroup.taskGroup?.tags ?? "Unknown")
-                            .font(.system(size: 20))
-                    }
-                }
-                Spacer()
-                    .frame(width: 30)
-                Image(systemName: "pencil")
-                    .font(.system(size: 20, weight: .bold))
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        overallEditSheet.toggle()
-                    }
-                    .onHover { inside in
-                        if inside {
-                            NSCursor.pointingHand.push()
+            ScrollView {
+                HStack {
+                    VStack {
+                        Text(clickedGroup.taskGroup?.name ?? "Unknown")
+                            .font(.system(size: 30, weight: .bold))
+                            .padding(.bottom, 3)
+                        if (clickedGroup.taskGroup?.tags.isEmpty) ?? true {
+                            Text("Add tags...")
+                                .font(.system(size: 20))
+                                .italic()
                         } else {
-                            NSCursor.pop()
+                            Text(clickedGroup.taskGroup?.tags ?? "Unknown")
+                                .font(.system(size: 20))
                         }
                     }
-            }
-            Spacer()
-                .frame(height: 40)
-            LazyVGrid(columns: columns, spacing: 20) {
-                Text("Start")
-                    .font(.system(size: 15, weight: .bold))
-                Text("Stop")
-                    .font(.system(size: 15, weight: .bold))
-                Text("Total")
-                    .font(.system(size: 15, weight: .bold))
-                Spacer()
-                ForEach(clickedGroup.taskGroup?.tasks ?? [], id: \.self) { task in
-                    Text(dateFormatter.string(from: task.startTime ?? Date.now))
-                        .font(Font.monospacedDigit(.system(size: 15))())
-                    Text(dateFormatter.string(from: task.stopTime ?? Date.now))
-                        .font(Font.monospacedDigit(.system(size: 15))())
-                    Text(totalFormatter.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now)!)
-                        .font(Font.monospacedDigit(.system(size: 15))())
-                        .bold()
+                    Spacer()
+                        .frame(width: 30)
                     Image(systemName: "pencil")
-                        .bold()
+                        .font(.system(size: 20, weight: .bold))
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            clickedTask.task = task
-                            clickedID = clickedTask.task?.id ?? UUID() //TODO: Can this be removed?
-                            showingSheet.toggle()
+                            overallEditSheet.toggle()
                         }
                         .onHover { inside in
                             if inside {
@@ -103,6 +70,41 @@ struct GroupView: View {
                                 NSCursor.pop()
                             }
                         }
+                }
+                Spacer()
+                    .frame(height: 40)
+                LazyVGrid(columns: columns, spacing: 20) {
+                    Text("Start")
+                        .font(.system(size: 15, weight: .bold))
+                    Text("Stop")
+                        .font(.system(size: 15, weight: .bold))
+                    Text("Total")
+                        .font(.system(size: 15, weight: .bold))
+                    Spacer()
+                    ForEach(clickedGroup.taskGroup?.tasks ?? [], id: \.self) { task in
+                        Text(dateFormatter.string(from: task.startTime ?? Date.now))
+                            .font(Font.monospacedDigit(.system(size: 15))())
+                        Text(dateFormatter.string(from: task.stopTime ?? Date.now))
+                            .font(Font.monospacedDigit(.system(size: 15))())
+                        Text(totalFormatter.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now)!)
+                            .font(Font.monospacedDigit(.system(size: 15))())
+                            .bold()
+                        Image(systemName: "pencil")
+                            .bold()
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                clickedTask.task = task
+                                clickedID = clickedTask.task?.id ?? UUID() //TODO: Can this be removed?
+                                showingSheet.toggle()
+                            }
+                            .onHover { inside in
+                                if inside {
+                                    NSCursor.pointingHand.push()
+                                } else {
+                                    NSCursor.pop()
+                                }
+                            }
+                    }
                 }
             }
             Spacer()
