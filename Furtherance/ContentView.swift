@@ -200,7 +200,7 @@ struct ContentView: View {
             Text(taskSection.id.localizedCapitalized)
             Spacer()
             if taskSection.id == "today", totalInclusive {
-                Text(totalSectionTimeSeconds(taskSection, secsElapsed: stopWatch.secondsElapsed))
+                Text(totalSectionTimeSeconds(taskSection, secsElapsed: stopWatch.secondsElapsedPositive))
             } else {
                 Text(totalSectionTime(taskSection))
             }

@@ -16,6 +16,7 @@ final class StopWatch: ObservableObject {
     @Published var timeElapsedFormatted = "00:00:00"
     @Published var isRunning = false
     @Published var secondsElapsed = 0
+    @Published var secondsElapsedPositive = 0
     @Published var showingAlert = false
     
     @AppStorage("idleDetect") private var idleDetect = false
@@ -36,6 +37,13 @@ final class StopWatch: ObservableObject {
     var timeAtSleep = Date.now
     var idleAtSleep = 0
     var timeUntilFire: TimeInterval = 0.0
+    
+    private let totalFormatter: DateComponentsFormatter = {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute, .second]
+        formatter.zeroFormattingBehavior = .pad
+        return formatter
+    }()
     
     init() {
         getPomodoroTime()
@@ -127,16 +135,17 @@ final class StopWatch: ObservableObject {
         UNUserNotificationCenter.current().add(request)
     }
 
-    // TODO: Change to a formatter like totalFormatter in GroupView
     func start() {
         /// Start the timer
         isRunning = true
         startTime = Date.now
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
             if self.pomodoro {
-                self.secondsElapsed = (self.pomodoroTime * 60) - (Calendar.current.dateComponents([.second], from: self.startTime, to: Date.now).second ?? 0)
+                self.secondsElapsedPositive = Calendar.current.dateComponents([.second], from: self.startTime, to: Date.now).second ?? 0
+                self.secondsElapsed = (self.pomodoroTime * 60) - self.secondsElapsedPositive
             } else {
                 self.secondsElapsed = Calendar.current.dateComponents([.second], from: self.startTime, to: Date.now).second ?? 0
+                self.secondsElapsedPositive = self.secondsElapsed
             }
             self.formatTime()
             if self.idleDetect {
