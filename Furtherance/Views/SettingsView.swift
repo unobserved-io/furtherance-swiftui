@@ -23,8 +23,40 @@ struct SettingsView: View {
     @AppStorage("totalInclusive") private var totalInclusive = false
         
     var body: some View {
+        if storeModel.purchasedIds.isEmpty {
+            if let product = storeModel.products.first {
+                Text("Unlock the Pro version to gain access to all features.")
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.top)
+                    .italic()
+                HStack {
+                    Button(action: {
+                        Task {
+                            if storeModel.purchasedIds.isEmpty {
+                                try await storeModel.purchase()
+                            }
+                        }
+                    }) {
+                        Text("Buy Pro \(product.displayPrice)")
+                    }
+                    .keyboardShortcut(.defaultAction)
+                    Button(action: {
+                        Task {
+                            try await AppStore.sync()
+                        }
+                    }) {
+                        Text("Restore Purchase")
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
+            }
+        }
+        
         ScrollView {
             Form {
+                
+                
                 Section(header: Text("General").bold()) {
                     HStack {
                         storeModel.purchasedIds.isEmpty ? Text("Show icon badge when timer is running (Pro)") : Text("Show icon badge when timer is running")
@@ -119,38 +151,6 @@ struct SettingsView: View {
                     .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
                     .cornerRadius(20)
                 }
-                
-                if storeModel.purchasedIds.isEmpty {
-                    if let product = storeModel.products.first {
-                        Text("Unlock the Pro version to gain access to all features.")
-                            .multilineTextAlignment(.center)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.top)
-                            .italic()
-                        HStack {
-                            Button(action: {
-                                Task {
-                                    if storeModel.purchasedIds.isEmpty {
-                                        try await storeModel.purchase()
-                                    }
-                                }
-                            }) {
-                                Text("Buy Pro \(product.displayPrice)")
-                            }
-                            .keyboardShortcut(.defaultAction)
-                            Button(action: {
-                                Task {
-                                    try await AppStore.sync()
-                                }
-                            }) {
-                                Text("Restore Purchase")
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    }
-                }
-                
-                Spacer()
             }
         }
         .frame(minWidth: 250, idealWidth: 400, minHeight: 320, idealHeight: 450)
