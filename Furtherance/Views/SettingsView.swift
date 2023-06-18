@@ -20,6 +20,7 @@ struct SettingsView: View {
     @AppStorage("pomodoro") private var pomodoro = false
     @AppStorage("pomodoroTime") private var pomodoroTime = 25
     @AppStorage("showIconBadge") private var showIconBadge = false
+    @AppStorage("totalInclusive") private var totalInclusive = false
         
     var body: some View {
         ScrollView {
@@ -37,6 +38,22 @@ struct SettingsView: View {
                         if !newVal {
                             NSApp.dockTile.badgeLabel = nil
                         }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                    .padding()
+                    .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                    .cornerRadius(20)
+                    
+                    HStack {
+                        storeModel.purchasedIds.isEmpty ? Text("Today's total time ticks up with timer (Pro)") : Text("Today's total time ticks up with timer")
+                        Spacer()
+                        Toggle("Today's total time ticks up with timer", isOn: $totalInclusive)
+                            .toggleStyle(.switch)
+                            .labelsHidden()
+                            .disabled(storeModel.purchasedIds.isEmpty)
+                    }
+                    .onChange(of: totalInclusive) { newVal in
+                        // TODO: Reset today's total time to normal
                     }
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
                     .padding()

@@ -17,6 +17,7 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.requestReview) private var requestReview
     @AppStorage("launchCount") private var launchCount = 0
+    @AppStorage("totalInclusive") private var totalInclusive = false
     @SectionedFetchRequest(
         sectionIdentifier: \.startDateRelative,
         sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
@@ -198,7 +199,11 @@ struct ContentView: View {
         return HStack {
             Text(taskSection.id.localizedCapitalized)
             Spacer()
-            Text(totalSectionTime(taskSection))
+            if taskSection.id == "today", totalInclusive {
+                Text(totalSectionTimeSeconds(taskSection, secsElapsed: stopWatch.secondsElapsed))
+            } else {
+                Text(totalSectionTime(taskSection))
+            }
         }
         .font(.headline)
         .padding(.top).padding(.bottom)
@@ -209,6 +214,14 @@ struct ContentView: View {
         for task in taskSection {
             totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
         }
+        return formatTimeShort(totalTime)
+    }
+    private func totalSectionTimeSeconds(_ taskSection: SectionedFetchResults<String, FurTask>.Element, secsElapsed: Int) -> String {
+        var totalTime = 0
+        for task in taskSection {
+            totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+        }
+        totalTime += secsElapsed
         return formatTimeShort(totalTime)
     }
     
