@@ -52,9 +52,6 @@ struct SettingsView: View {
                             .labelsHidden()
                             .disabled(storeModel.purchasedIds.isEmpty)
                     }
-                    .onChange(of: totalInclusive) { newVal in
-                        // TODO: Reset today's total time to normal
-                    }
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
                     .padding()
                     .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
