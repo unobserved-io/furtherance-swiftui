@@ -20,7 +20,6 @@ struct FurtheranceApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @AppStorage("launchCount") private var launchCount = 0
     @ObservedObject var storeModel = StoreModel.sharedInstance
-    @ObservedObject var stopWatch = StopWatch.sharedInstance
     @State private var showDeleteDialog = false
     @State private var showProAlert = false
     @State private var dialogTitle = ""
@@ -111,14 +110,14 @@ struct FurtheranceApp: App {
                         showExportCSV.toggle()
                     }
                 }
-                .disabled(tasksCount == 0 || stopWatch.isRunning)
+                .disabled(tasksCount == 0)
                 Button("Delete All") {
                     showDeleteDialog = true
                     dialogTitle = "Delete all data?"
                     dialogMessage = "This will delete all of your saved tasks."
                     confirmBtn = "Delete"
                 }
-                .disabled(tasksCount == 0 || stopWatch.isRunning)
+                .disabled(tasksCount == 0)
             }
             CommandGroup(replacing: CommandGroupPlacement.newItem) {}
             CommandGroup(replacing: CommandGroupPlacement.windowList) {}
@@ -133,13 +132,11 @@ struct FurtheranceApp: App {
                     }
                 }
                 .keyboardShortcut("R", modifiers: EventModifiers.command)
-                .disabled(stopWatch.isRunning)
             }
             CommandGroup(before: CommandGroupPlacement.newItem) {
                 Button("Add Task") {
                     addTaskSheet.toggle()
                 }
-                .disabled(stopWatch.isRunning)
             }
         }
         .defaultSize(width: 360, height: 600)
