@@ -27,7 +27,7 @@ struct ContentView: View {
     
     @ObservedObject var stopWatch = StopWatch.sharedInstance
     @ObservedObject var taskTagsInput = TaskTagsInput.sharedInstance
-    @ObservedObject var autosave = Autosave()
+    @StateObject var autosave = Autosave()
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
     @State private var showingSheet = false
@@ -38,7 +38,6 @@ struct ContentView: View {
         self._tasksCount = tasksCount
         self._navPath = navPath
         self._showExportCSV = showExportCSV
-        checkForAutosave()
     }
     
     var body: some View {
@@ -122,6 +121,7 @@ struct ContentView: View {
                         requestReview()
                     }
                 }
+                checkForAutosave()
             }
             // Task edit sheet
             .sheet(isPresented: $showingSheet) {
