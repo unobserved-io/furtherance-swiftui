@@ -139,20 +139,22 @@ final class StopWatch: ObservableObject {
         /// Start the timer
         isRunning = true
         startTime = Date.now
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            if self.pomodoro {
-                self.secondsElapsedPositive = Calendar.current.dateComponents([.second], from: self.startTime, to: Date.now).second ?? 0
-                self.secondsElapsed = (self.pomodoroTime * 60) - self.secondsElapsedPositive
-            } else {
-                self.secondsElapsed = Calendar.current.dateComponents([.second], from: self.startTime, to: Date.now).second ?? 0
-                self.secondsElapsedPositive = self.secondsElapsed
-            }
-            self.formatTime()
-            if self.idleDetect {
-                self.checkUserIdle()
-            }
-            if self.secondsElapsed != 0 && self.secondsElapsed % 60 == 0 {
-                Autosave().write()
+        DispatchQueue.main.async {
+            self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                if self.pomodoro {
+                    self.secondsElapsedPositive = Calendar.current.dateComponents([.second], from: self.startTime, to: Date.now).second ?? 0
+                    self.secondsElapsed = (self.pomodoroTime * 60) - self.secondsElapsedPositive
+                } else {
+                    self.secondsElapsed = Calendar.current.dateComponents([.second], from: self.startTime, to: Date.now).second ?? 0
+                    self.secondsElapsedPositive = self.secondsElapsed
+                }
+                self.formatTime()
+                if self.idleDetect {
+                    self.checkUserIdle()
+                }
+                if self.secondsElapsed != 0 && self.secondsElapsed % 60 == 0 {
+                    Autosave().write()
+                }
             }
         }
         // Set computer sleep observers
@@ -186,9 +188,9 @@ final class StopWatch: ObservableObject {
     }
     
     func pause() {
-        //Get the difference in seconds between now and the future fire date
+        // Get the difference in seconds between now and the future fire date
         timeUntilFire = timer.fireDate.timeIntervalSinceNow
-        //Stop the timer
+        // Stop the timer
         timer.invalidate()
     }
 
