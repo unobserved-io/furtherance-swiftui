@@ -32,6 +32,7 @@ struct ContentView: View {
     @StateObject var clickedTask = ClickedTask(task: nil)
     @State private var showingSheet = false
     @State private var hashtagAlert = false
+    @State private var showingTaskEmptyAlert = false
     let timerHelper = TimerHelper.sharedInstance
     
     init(tasksCount: Binding<Int>, navPath: Binding<[String]>, showExportCSV: Binding<Bool>) {
@@ -67,11 +68,14 @@ struct ContentView: View {
                             startStopPress()
                         }
                     Button {
-                        startStopPress()
+                        if taskTagsInput.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                            showingTaskEmptyAlert.toggle()
+                        } else {
+                            startStopPress()
+                        }
                     } label: {
                         Image(systemName: stopWatch.isRunning ? "stop.fill" : "play.fill")
                     }
-                    .disabled(taskTagsInput.text.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
                 .padding(.horizontal)
                 tasks.isEmpty ? nil : ScrollView {
@@ -137,6 +141,12 @@ struct ContentView: View {
                 Button("OK") { }
             } message: {
                 Text("A task name must be provided before tags. The first character cannot be a '#'.")
+            }
+            // Empty task name alert
+            .alert("Task Name Empty", isPresented: $showingTaskEmptyAlert) {
+                Button("OK") { }
+            } message: {
+                Text("The task name cannot be empty.")
             }
             // Idle alert
             .alert(isPresented: $stopWatch.showingAlert) {

@@ -9,5 +9,6 @@ import Foundation
 
 class TaskTagsInput: ObservableObject {
     static let sharedInstance = TaskTagsInput()
-    @Published var text = ""
+    var text = ""
+    @Published var startStopDisabled = false
 }
