@@ -125,7 +125,6 @@
 				9CA84E2B29A77A8000A28FDA /* Helpers */,
 				9CA84E2529A7766000A28FDA /* Objects */,
 				9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */,
-				9CA84E1229A7721200A28FDA /* ContentView.swift */,
 				9CA84E1429A7721300A28FDA /* Assets.xcassets */,
 				9CA84E1929A7721300A28FDA /* Persistence.swift */,
 				9CA84E1E29A7721300A28FDA /* Furtherance.entitlements */,
@@ -169,6 +168,7 @@
 		9CA84E2E29A79ECC00A28FDA /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9CA84E1229A7721200A28FDA /* ContentView.swift */,
 				9CA84E2F29A79EE600A28FDA /* TaskRow.swift */,
 				9C27D34529A8B2630012C274 /* GroupView.swift */,
 				9C75182E2A35FEEF005100B6 /* GroupAddView.swift */,
