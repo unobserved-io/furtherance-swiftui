@@ -163,7 +163,7 @@ struct ContentView: View {
         .environmentObject(clickedGroup)
     }
         
-    func startStopPress() {
+    private func startStopPress() {
         if stopWatch.isRunning {
             stopTimer(stopTime: Date.now)
         } else {
