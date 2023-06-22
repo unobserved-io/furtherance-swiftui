@@ -26,7 +26,7 @@ struct ContentView: View {
     var tasks: SectionedFetchResults<String, FurTask>
     
     @ObservedObject var stopWatch = StopWatch.sharedInstance
-    @ObservedObject var taskTagsInput = TaskTagsInput.sharedInstance
+    @StateObject var taskTagsInput = TaskTagsInput.sharedInstance
     @StateObject var autosave = Autosave()
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
