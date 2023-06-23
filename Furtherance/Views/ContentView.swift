@@ -164,7 +164,7 @@ struct ContentView: View {
             // CSV Export
             .fileExporter(
                 isPresented: $showExportCSV,
-                document: CSVFile(initialText: getDataAsCSV()),
+                document: CSVFile(initialText: dataAsCSV()),
                 contentType: UTType.commaSeparatedText,
                 defaultFilename: "Furtherance.csv"
             ) { _ in }
@@ -260,27 +260,35 @@ struct ContentView: View {
         }
     }
     
-    private func getDataAsCSV() -> String {
-        let fetchRequest: NSFetchRequest<FurTask> = FurTask.fetchRequest()
-        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)]
-        var allData: [FurTask] = []
-        do {
-            allData = try viewContext.fetch(fetchRequest)
-        } catch {
-            print(error)
-        }
+    private func dataAsCSV() -> String {
+        let allData: [FurTask] = fetchAllData()
         var csvString = "Name,Tags,Start Time,Stop Time,Total Seconds\n"
         
         allData.forEach { task in
-            let totalSeconds = task.stopTime?.timeIntervalSince(task.startTime ?? Date.now)
-            let localDateFormatter = DateFormatter()
-            localDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            let startString = localDateFormatter.string(from: task.startTime ?? Date.now)
-            let stopString = localDateFormatter.string(from: task.stopTime ?? Date.now)
-            csvString += "\(task.name ?? "Unknown"),\(task.tags ?? ""),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
+            csvString += furTaskToString(task)
         }
         
         return csvString
+    }
+    
+    private func fetchAllData() -> [FurTask] {
+        let fetchRequest: NSFetchRequest<FurTask> = FurTask.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)]
+        
+        do {
+            return try viewContext.fetch(fetchRequest)
+        } catch {
+            return []
+        }
+    }
+    
+    private func furTaskToString(_ task: FurTask) -> String {
+        let totalSeconds = task.stopTime?.timeIntervalSince(task.startTime ?? Date.now)
+        let localDateFormatter = DateFormatter()
+        localDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let startString = localDateFormatter.string(from: task.startTime ?? Date.now)
+        let stopString = localDateFormatter.string(from: task.stopTime ?? Date.now)
+        return "\(task.name ?? "Unknown"),\(task.tags ?? ""),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
     }
 }
 
