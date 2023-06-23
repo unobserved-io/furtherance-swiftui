@@ -107,9 +107,7 @@ struct FurtheranceApp: App {
                             // Remove headers
                             if rows[0] == "Name,Tags,Start Time,Stop Time,Total Seconds" {
                                 rows.removeFirst()
-                                
-                                let localDateFormatter = DateFormatter()
-                                localDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+
                                 // Split rows into columns
                                 var furTasks = [FurTask]()
                                 for row in rows {

@@ -7,6 +7,12 @@
 
 import Foundation
 
+let localDateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    return formatter
+}()
+
 func formatTimeShort(_ totalSeconds: Int) -> String {
     /// Format input seconds into a time format that does not include hours if there isn't any, and doesn't pad the hours
     let hours = totalSeconds / 3600
