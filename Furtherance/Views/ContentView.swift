@@ -62,11 +62,11 @@ struct ContentView: View {
                             }
                         }
                     ))
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .disabled(stopWatch.isRunning)
-                        .onSubmit {
-                            startStopPress()
-                        }
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .disabled(stopWatch.isRunning)
+                    .onSubmit {
+                        startStopPress()
+                    }
                     Button {
                         if taskTagsInput.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             showingTaskEmptyAlert.toggle()
@@ -104,7 +104,7 @@ struct ContentView: View {
                 }
             }
             // Update tasks count every time tasks is changed
-            .onChange(of: tasks.count) { newValue in
+            .onChange(of: tasks.count) { _ in
                 tasksCount = tasks.count
             }
             .navigationDestination(for: String.self) { s in
@@ -116,7 +116,7 @@ struct ContentView: View {
                 }
             }
             // Initial task count update when view is loaded
-            .onAppear() {
+            .onAppear {
                 tasksCount = tasks.count
                 
                 // Ask for in-app review
@@ -138,13 +138,13 @@ struct ContentView: View {
                 Text("Furtherance shut down improperly. An autosave was restored.")
             }
             .alert("Improper Task Name", isPresented: $hashtagAlert) {
-                Button("OK") { }
+                Button("OK") {}
             } message: {
                 Text("A task name must be provided before tags. The first character cannot be a '#'.")
             }
             // Empty task name alert
             .alert("Task Name Empty", isPresented: $showingTaskEmptyAlert) {
-                Button("OK") { }
+                Button("OK") {}
             } message: {
                 Text("The task name cannot be empty.")
             }
@@ -226,6 +226,7 @@ struct ContentView: View {
         }
         return formatTimeShort(totalTime)
     }
+
     private func totalSectionTimeIncludingTimer(_ taskSection: SectionedFetchResults<String, FurTask>.Element, secsElapsed: Int) -> String {
         var totalTime = 0
         for task in taskSection {
@@ -270,7 +271,7 @@ struct ContentView: View {
         }
         var csvString = "Name,Tags,Start Time,Stop Time,Total Seconds\n"
         
-        allData.forEach() { task in
+        allData.forEach { task in
             let totalSeconds = task.stopTime?.timeIntervalSince(task.startTime ?? Date.now)
             let localDateFormatter = DateFormatter()
             localDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
