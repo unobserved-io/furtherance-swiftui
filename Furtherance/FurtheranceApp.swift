@@ -8,12 +8,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-class AppDelegate: NSObject, NSApplicationDelegate {
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        return true
-    }
-}
-
 @main
 struct FurtheranceApp: App {
     let persistenceController = PersistenceController.shared

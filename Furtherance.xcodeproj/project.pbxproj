@@ -34,6 +34,7 @@
 		9CAB8E3229C1331C00610E6E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CAB8E3129C1331C00610E6E /* StoreKit.framework */; };
 		9CD1EEDB29ACBBC70044B9E4 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9CD1EEDA29ACBBC70044B9E4 /* Info.plist */; };
 		9CE227322A3C3DD50008032D /* CSVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE227312A3C3DD50008032D /* CSVFile.swift */; };
+		9CE733E12A45C40800BF8165 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE733E02A45C40800BF8165 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +68,7 @@
 		9CAB8E3129C1331C00610E6E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		9CD1EEDA29ACBBC70044B9E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9CE227312A3C3DD50008032D /* CSVFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVFile.swift; sourceTree = "<group>"; };
+		9CE733E02A45C40800BF8165 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +153,7 @@
 				9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */,
 				9C27D34729A8B5460012C274 /* ClickedGroup.swift */,
 				9C98E11029A8BFF70064F63F /* ClickedTask.swift */,
+				9CE733E02A45C40800BF8165 /* AppDelegate.swift */,
 			);
 			path = Objects;
 			sourceTree = "<group>";
@@ -264,6 +267,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9CE733E12A45C40800BF8165 /* AppDelegate.swift in Sources */,
 				9C4F06A229A928E8009D1AFE /* StoreModel.swift in Sources */,
 				9CA84E2729A7767500A28FDA /* TaskTagsInput.swift in Sources */,
 				9C27D34829A8B5460012C274 /* ClickedGroup.swift in Sources */,
