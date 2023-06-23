@@ -142,7 +142,7 @@ struct FurtheranceApp: App {
                     }
                 }
                 .alert("Invalid CSV", isPresented: $showInvalidCSVAlert) {
-                    Button("OK") { }
+                    Button("OK") {}
                 } message: {
                     Text("The CSV you chose is not a valid Furtherance CSV.")
                 }
