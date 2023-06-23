@@ -168,6 +168,7 @@ final class StopWatch: ObservableObject {
         isRunning = false
         completedSecondsElapsed = secondsElapsed
         secondsElapsed = 0
+        secondsElapsedPositive = 0
         timeElapsedFormatted = "00:00:00"
         resetIdle()
         // Destroy sleep observers

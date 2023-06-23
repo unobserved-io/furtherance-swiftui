@@ -210,7 +210,7 @@ struct ContentView: View {
             Text(taskSection.id.localizedCapitalized)
             Spacer()
             if taskSection.id == "today", totalInclusive {
-                Text(totalSectionTimeSeconds(taskSection, secsElapsed: stopWatch.secondsElapsedPositive))
+                Text(totalSectionTimeIncludingTimer(taskSection, secsElapsed: stopWatch.secondsElapsedPositive))
             } else {
                 Text(totalSectionTime(taskSection))
             }
@@ -226,7 +226,7 @@ struct ContentView: View {
         }
         return formatTimeShort(totalTime)
     }
-    private func totalSectionTimeSeconds(_ taskSection: SectionedFetchResults<String, FurTask>.Element, secsElapsed: Int) -> String {
+    private func totalSectionTimeIncludingTimer(_ taskSection: SectionedFetchResults<String, FurTask>.Element, secsElapsed: Int) -> String {
         var totalTime = 0
         for task in taskSection {
             totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
