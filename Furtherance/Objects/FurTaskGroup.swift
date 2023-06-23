@@ -25,7 +25,7 @@ class FurTaskGroup: Identifiable, ObservableObject {
         totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
         tasks.append(task)
     }
-    
+
     func sortTasks() {
         tasks.sort(by: { $0.startTime ?? Date.now > $1.startTime ?? Date.now })
     }
