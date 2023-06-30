@@ -34,6 +34,7 @@ struct ContentView: View {
     @State private var hashtagAlert = false
     @State private var showingTaskEmptyAlert = false
     let timerHelper = TimerHelper.sharedInstance
+    let willBecomeActive = NotificationCenter.default.publisher(for: NSApplication.willBecomeActiveNotification)
     
     init(tasksCount: Binding<Int>, navPath: Binding<[String]>, showExportCSV: Binding<Bool>) {
         self._tasksCount = tasksCount
@@ -126,6 +127,11 @@ struct ContentView: View {
                     }
                 }
                 checkForAutosave()
+            }
+            .onReceive(willBecomeActive) { _ in
+                if !Calendar.current.isDateInToday(tasks[0][0].stopTime ?? Date.now) {
+                    viewContext.refreshAllObjects()
+                }
             }
             // Task edit sheet
             .sheet(isPresented: $showingSheet) {
