@@ -5,12 +5,12 @@
 //  Created by Ricky Kresslein on 7/1/23.
 //
 
-import SwiftUI
 import StoreKit
+import SwiftUI
 
 struct BuyProView: View {
     @ObservedObject var storeModel = StoreModel.sharedInstance
-    
+
     var body: some View {
         if storeModel.purchasedIds.isEmpty {
             if let product = storeModel.products.first {

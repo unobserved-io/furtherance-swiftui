@@ -10,7 +10,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var storeModel = StoreModel.sharedInstance
-        
+
     var body: some View {
         TabView {
             GeneralSettingsView()
@@ -22,13 +22,13 @@ struct SettingsView: View {
                 .tabItem {
                     Label("Advanced", systemImage: "gearshape.2")
                 }
-            
+
             PomodoroSettingsView()
                 .tabItem {
                     Label("Pomodoro", systemImage: "stopwatch")
                 }
         }
-        .onAppear() {
+        .onAppear {
             Task {
                 try await storeModel.fetchProducts()
             }
@@ -36,10 +36,8 @@ struct SettingsView: View {
     }
 }
 
-
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView()
     }
 }
-

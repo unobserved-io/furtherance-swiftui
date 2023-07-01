@@ -10,14 +10,14 @@ import SwiftUI
 struct GeneralSettingsView: View {
     @ObservedObject var storeModel = StoreModel.sharedInstance
     @Environment(\.colorScheme) var colorScheme
-    
+
     @AppStorage("showIconBadge") private var showIconBadge = false
     @AppStorage("totalInclusive") private var totalInclusive = false
-    
+
     var body: some View {
         Form {
             BuyProView()
-            
+
             HStack {
                 storeModel.purchasedIds.isEmpty ? Text("Show icon badge when timer is running (Pro)") : Text("Show icon badge when timer is running")
                 Spacer()
@@ -35,7 +35,7 @@ struct GeneralSettingsView: View {
             .padding()
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
-            
+
             HStack {
                 storeModel.purchasedIds.isEmpty ? Text("Today's total time ticks up with timer (Pro)") : Text("Today's total time ticks up with timer")
                 Spacer()
