@@ -17,7 +17,7 @@ struct BuyProView: View {
                 Text("Unlock the Pro version to gain access to all features.")
                     .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top)
+//                    .padding(.top)
                     .italic()
                 HStack {
                     Button(action: {
@@ -39,6 +39,7 @@ struct BuyProView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.bottom)
             }
         }
     }

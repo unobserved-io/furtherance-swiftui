@@ -16,7 +16,9 @@ struct AdvancedSettingsView: View {
     
     var body: some View {
         Form {
-            Section(header: storeModel.purchasedIds.isEmpty ? Text("Idle (Pro)").bold() : Text("Idle").bold()) {
+            BuyProView()
+            
+//            Section(header: storeModel.purchasedIds.isEmpty ? Text("Idle (Pro)").bold() : Text("Idle").bold()) {
                 HStack {
                     Text("Detect when user is idle")
                     Spacer()
@@ -43,8 +45,10 @@ struct AdvancedSettingsView: View {
                 .padding()
                 .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
                 .cornerRadius(20)
-            }
+//            }
         }
+        .padding(20)
+        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 200 : 150)
     }
 }
 

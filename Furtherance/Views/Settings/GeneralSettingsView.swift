@@ -16,6 +16,8 @@ struct GeneralSettingsView: View {
     
     var body: some View {
         Form {
+            BuyProView()
+            
             HStack {
                 storeModel.purchasedIds.isEmpty ? Text("Show icon badge when timer is running (Pro)") : Text("Show icon badge when timer is running")
                 Spacer()
@@ -47,6 +49,8 @@ struct GeneralSettingsView: View {
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
         }
+        .padding(20)
+        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 200 : 150)
     }
 }
 
