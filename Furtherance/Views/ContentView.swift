@@ -20,6 +20,7 @@ struct ContentView: View {
     @AppStorage("totalInclusive") private var totalInclusive = false
     @AppStorage("limitHistory") private var limitHistory = false
     @AppStorage("historyListLimit") private var historyListLimit = 50
+    @AppStorage("showDailySum") private var showDailySum = true
     @SectionedFetchRequest(
         sectionIdentifier: \.startDateRelative,
         sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
@@ -205,10 +206,12 @@ struct ContentView: View {
         return HStack {
             Text(taskSection.id.localizedCapitalized)
             Spacer()
-            if taskSection.id == "today", totalInclusive {
-                Text(totalSectionTimeIncludingTimer(taskSection, secsElapsed: stopWatch.secondsElapsedPositive))
-            } else {
-                Text(totalSectionTime(taskSection))
+            if showDailySum {
+                if taskSection.id == "today", totalInclusive {
+                    Text(totalSectionTimeIncludingTimer(taskSection, secsElapsed: stopWatch.secondsElapsedPositive))
+                } else {
+                    Text(totalSectionTime(taskSection))
+                }
             }
         }
         .font(.headline)

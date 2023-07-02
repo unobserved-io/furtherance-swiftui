@@ -13,6 +13,7 @@ struct AdvancedSettingsView: View {
 
     @AppStorage("idleDetect") private var idleDetect = false
     @AppStorage("idleLimit") private var idleLimit = 6
+    @AppStorage("showDailySum") private var showDailySum = true
     @AppStorage("limitHistory") private var limitHistory = false
     @AppStorage("historyListLimit") private var historyListLimit = 50
 
@@ -49,7 +50,20 @@ struct AdvancedSettingsView: View {
                 .cornerRadius(20)
             }
             
-            Section(header: Text("Other").bold()) {
+            Section(header: Text("Task History").bold()) {
+                HStack {
+                    storeModel.purchasedIds.isEmpty ? Text("Show daily time sum (Pro)") : Text("Show daily time sum")
+                    Spacer()
+                    Toggle("Show daily time sum", isOn: $showDailySum)
+                        .toggleStyle(.switch)
+                        .labelsHidden()
+                        .disabled(storeModel.purchasedIds.isEmpty)
+                }
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+                
                 HStack {
                     storeModel.purchasedIds.isEmpty ? Text("Limit days shown in task history (Pro)") : Text("Limit days shown in task history")
                     Spacer()
@@ -79,7 +93,7 @@ struct AdvancedSettingsView: View {
             }
         }
         .padding(20)
-        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 350 : 300)
+        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 400 : 350)
     }
 }
 
