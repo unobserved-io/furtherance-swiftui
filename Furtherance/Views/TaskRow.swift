@@ -10,6 +10,7 @@ import SwiftUI
 struct TaskRow: View {
     var taskGroup: FurTaskGroup
     @Environment(\.colorScheme) var colorScheme
+    @AppStorage("showTags") private var showTags = true
 
     init(taskGroup: FurTaskGroup) {
         self.taskGroup = taskGroup
@@ -25,7 +26,7 @@ struct TaskRow: View {
                     .frame(minWidth: 20)
                     .help(taskGroup.name)
 
-                if !taskGroup.tags.isEmpty {
+                if !taskGroup.tags.isEmpty && showTags {
                     Text(taskGroup.tags)
                         .opacity(0.626)
                         .frame(minWidth: 20)
