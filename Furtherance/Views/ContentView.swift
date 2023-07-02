@@ -21,6 +21,7 @@ struct ContentView: View {
     @AppStorage("limitHistory") private var limitHistory = false
     @AppStorage("historyListLimit") private var historyListLimit = 50
     @AppStorage("showDailySum") private var showDailySum = true
+    @AppStorage("showSeconds") private var showSeconds = true
     @SectionedFetchRequest(
         sectionIdentifier: \.startDateRelative,
         sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
@@ -223,7 +224,12 @@ struct ContentView: View {
         for task in taskSection {
             totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
         }
-        return formatTimeShort(totalTime)
+        if showSeconds {
+            return formatTimeShort(totalTime)
+        }
+        else {
+            return formatTimeLongWithoutSeconds(totalTime)
+        }
     }
 
     private func totalSectionTimeIncludingTimer(_ taskSection: SectionedFetchResults<String, FurTask>.Element, secsElapsed: Int) -> String {
@@ -232,7 +238,12 @@ struct ContentView: View {
             totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
         }
         totalTime += secsElapsed
-        return formatTimeShort(totalTime)
+        if showSeconds {
+            return formatTimeShort(totalTime)
+        }
+        else {
+            return formatTimeLongWithoutSeconds(totalTime)
+        }
     }
     
     private func sortTasks(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> [FurTaskGroup] {

@@ -38,3 +38,16 @@ func formatTimeLong(_ totalSeconds: Int) -> String {
     let secondsString = (seconds < 10) ? "0\(seconds)" : "\(seconds)"
     return hoursString + ":" + minutesString + ":" + secondsString
 }
+
+func formatTimeLongWithoutSeconds(_ totalSeconds: Int) -> String {
+    /// Format input seconds into a time format that does not include hours if there isn't any, and doesn't pad the hours
+    let hours = totalSeconds / 3600
+    let hoursString = String(hours)
+    let minutes = (totalSeconds % 3600) / 60
+    let minutesString = (minutes < 10) ? "0\(minutes)" : "\(minutes)"
+    if minutes < 1 {
+        return "< 0:01"
+    } else {
+        return hoursString + ":" + minutesString
+    }
+}

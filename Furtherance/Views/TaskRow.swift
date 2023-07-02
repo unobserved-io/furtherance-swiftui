@@ -11,6 +11,7 @@ struct TaskRow: View {
     var taskGroup: FurTaskGroup
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("showTags") private var showTags = true
+    @AppStorage("showSeconds") private var showSeconds = true
 
     init(taskGroup: FurTaskGroup) {
         self.taskGroup = taskGroup
@@ -37,7 +38,7 @@ struct TaskRow: View {
 
             Spacer()
 
-            Text(formatTimeShort(taskGroup.totalTime))
+            Text(showSeconds ? formatTimeShort(taskGroup.totalTime) : formatTimeLongWithoutSeconds(taskGroup.totalTime))
                 .font(.system(.body).monospacedDigit())
             Image(systemName: "arrow.counterclockwise.circle")
                 .contentShape(Circle())

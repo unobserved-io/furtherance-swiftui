@@ -12,23 +12,36 @@ struct GroupView: View {
     @EnvironmentObject var clickedGroup: ClickedGroup
     @Environment(\.presentationMode) var presentationMode
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
+    @AppStorage("showSeconds") private var showSeconds = true
     @StateObject var clickedTask = ClickedTask(task: nil)
     @State private var clickedID = UUID()
     @State private var showingSheet = false
     @State private var overallEditSheet = false
     @State private var groupAddSheet = false
     @State private var showDeleteDialog = false
-
-    private let totalFormatter: DateComponentsFormatter = {
+    private let totalFormatterWithSeconds: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute, .second]
         formatter.zeroFormattingBehavior = .pad
         return formatter
     }()
 
-    private let dateFormatter: DateFormatter = {
+    private let totalFormatterWithoutSeconds: DateComponentsFormatter = {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.hour, .minute]
+        formatter.zeroFormattingBehavior = .pad
+        return formatter
+    }()
+
+    private let dateFormatterWithSeconds: DateFormatter = {
         let dateformat = DateFormatter()
         dateformat.dateFormat = "HH:mm:ss"
+        return dateformat
+    }()
+
+    private let dateFormatterWithoutSeconds: DateFormatter = {
+        let dateformat = DateFormatter()
+        dateformat.dateFormat = "HH:mm"
         return dateformat
     }()
 
@@ -83,13 +96,22 @@ struct GroupView: View {
                         .font(.system(size: 15, weight: .bold))
                     Spacer()
                     ForEach(clickedGroup.taskGroup?.tasks ?? [], id: \.self) { task in
-                        Text(dateFormatter.string(from: task.startTime ?? Date.now))
-                            .font(Font.monospacedDigit(.system(size: 15))())
-                        Text(dateFormatter.string(from: task.stopTime ?? Date.now))
-                            .font(Font.monospacedDigit(.system(size: 15))())
-                        Text(totalFormatter.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now)!)
-                            .font(Font.monospacedDigit(.system(size: 15))())
-                            .bold()
+                        Text(showSeconds
+                            ? dateFormatterWithSeconds.string(from: task.startTime ?? Date.now)
+                            : dateFormatterWithoutSeconds.string(from: task.startTime ?? Date.now)
+                        )
+                        .font(Font.monospacedDigit(.system(size: 15))())
+                        Text(showSeconds
+                            ? dateFormatterWithSeconds.string(from: task.stopTime ?? Date.now)
+                            : dateFormatterWithoutSeconds.string(from: task.stopTime ?? Date.now)
+                        )
+                        .font(Font.monospacedDigit(.system(size: 15))())
+                        Text(showSeconds
+                            ? totalFormatterWithSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
+                            : totalFormatterWithoutSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
+                        )
+                        .font(Font.monospacedDigit(.system(size: 15))())
+                        .bold()
                         Image(systemName: "pencil")
                             .bold()
                             .contentShape(Rectangle())
