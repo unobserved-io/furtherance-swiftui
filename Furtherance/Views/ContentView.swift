@@ -18,6 +18,8 @@ struct ContentView: View {
     @Environment(\.requestReview) private var requestReview
     @AppStorage("launchCount") private var launchCount = 0
     @AppStorage("totalInclusive") private var totalInclusive = false
+    @AppStorage("limitHistory") private var limitHistory = false
+    @AppStorage("historyListLimit") private var historyListLimit = 50
     @SectionedFetchRequest(
         sectionIdentifier: \.startDateRelative,
         sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
@@ -81,23 +83,13 @@ struct ContentView: View {
                 .padding(.horizontal)
                 tasks.isEmpty ? nil : ScrollView {
                     Form {
-                        ForEach(tasks) { section in
-                            Section(header: sectionHeader(section)) {
-                                ForEach(sortTasks(section)) { taskGroup in
-                                    TaskRow(taskGroup: taskGroup)
-                                        .padding(.bottom, 5)
-                                        .contentShape(Rectangle())
-                                        .onTapGesture {
-                                            if taskGroup.tasks.count > 1 {
-                                                clickedGroup.taskGroup = taskGroup
-                                                navPath.append("group")
-                                            } else {
-                                                clickedTask.task = taskGroup.tasks.first!
-                                                showingSheet.toggle()
-                                            }
-                                        }
-                                        .disabled(stopWatch.isRunning)
-                                }
+                        if limitHistory {
+                            ForEach(0 ..< historyListLimit, id: \.self) { index in
+                                showHistoryList(tasks[index])
+                            }
+                        } else {
+                            ForEach(tasks) { section in
+                                showHistoryList(section)
                             }
                         }
                     }
@@ -291,6 +283,26 @@ struct ContentView: View {
         let startString = localDateFormatter.string(from: task.startTime ?? Date.now)
         let stopString = localDateFormatter.string(from: task.stopTime ?? Date.now)
         return "\(task.name ?? "Unknown"),\(task.tags ?? ""),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
+    }
+    
+    private func showHistoryList(_ section: SectionedFetchResults<String, FurTask>.Section) -> some View {
+        return Section(header: sectionHeader(section)) {
+            ForEach(sortTasks(section)) { taskGroup in
+                TaskRow(taskGroup: taskGroup)
+                    .padding(.bottom, 5)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        if taskGroup.tasks.count > 1 {
+                            clickedGroup.taskGroup = taskGroup
+                            navPath.append("group")
+                        } else {
+                            clickedTask.task = taskGroup.tasks.first!
+                            showingSheet.toggle()
+                        }
+                    }
+                    .disabled(stopWatch.isRunning)
+            }
+        }
     }
 }
 

@@ -13,6 +13,8 @@ struct AdvancedSettingsView: View {
 
     @AppStorage("idleDetect") private var idleDetect = false
     @AppStorage("idleLimit") private var idleLimit = 6
+    @AppStorage("limitHistory") private var limitHistory = false
+    @AppStorage("historyListLimit") private var historyListLimit = 50
 
     var body: some View {
         Form {
@@ -46,9 +48,38 @@ struct AdvancedSettingsView: View {
                 .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
                 .cornerRadius(20)
             }
+            
+            Section(header: Text("Other").bold()) {
+                HStack {
+                    storeModel.purchasedIds.isEmpty ? Text("Limit days shown in task history (Pro)") : Text("Limit days shown in task history")
+                    Spacer()
+                    Toggle("Limit days shown in task history", isOn: $limitHistory)
+                        .toggleStyle(.switch)
+                        .labelsHidden()
+                        .disabled(storeModel.purchasedIds.isEmpty)
+                }
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+                
+                HStack {
+                    Text("Only show X number of days in task history:")
+                    Spacer()
+                    Text("\(historyListLimit)")
+                        .bold()
+                    Stepper("\(historyListLimit)", value: $historyListLimit, in: 10 ... 1000, step: 10)
+                        .labelsHidden()
+                        .disabled(storeModel.purchasedIds.isEmpty)
+                }
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+            }
         }
         .padding(20)
-        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 200 : 150)
+        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 350 : 300)
     }
 }
 
