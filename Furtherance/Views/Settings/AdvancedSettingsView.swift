@@ -70,7 +70,7 @@ struct AdvancedSettingsView: View {
                         .bold()
                     Stepper("\(historyListLimit)", value: $historyListLimit, in: 10 ... 1000, step: 10)
                         .labelsHidden()
-                        .disabled(storeModel.purchasedIds.isEmpty)
+                        .disabled(storeModel.purchasedIds.isEmpty || !limitHistory)
                 }
                 .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
                 .padding()
