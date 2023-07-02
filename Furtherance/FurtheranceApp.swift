@@ -14,6 +14,7 @@ struct FurtheranceApp: App {
     
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @AppStorage("launchCount") private var launchCount = 0
+    @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
     @ObservedObject var storeModel = StoreModel.sharedInstance
     @State private var showDeleteDialog = false
     @State private var showProAlert = false
@@ -44,33 +45,7 @@ struct FurtheranceApp: App {
                 .confirmationDialog(dialogTitle, isPresented: $showDeleteDialog) {
                     Button(confirmBtn, role: .destructive) {
                         if confirmBtn == "Delete" {
-                            do {
-                                let fetchRequest: NSFetchRequest<NSFetchRequestResult>
-                                fetchRequest = NSFetchRequest(entityName: "FurTask")
-                                
-                                let deleteRequest = NSBatchDeleteRequest(
-                                    fetchRequest: fetchRequest
-                                )
-                                deleteRequest.resultType = .resultTypeObjectIDs
-                                
-                                let batchDelete = try persistenceController.container.viewContext.execute(deleteRequest)
-                                    as? NSBatchDeleteResult
-                                
-                                guard let deleteResult = batchDelete?.result
-                                    as? [NSManagedObjectID]
-                                else { return }
-                                
-                                let deletedObjects: [AnyHashable: Any] = [
-                                    NSDeletedObjectsKey: deleteResult
-                                ]
-                                
-                                NSManagedObjectContext.mergeChanges(
-                                    fromRemoteContextSave: deletedObjects,
-                                    into: [persistenceController.container.viewContext]
-                                )
-                            } catch {
-                                print("Error deleting all tasks: \(error)")
-                            }
+                            deleteAllTasks()
                         }
                     }
                     Button("Cancel", role: .cancel) {}
@@ -158,10 +133,14 @@ struct FurtheranceApp: App {
                 }
                 .disabled(tasksCount == 0)
                 Button("Delete All") {
-                    showDeleteDialog = true
-                    dialogTitle = "Delete all data?"
-                    dialogMessage = "This will delete all of your saved tasks."
-                    confirmBtn = "Delete"
+                    if showDeleteConfirmation {
+                        showDeleteDialog = true
+                        dialogTitle = "Delete all data?"
+                        dialogMessage = "This will delete all of your saved tasks."
+                        confirmBtn = "Delete"
+                    } else {
+                        deleteAllTasks()
+                    }
                 }
                 .disabled(tasksCount == 0)
             }
@@ -193,5 +172,35 @@ struct FurtheranceApp: App {
         }
         .defaultSize(width: 400, height: 450)
 #endif
+    }
+    
+    private func deleteAllTasks() {
+        do {
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult>
+            fetchRequest = NSFetchRequest(entityName: "FurTask")
+            
+            let deleteRequest = NSBatchDeleteRequest(
+                fetchRequest: fetchRequest
+            )
+            deleteRequest.resultType = .resultTypeObjectIDs
+            
+            let batchDelete = try persistenceController.container.viewContext.execute(deleteRequest)
+                as? NSBatchDeleteResult
+            
+            guard let deleteResult = batchDelete?.result
+                as? [NSManagedObjectID]
+            else { return }
+            
+            let deletedObjects: [AnyHashable: Any] = [
+                NSDeletedObjectsKey: deleteResult
+            ]
+            
+            NSManagedObjectContext.mergeChanges(
+                fromRemoteContextSave: deletedObjects,
+                into: [persistenceController.container.viewContext]
+            )
+        } catch {
+            print("Error deleting all tasks: \(error)")
+        }
     }
 }

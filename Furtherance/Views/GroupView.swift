@@ -11,12 +11,13 @@ struct GroupView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var clickedGroup: ClickedGroup
     @Environment(\.presentationMode) var presentationMode
+    @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
     @StateObject var clickedTask = ClickedTask(task: nil)
     @State private var clickedID = UUID()
     @State private var showingSheet = false
     @State private var overallEditSheet = false
     @State private var groupAddSheet = false
-    @State private var showDialog = false
+    @State private var showDeleteDialog = false
 
     private let totalFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
@@ -94,7 +95,7 @@ struct GroupView: View {
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 clickedTask.task = task
-                                clickedID = clickedTask.task?.id ?? UUID() //TODO: Can this be removed?
+                                clickedID = clickedTask.task?.id ?? UUID() // TODO: Can this be removed?
                                 showingSheet.toggle()
                             }
                             .onHover { inside in
@@ -116,7 +117,11 @@ struct GroupView: View {
                     Image(systemName: "plus")
                 }
                 Button(action: {
-                    showDialog.toggle()
+                    if showDeleteConfirmation {
+                        showDeleteDialog.toggle()
+                    } else {
+                        deleteAllTasksInGroup()
+                    }
                 }) {
                     Image(systemName: "trash.fill")
                 }
@@ -132,17 +137,9 @@ struct GroupView: View {
             GroupAddView(taskName: clickedGroup.taskGroup?.name ?? "Unknown", taskTags: clickedGroup.taskGroup?.tags ?? "#tags", selectedStart: clickedGroup.taskGroup?.tasks.first?.stopTime ?? Date.now, selectedStop: Calendar.current.date(byAdding: .hour, value: 1, to: clickedGroup.taskGroup?.tasks.first?.stopTime ?? Date.now) ?? Date.now)
                 .environmentObject(clickedGroup)
         }
-        .confirmationDialog("Delete all?", isPresented: $showDialog) {
+        .confirmationDialog("Delete all?", isPresented: $showDeleteDialog) {
             Button("Delete", role: .destructive) {
-                for task in clickedGroup.taskGroup!.tasks {
-                    viewContext.delete(task)
-                }
-                do {
-                    try viewContext.save()
-                } catch {
-                    print("Error deleting task \(error)")
-                }
-                presentationMode.wrappedValue.dismiss()
+                deleteAllTasksInGroup()
             }
             Button("Cancel", role: .cancel) {}
         } message: {
@@ -169,6 +166,18 @@ struct GroupView: View {
                 presentationMode.wrappedValue.dismiss()
             }
         }
+    }
+
+    private func deleteAllTasksInGroup() {
+        for task in clickedGroup.taskGroup!.tasks {
+            viewContext.delete(task)
+        }
+        do {
+            try viewContext.save()
+        } catch {
+            print("Error deleting task \(error)")
+        }
+        presentationMode.wrappedValue.dismiss()
     }
 }
 

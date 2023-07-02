@@ -11,9 +11,10 @@ struct TaskEditView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var clickedTask: ClickedTask
     @Environment(\.dismiss) var dismiss
+    @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
     @State private var titleField = ""
     @State private var tagsField = ""
-    @State private var showDialog = false
+    @State private var showDeleteDialog = false
     @State var selectedStart = Date(timeIntervalSinceReferenceDate: 0)
     @State var selectedStop = Date()
     @State var errorMessage = ""
@@ -28,7 +29,7 @@ struct TaskEditView: View {
         let max = selectedStop
         return min...max
     }
-
+    
     func getStopRange() -> ClosedRange<Date> {
         let min = selectedStart
         let max = Date.now
@@ -58,7 +59,11 @@ struct TaskEditView: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    showDialog.toggle()
+                    if showDeleteConfirmation {
+                        showDeleteDialog.toggle()
+                    } else {
+                        deleteTask()
+                    }
                 }) {
                     Image(systemName: "trash.fill")
                 }
@@ -69,7 +74,7 @@ struct TaskEditView: View {
                     titleField = newValue.trimmingCharacters(in: ["#"])
                 }
             ))
-                .frame(minWidth: 200)
+            .frame(minWidth: 200)
             TextField((clickedTask.task?.tags?.isEmpty) ?? true ? "#tags" : clickedTask.task!.tags!, text: $tagsField)
                 .frame(minWidth: 200)
             DatePicker(
@@ -154,15 +159,9 @@ struct TaskEditView: View {
                 .keyboardShortcut(.defaultAction)
             }
         }
-        .confirmationDialog("Delete task?", isPresented: $showDialog) {
+        .confirmationDialog("Delete task?", isPresented: $showDeleteDialog) {
             Button("Delete", role: .destructive) {
-                viewContext.delete(clickedTask.task!)
-                do {
-                    try viewContext.save()
-                } catch {
-                    print("Error deleting task \(error)")
-                }
-                dismiss()
+                deleteTask()
             }
             Button("Cancel", role: .cancel) {}
         }
@@ -173,6 +172,16 @@ struct TaskEditView: View {
             titleField = clickedTask.task?.name ?? ""
             tagsField = clickedTask.task?.tags ?? ""
         }
+    }
+    
+    private func deleteTask() {
+        viewContext.delete(clickedTask.task!)
+        do {
+            try viewContext.save()
+        } catch {
+            print("Error deleting task \(error)")
+        }
+        dismiss()
     }
 }
 

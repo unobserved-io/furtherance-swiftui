@@ -13,6 +13,7 @@ struct GeneralSettingsView: View {
 
     @AppStorage("showIconBadge") private var showIconBadge = false
     @AppStorage("totalInclusive") private var totalInclusive = false
+    @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
 
     var body: some View {
         Form {
@@ -48,9 +49,21 @@ struct GeneralSettingsView: View {
             .padding()
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
+            
+            HStack {
+                Text("Show delete confirmation")
+                Spacer()
+                Toggle("Show delete confirmation", isOn: $showDeleteConfirmation)
+                    .toggleStyle(.switch)
+                    .labelsHidden()
+            }
+            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+            .padding()
+            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+            .cornerRadius(20)
         }
         .padding(20)
-        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 200 : 150)
+        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 250 : 200)
     }
 }
 
