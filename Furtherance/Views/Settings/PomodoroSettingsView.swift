@@ -43,6 +43,7 @@ struct PomodoroSettingsView: View {
                     .onChange(of: pomodoroTime) { _ in
                         StopWatch.sharedInstance.getPomodoroTime()
                     }
+                    .disabled(!pomodoro)
             }
             .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
             .padding()
