@@ -13,7 +13,7 @@ struct AdvancedSettingsView: View {
 
     @AppStorage("idleDetect") private var idleDetect = false
     @AppStorage("idleLimit") private var idleLimit = 6
-    @AppStorage("showDailySum") private var showDailySum = true
+    @AppStorage("totalInclusive") private var totalInclusive = false
     @AppStorage("limitHistory") private var limitHistory = false
     @AppStorage("historyListLimit") private var historyListLimit = 50
 
@@ -52,9 +52,9 @@ struct AdvancedSettingsView: View {
             
             Section(header: Text("Task History").bold()) {
                 HStack {
-                    storeModel.purchasedIds.isEmpty ? Text("Show daily time sum (Pro)") : Text("Show daily time sum")
+                    storeModel.purchasedIds.isEmpty ? Text("Today's total time ticks up with timer (Pro)") : Text("Today's total time ticks up with timer")
                     Spacer()
-                    Toggle("Show daily time sum", isOn: $showDailySum)
+                    Toggle("Today's total time ticks up with timer", isOn: $totalInclusive)
                         .toggleStyle(.switch)
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty)

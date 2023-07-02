@@ -12,7 +12,7 @@ struct GeneralSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
 
     @AppStorage("showIconBadge") private var showIconBadge = false
-    @AppStorage("totalInclusive") private var totalInclusive = false
+    @AppStorage("showDailySum") private var showDailySum = true
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
 
     var body: some View {
@@ -36,19 +36,6 @@ struct GeneralSettingsView: View {
             .padding()
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
-
-            HStack {
-                storeModel.purchasedIds.isEmpty ? Text("Today's total time ticks up with timer (Pro)") : Text("Today's total time ticks up with timer")
-                Spacer()
-                Toggle("Today's total time ticks up with timer", isOn: $totalInclusive)
-                    .toggleStyle(.switch)
-                    .labelsHidden()
-                    .disabled(storeModel.purchasedIds.isEmpty)
-            }
-            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-            .padding()
-            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-            .cornerRadius(20)
             
             HStack {
                 Text("Show delete confirmation")
@@ -61,6 +48,21 @@ struct GeneralSettingsView: View {
             .padding()
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
+            
+            Section(header: Text("Task History").bold()) {
+                HStack {
+                    storeModel.purchasedIds.isEmpty ? Text("Show daily time sum (Pro)") : Text("Show daily time sum")
+                    Spacer()
+                    Toggle("Show daily time sum", isOn: $showDailySum)
+                        .toggleStyle(.switch)
+                        .labelsHidden()
+                        .disabled(storeModel.purchasedIds.isEmpty)
+                }
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+            }
         }
         .padding(20)
         .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 250 : 200)
