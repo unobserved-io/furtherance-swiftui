@@ -41,7 +41,7 @@ struct AdvancedSettingsView: View {
                         .bold()
                     Stepper("\(idleLimit)", value: $idleLimit, in: 1 ... 999)
                         .labelsHidden()
-                        .disabled(storeModel.purchasedIds.isEmpty)
+                        .disabled(storeModel.purchasedIds.isEmpty || !idleDetect)
                 }
                 .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
                 .padding()
