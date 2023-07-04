@@ -72,6 +72,14 @@ struct ContentView: View {
                             }
                         }
                     ))
+                    #if os(iOS)
+                    .disableAutocorrection(true)
+//                    .frame(height: 40)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 14)
+                            .stroke(Color.accentColor, lineWidth: 3)
+                    )
+                    #endif
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .disabled(stopWatch.isRunning)
                     .onSubmit {
@@ -85,6 +93,12 @@ struct ContentView: View {
                         }
                     } label: {
                         Image(systemName: stopWatch.isRunning ? "stop.fill" : "play.fill")
+                        #if os(iOS)
+                            .padding()
+                            .background(Color.accentColor)
+                            .clipShape(Circle())
+                            .foregroundColor(Color.white)
+                        #endif
                     }
                 }
                 .padding(.horizontal)
@@ -177,7 +191,9 @@ struct ContentView: View {
                 contentType: UTType.commaSeparatedText,
                 defaultFilename: "Furtherance.csv"
             ) { _ in }
+            #if os(macOS)
             .frame(minWidth: 360, idealWidth: 400, minHeight: 170, idealHeight: 600)
+            #endif
         }
         .environmentObject(clickedGroup)
     }
