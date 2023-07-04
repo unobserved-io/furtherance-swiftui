@@ -24,10 +24,10 @@
 		9C98E11329A8C0790064F63F /* TaskEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11229A8C0790064F63F /* TaskEditView.swift */; };
 		9C98E11529A8F6B80064F63F /* GroupEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11429A8F6B80064F63F /* GroupEditView.swift */; };
 		9C98E11729A918BC0064F63F /* Autosave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11629A918BC0064F63F /* Autosave.swift */; };
+		9C9DB0622A543F0600E0DC2B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CA84E1429A7721300A28FDA /* Assets.xcassets */; platformFilters = (macos, ); };
+		9C9DB0652A54405A00E0DC2B /* Assets-iOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C9DB0642A54405A00E0DC2B /* Assets-iOS.xcassets */; platformFilter = ios; };
 		9CA84E1129A7721200A28FDA /* FurtheranceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */; };
 		9CA84E1329A7721200A28FDA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1229A7721200A28FDA /* ContentView.swift */; };
-		9CA84E1529A7721300A28FDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CA84E1429A7721300A28FDA /* Assets.xcassets */; };
-		9CA84E1829A7721300A28FDA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CA84E1729A7721300A28FDA /* Preview Assets.xcassets */; };
 		9CA84E1A29A7721300A28FDA /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1929A7721300A28FDA /* Persistence.swift */; };
 		9CA84E1D29A7721300A28FDA /* Furtherance.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1B29A7721300A28FDA /* Furtherance.xcdatamodeld */; };
 		9CA84E2729A7767500A28FDA /* TaskTagsInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E2629A7767500A28FDA /* TaskTagsInput.swift */; };
@@ -59,6 +59,7 @@
 		9C98E11229A8C0790064F63F /* TaskEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditView.swift; sourceTree = "<group>"; };
 		9C98E11429A8F6B80064F63F /* GroupEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupEditView.swift; sourceTree = "<group>"; };
 		9C98E11629A918BC0064F63F /* Autosave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autosave.swift; sourceTree = "<group>"; };
+		9C9DB0642A54405A00E0DC2B /* Assets-iOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-iOS.xcassets"; sourceTree = "<group>"; };
 		9CA84E0D29A7721200A28FDA /* Furtherance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Furtherance.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurtheranceApp.swift; sourceTree = "<group>"; };
 		9CA84E1229A7721200A28FDA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -146,6 +147,7 @@
 				9CA84E2529A7766000A28FDA /* Objects */,
 				9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */,
 				9CA84E1429A7721300A28FDA /* Assets.xcassets */,
+				9C9DB0642A54405A00E0DC2B /* Assets-iOS.xcassets */,
 				9CA84E1929A7721300A28FDA /* Persistence.swift */,
 				9CA84E1E29A7721300A28FDA /* Furtherance.entitlements */,
 				9CA84E1B29A7721300A28FDA /* Furtherance.xcdatamodeld */,
@@ -271,8 +273,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9CA84E1829A7721300A28FDA /* Preview Assets.xcassets in Resources */,
-				9CA84E1529A7721300A28FDA /* Assets.xcassets in Resources */,
+				9C9DB0652A54405A00E0DC2B /* Assets-iOS.xcassets in Resources */,
+				9C9DB0622A543F0600E0DC2B /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -436,7 +438,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphoneos*]" = "AppIcon-iOS";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Furtherance/Furtherance.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -471,7 +475,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphoneos*]" = "AppIcon-iOS";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = Furtherance/Furtherance.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
