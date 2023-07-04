@@ -36,7 +36,7 @@
 		9CA84E3429A7A4F500A28FDA /* FurTaskGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */; };
 		9CA84E3629A7AE0600A28FDA /* TimerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */; };
 		9CAB8E3229C1331C00610E6E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CAB8E3129C1331C00610E6E /* StoreKit.framework */; };
-		9CDC03892A5447AE0060EF4E /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9CDC03882A5447AE0060EF4E /* Info.plist */; platformFilters = (macos, ); };
+		9CDC03892A5447AE0060EF4E /* Info-macOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9CDC03882A5447AE0060EF4E /* Info-macOS.plist */; platformFilters = (macos, ); };
 		9CDC038B2A5448D20060EF4E /* Info-iOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9CDC038A2A5448D20060EF4E /* Info-iOS.plist */; platformFilter = ios; };
 		9CE227322A3C3DD50008032D /* CSVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE227312A3C3DD50008032D /* CSVFile.swift */; };
 		9CE733E12A45C40800BF8165 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE733E02A45C40800BF8165 /* AppDelegate.swift */; platformFilters = (macos, ); };
@@ -76,7 +76,7 @@
 		9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurTaskGroup.swift; sourceTree = "<group>"; };
 		9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerHelper.swift; sourceTree = "<group>"; };
 		9CAB8E3129C1331C00610E6E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		9CDC03882A5447AE0060EF4E /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9CDC03882A5447AE0060EF4E /* Info-macOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-macOS.plist"; sourceTree = "<group>"; };
 		9CDC038A2A5448D20060EF4E /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		9CE227312A3C3DD50008032D /* CSVFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVFile.swift; sourceTree = "<group>"; };
 		9CE733E02A45C40800BF8165 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -128,7 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				9CA84E1429A7721300A28FDA /* Assets-macOS.xcassets */,
-				9CDC03882A5447AE0060EF4E /* Info.plist */,
+				9CDC03882A5447AE0060EF4E /* Info-macOS.plist */,
 			);
 			path = macOS;
 			sourceTree = "<group>";
@@ -298,7 +298,7 @@
 				9CDC038B2A5448D20060EF4E /* Info-iOS.plist in Resources */,
 				9C9DB0652A54405A00E0DC2B /* Assets-iOS.xcassets in Resources */,
 				9C9DB0622A543F0600E0DC2B /* Assets-macOS.xcassets in Resources */,
-				9CDC03892A5447AE0060EF4E /* Info.plist in Resources */,
+				9CDC03892A5447AE0060EF4E /* Info-macOS.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
