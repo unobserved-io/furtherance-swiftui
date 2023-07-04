@@ -325,15 +325,26 @@ struct ContentView: View {
                             showingSheet.toggle()
                         }
                     }
-                //TODO: Too easy to accidentally delete?
-//                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-//                        Button("Delete", role: .destructive) {
-//                            taskGroup.tasks.forEach { task in
-//                                viewContext.delete(task)
-//                            }
-//                            try? viewContext.save()
-//                        }
-//                    }
+                #if os(iOS)
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button("Delete", role: .destructive) {
+                            taskGroup.tasks.forEach { task in
+                                viewContext.delete(task)
+                            }
+                            try? viewContext.save()
+                        }
+                    }
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button("Repeat") {
+                            if !StopWatch.sharedInstance.isRunning {
+                                let taskTagsInput = TaskTagsInput.sharedInstance
+                                taskTagsInput.text = taskGroup.name + " " + taskGroup.tags
+                                StopWatch.sharedInstance.start()
+                                TimerHelper.sharedInstance.onStart(nameAndTags: taskTagsInput.text)
+                            }
+                        }
+                    }
+                #endif
                     .disabled(stopWatch.isRunning)
             }
         }
