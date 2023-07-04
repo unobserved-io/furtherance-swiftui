@@ -128,8 +128,10 @@ struct ContentView: View {
                 checkForAutosave()
             }
             .onReceive(willBecomeActive) { _ in
-                if !Calendar.current.isDateInToday(tasks[0][0].stopTime ?? Date.now) {
-                    viewContext.refreshAllObjects()
+                if !tasks.isEmpty {
+                    if !Calendar.current.isDateInToday(tasks[0][0].stopTime ?? Date.now) {
+                        viewContext.refreshAllObjects()
+                    }
                 }
             }
             // Task edit sheet
