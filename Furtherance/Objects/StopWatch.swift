@@ -25,7 +25,9 @@ final class StopWatch: ObservableObject {
     @AppStorage("pomodoroTime") private var pomodoroTime = 25
     @AppStorage("showIconBadge") private var showIconBadge = false
     
+#if os(macOS)
     let usbInfoRaw: io_service_t = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOHIDSystem"))
+#endif
     
     var startTime = Date.now
     var completedSecondsElapsed = 0
@@ -63,26 +65,6 @@ final class StopWatch: ObservableObject {
                 timeElapsedFormatted = hoursString + ":" + minutesString + ":" + secondsString
             } else {
                 timeElapsedFormatted = "00:00:00"
-            }
-        }
-    }
-    
-    @objc private func sleepListener(_ aNotification: Notification) {
-        /// Check if the computer is going to sleep
-        if idleDetect {
-            if aNotification.name == NSWorkspace.willSleepNotification {
-                print("Going to sleep")
-                timeAtSleep = Date.now
-                idleAtSleep = getIdleTime()
-                idleStartTime = timeAtSleep.addingTimeInterval(Double(-idleAtSleep))
-            } else if aNotification.name == NSWorkspace.didWakeNotification {
-                print("Woke up")
-                let selectedIdle = idleLimit * 60
-                let timeAsleep = Calendar.current.dateComponents([.second], from: timeAtSleep, to: Date.now).second ?? 0
-                let idleAfterSleep = timeAsleep + idleAtSleep
-                if idleAfterSleep > selectedIdle {
-                    resumeFromIdle()
-                }
             }
         }
     }
@@ -149,17 +131,21 @@ final class StopWatch: ObservableObject {
                     self.secondsElapsedPositive = self.secondsElapsed
                 }
                 self.formatTime()
+#if os(macOS)
                 if self.idleDetect {
                     self.checkUserIdle()
                 }
+#endif
                 if self.secondsElapsed != 0 && self.secondsElapsed % 60 == 0 {
                     Autosave().write()
                 }
             }
         }
+#if os(macOS)
         // Set computer sleep observers
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(sleepListener(_:)), name: NSWorkspace.willSleepNotification, object: nil)
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(sleepListener(_:)), name: NSWorkspace.didWakeNotification, object: nil)
+#endif
     }
 
     func stop() {
@@ -170,10 +156,13 @@ final class StopWatch: ObservableObject {
         secondsElapsed = 0
         secondsElapsedPositive = 0
         timeElapsedFormatted = "00:00:00"
+#if os(macOS)
         resetIdle()
+
         // Destroy sleep observers
         NSWorkspace.shared.notificationCenter.removeObserver(self, name: NSWorkspace.willSleepNotification, object: nil)
         NSWorkspace.shared.notificationCenter.removeObserver(self, name: NSWorkspace.didWakeNotification, object: nil)
+#endif
         // Delete any autosave
         let autosave = Autosave()
         if autosave.exists() {
@@ -182,8 +171,10 @@ final class StopWatch: ObservableObject {
         // Delete any pending notifications
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
+#if os(macOS)
         // Remove dock icon badge
         NSApp.dockTile.badgeLabel = nil
+#endif
         // Reset Pomodoro time
         getPomodoroTime()
     }
@@ -204,9 +195,11 @@ final class StopWatch: ObservableObject {
         let seconds = secondsElapsed % 60
         let secondsString = (seconds < 10) ? "0\(seconds)" : "\(seconds)"
         timeElapsedFormatted = hoursString + ":" + minutesString + ":" + secondsString
+#if os(macOS)
         if showIconBadge {
             NSApp.dockTile.badgeLabel = timeElapsedFormatted
         }
+#endif
         
         // Stop pomodoro timer if time is up
         if pomodoro && secondsElapsed == 0 {
@@ -219,6 +212,7 @@ final class StopWatch: ObservableObject {
         }
     }
     
+#if os(macOS)
     func getIdleTime() -> Int {
         /// Get user's idle time
         let usbInfoAsString = IORegistryEntryCreateCFProperty(usbInfoRaw, kIOHIDIdleTimeKey as CFString, kCFAllocatorDefault, 0)
@@ -272,4 +266,25 @@ final class StopWatch: ObservableObject {
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
     }
+    
+    @objc private func sleepListener(_ aNotification: Notification) {
+        /// Check if the computer is going to sleep
+        if idleDetect {
+            if aNotification.name == NSWorkspace.willSleepNotification {
+                print("Going to sleep")
+                timeAtSleep = Date.now
+                idleAtSleep = getIdleTime()
+                idleStartTime = timeAtSleep.addingTimeInterval(Double(-idleAtSleep))
+            } else if aNotification.name == NSWorkspace.didWakeNotification {
+                print("Woke up")
+                let selectedIdle = idleLimit * 60
+                let timeAsleep = Calendar.current.dateComponents([.second], from: timeAtSleep, to: Date.now).second ?? 0
+                let idleAfterSleep = timeAsleep + idleAtSleep
+                if idleAfterSleep > selectedIdle {
+                    resumeFromIdle()
+                }
+            }
+        }
+    }
+#endif
 }

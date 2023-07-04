@@ -4,7 +4,7 @@
 //
 //  Created by Ricky Kresslein on 6/23/23.
 //
-
+#if os(macOS)
 import SwiftUI
 
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -12,3 +12,4 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return true
     }
 }
+#endif

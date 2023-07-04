@@ -29,11 +29,13 @@ struct GeneralSettingsView: View {
                     .labelsHidden()
                     .disabled(storeModel.purchasedIds.isEmpty)
             }
+#if os(macOS)
             .onChange(of: showIconBadge) { newVal in
                 if !newVal {
                     NSApp.dockTile.badgeLabel = nil
                 }
             }
+#endif
             .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
             .padding()
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))

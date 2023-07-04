@@ -77,6 +77,7 @@ struct GroupView: View {
                         .onTapGesture {
                             overallEditSheet.toggle()
                         }
+#if os(macOS)
                         .onHover { inside in
                             if inside {
                                 NSCursor.pointingHand.push()
@@ -84,6 +85,7 @@ struct GroupView: View {
                                 NSCursor.pop()
                             }
                         }
+#endif
                 }
                 Spacer()
                     .frame(height: 40)
@@ -120,6 +122,7 @@ struct GroupView: View {
                                 clickedID = clickedTask.task?.id ?? UUID() // TODO: Can this be removed?
                                 showingSheet.toggle()
                             }
+#if os(macOS)
                             .onHover { inside in
                                 if inside {
                                     NSCursor.pointingHand.push()
@@ -127,6 +130,7 @@ struct GroupView: View {
                                     NSCursor.pop()
                                 }
                             }
+#endif
                     }
                 }
             }

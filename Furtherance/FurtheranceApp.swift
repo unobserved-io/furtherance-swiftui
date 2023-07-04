@@ -6,13 +6,16 @@
 //
 
 import SwiftUI
+import CoreData
 import UniformTypeIdentifiers
 
 @main
 struct FurtheranceApp: App {
     let persistenceController = PersistenceController.shared
     
+    #if os(macOS)
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    #endif
     @AppStorage("launchCount") private var launchCount = 0
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
     @ObservedObject var storeModel = StoreModel.sharedInstance
@@ -37,7 +40,9 @@ struct FurtheranceApp: App {
             ContentView(tasksCount: $tasksCount, navPath: $navPath, showExportCSV: $showExportCSV)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .onAppear {
+                    #if os(macOS)
                     NSWindow.allowsAutomaticWindowTabbing = false
+                    #endif
                     Task {
                         try await storeModel.fetchProducts()
                     }
@@ -144,6 +149,7 @@ struct FurtheranceApp: App {
                 }
                 .disabled(tasksCount == 0)
             }
+            #if os(macOS)
             CommandGroup(replacing: CommandGroupPlacement.newItem) {}
             CommandGroup(replacing: CommandGroupPlacement.windowList) {}
             CommandGroup(replacing: CommandGroupPlacement.windowArrangement) {}
@@ -163,8 +169,11 @@ struct FurtheranceApp: App {
                     addTaskSheet.toggle()
                 }
             }
+            #endif
         }
+        #if os(macOS)
         .defaultSize(width: 360, height: 600)
+        #endif
         
 #if os(macOS)
         Settings {

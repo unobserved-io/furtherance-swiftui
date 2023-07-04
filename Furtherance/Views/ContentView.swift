@@ -38,7 +38,12 @@ struct ContentView: View {
     @State private var hashtagAlert = false
     @State private var showingTaskEmptyAlert = false
     let timerHelper = TimerHelper.sharedInstance
-    let willBecomeActive = NotificationCenter.default.publisher(for: NSApplication.willBecomeActiveNotification)
+    #if os(macOS)
+        let willBecomeActive = NotificationCenter.default.publisher(for: NSApplication.willBecomeActiveNotification)
+    #else
+        let willBecomeActive = NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
+    #endif
+    
     
     init(tasksCount: Binding<Int>, navPath: Binding<[String]>, showExportCSV: Binding<Bool>) {
         self._tasksCount = tasksCount
@@ -148,6 +153,7 @@ struct ContentView: View {
             } message: {
                 Text("The task name cannot be empty.")
             }
+#if os(macOS)
             // Idle alert
             .alert(isPresented: $stopWatch.showingAlert) {
                 Alert(
@@ -161,6 +167,7 @@ struct ContentView: View {
                     })
                 )
             }
+#endif
             // CSV Export
             .fileExporter(
                 isPresented: $showExportCSV,
@@ -226,8 +233,7 @@ struct ContentView: View {
         }
         if showSeconds {
             return formatTimeShort(totalTime)
-        }
-        else {
+        } else {
             return formatTimeLongWithoutSeconds(totalTime)
         }
     }
@@ -240,8 +246,7 @@ struct ContentView: View {
         totalTime += secsElapsed
         if showSeconds {
             return formatTimeShort(totalTime)
-        }
-        else {
+        } else {
             return formatTimeLongWithoutSeconds(totalTime)
         }
     }

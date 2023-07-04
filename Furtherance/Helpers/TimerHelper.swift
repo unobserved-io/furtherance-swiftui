@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreData
 
 final class TimerHelper {
     static let sharedInstance = TimerHelper()
