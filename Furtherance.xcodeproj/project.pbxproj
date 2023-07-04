@@ -10,6 +10,7 @@
 		9C1026672A361B5000FB95D8 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1026662A361B5000FB95D8 /* AddTaskView.swift */; };
 		9C27D34629A8B2630012C274 /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C27D34529A8B2630012C274 /* GroupView.swift */; };
 		9C27D34829A8B5460012C274 /* ClickedGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C27D34729A8B5460012C274 /* ClickedGroup.swift */; };
+		9C3B41372A54966E002F3F5B /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C3B41362A54966E002F3F5B /* Storyboard.storyboard */; };
 		9C3BD94629BE7A2900637D36 /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3BD94529BE7A2900637D36 /* Globals.swift */; };
 		9C3BD94829BE808A00637D36 /* ReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3BD94729BE808A00637D36 /* ReportsView.swift */; };
 		9C4074C92A31E26A00C989CF /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4074C82A31E26A00C989CF /* Extensions.swift */; };
@@ -46,6 +47,7 @@
 		9C1026662A361B5000FB95D8 /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
 		9C27D34529A8B2630012C274 /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
 		9C27D34729A8B5460012C274 /* ClickedGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickedGroup.swift; sourceTree = "<group>"; };
+		9C3B41362A54966E002F3F5B /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		9C3BD94529BE7A2900637D36 /* Globals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
 		9C3BD94729BE808A00637D36 /* ReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsView.swift; sourceTree = "<group>"; };
 		9C4074C82A31E26A00C989CF /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 			children = (
 				9C9DB0642A54405A00E0DC2B /* Assets-iOS.xcassets */,
 				9CDC038A2A5448D20060EF4E /* Info-iOS.plist */,
+				9C3B41362A54966E002F3F5B /* Storyboard.storyboard */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -299,6 +302,7 @@
 				9C9DB0652A54405A00E0DC2B /* Assets-iOS.xcassets in Resources */,
 				9C9DB0622A543F0600E0DC2B /* Assets-macOS.xcassets in Resources */,
 				9CDC03892A5447AE0060EF4E /* Info-macOS.plist in Resources */,
+				9C3B41372A54966E002F3F5B /* Storyboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,6 +483,11 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Furtherance;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UILaunchStoryboardName = Storyboard.storyboard;
+				INFOPLIST_KEY_UIRequiresFullScreen = NO;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -486,12 +495,13 @@
 				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lakoliu.furtherance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -516,6 +526,11 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Furtherance;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_UILaunchStoryboardName = Storyboard.storyboard;
+				INFOPLIST_KEY_UIRequiresFullScreen = NO;
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -523,12 +538,13 @@
 				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lakoliu.furtherance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

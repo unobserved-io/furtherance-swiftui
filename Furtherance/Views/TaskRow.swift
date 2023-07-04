@@ -29,6 +29,7 @@ struct TaskRow: View {
 
                 if !taskGroup.tags.isEmpty && showTags {
                     Text(taskGroup.tags)
+                        .lineLimit(1)
                         .opacity(0.626)
                         .frame(minWidth: 20)
                         .truncationMode(.middle)
@@ -40,6 +41,7 @@ struct TaskRow: View {
 
             Text(showSeconds ? formatTimeShort(taskGroup.totalTime) : formatTimeLongWithoutSeconds(taskGroup.totalTime))
                 .font(.system(.body).monospacedDigit())
+            #if os(macOS)
             Image(systemName: "arrow.counterclockwise.circle")
                 .contentShape(Circle())
                 .onTapGesture {
@@ -50,11 +52,16 @@ struct TaskRow: View {
                         TimerHelper.sharedInstance.onStart(nameAndTags: taskTagsInput.text)
                     }
                 }
+            #endif
         }
+        #if os(macOS)
         .frame(height: 25)
         .padding()
         .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
         .cornerRadius(20)
+        #else
+        .frame(height: 35)
+        #endif
     }
 }
 

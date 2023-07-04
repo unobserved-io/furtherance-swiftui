@@ -15,6 +15,7 @@ struct ContentView: View {
     @Binding var showExportCSV: Bool
     
     @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.colorScheme) var colorScheme
     @Environment(\.requestReview) private var requestReview
     @AppStorage("launchCount") private var launchCount = 0
     @AppStorage("totalInclusive") private var totalInclusive = false
@@ -74,7 +75,7 @@ struct ContentView: View {
                     ))
                     #if os(iOS)
                     .disableAutocorrection(true)
-//                    .frame(height: 40)
+                    .frame(height: 40)
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
                             .stroke(Color.accentColor, lineWidth: 3)
@@ -102,20 +103,7 @@ struct ContentView: View {
                     }
                 }
                 .padding(.horizontal)
-                tasks.isEmpty ? nil : ScrollView {
-                    Form {
-                        if limitHistory {
-                            ForEach(0 ..< historyListLimit, id: \.self) { index in
-                                showHistoryList(tasks[index])
-                            }
-                        } else {
-                            ForEach(tasks) { section in
-                                showHistoryList(section)
-                            }
-                        }
-                    }
-                    .padding(.horizontal)
-                }
+                tasks.isEmpty ? nil : showTaskHistoryListBasedOnDevice()
             }
             // Update tasks count every time tasks is changed
             .onChange(of: tasks.count) { _ in
@@ -337,9 +325,52 @@ struct ContentView: View {
                             showingSheet.toggle()
                         }
                     }
+                //TODO: Too easy to accidentally delete?
+//                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+//                        Button("Delete", role: .destructive) {
+//                            taskGroup.tasks.forEach { task in
+//                                viewContext.delete(task)
+//                            }
+//                            try? viewContext.save()
+//                        }
+//                    }
                     .disabled(stopWatch.isRunning)
             }
         }
+    }
+    
+    private func showTaskHistoryListBasedOnDevice() -> some View {
+            #if os(macOS)
+            return ScrollView {
+                Form {
+                    if limitHistory {
+                        ForEach(0 ..< historyListLimit, id: \.self) { index in
+                            showHistoryList(tasks[index])
+                        }
+                    } else {
+                        ForEach(tasks) { section in
+                            showHistoryList(section)
+                        }
+                    }
+                }
+                .padding(.horizontal)
+            }
+            #else
+            return List {
+                if limitHistory {
+                    ForEach(0 ..< historyListLimit, id: \.self) { index in
+                        showHistoryList(tasks[index])
+                    }
+                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.10))
+                } else {
+                    ForEach(tasks) { section in
+                        showHistoryList(section)
+                    }
+                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.10))
+                }
+            }
+            .scrollContentBackground(.hidden)
+            #endif
     }
 }
 
