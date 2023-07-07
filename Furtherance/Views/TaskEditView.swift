@@ -66,6 +66,7 @@ struct TaskEditView: View {
                     }
                 }) {
                     Image(systemName: "trash.fill")
+                        .imageScale(.large)
                 }
             }
             TextField(clickedTask.task?.name ?? "Unknown", text: Binding(
@@ -74,9 +75,27 @@ struct TaskEditView: View {
                     titleField = newValue.trimmingCharacters(in: ["#"])
                 }
             ))
+#if os(macOS)
             .frame(minWidth: 200)
+#else
+            .frame(minHeight: 30)
+            .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+            )
+#endif
             TextField((clickedTask.task?.tags?.isEmpty) ?? true ? "#tags" : clickedTask.task!.tags!, text: $tagsField)
+#if os(macOS)
                 .frame(minWidth: 200)
+#else
+            .frame(minHeight: 30)
+            .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+            )
+#endif
             DatePicker(
                 selection: $selectedStart,
                 in: getStartRange(),
@@ -95,13 +114,16 @@ struct TaskEditView: View {
                 .frame(height: 50)
             Spacer()
                 .frame(height: 15)
-            HStack(spacing: 10) {
+            HStack(spacing: 20) {
                 Button(action: {
                     dismiss()
                 }) {
                     Text("Cancel")
                 }
                 .keyboardShortcut(.cancelAction)
+#if os(iOS)
+                .buttonStyle(.bordered)
+#endif
                 Button(action: {
                     let newTask: FurTask = clickedTask.task!
                     
@@ -157,6 +179,10 @@ struct TaskEditView: View {
                     Text("Save")
                 }
                 .keyboardShortcut(.defaultAction)
+                #if os(iOS)
+                .buttonStyle(.borderedProminent)
+                .tint(.accentColor)
+                #endif
             }
         }
         .confirmationDialog("Delete task?", isPresented: $showDeleteDialog) {
