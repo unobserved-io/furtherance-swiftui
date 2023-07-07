@@ -5,7 +5,7 @@
 //  Created by Ricky Kresslein on 6/8/23.
 //
 
-import Foundation
+import SwiftUI
 
 extension Date {
     var startOfDay: Date {
@@ -41,4 +41,8 @@ extension Date {
         components.second = -1
         return Calendar.current.date(byAdding: components, to: startOfMonth)!
     }
+}
+
+extension PresentationDetent {
+    static let taskBar = Self.fraction(0.4)
 }

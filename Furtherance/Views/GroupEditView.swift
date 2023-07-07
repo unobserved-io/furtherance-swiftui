@@ -75,8 +75,8 @@ struct GroupEditView: View {
                         }
                     } // else not changed (don't update)
                     
-                    if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty, tagsField != clickedGroup.taskGroup!.tags {
-                        if !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
+                    if tagsField != clickedGroup.taskGroup!.tags {
+                        if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty, !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
                             error.append("Tags must start with a '#'.")
                         } else {
                             newTags = separateTags(rawString: tagsField)

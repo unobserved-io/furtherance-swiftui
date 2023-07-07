@@ -135,6 +135,7 @@ struct GroupView: View {
                 }
             }
             Spacer()
+            #if os(macOS)
             HStack {
                 Spacer()
                 Button(action: {
@@ -152,14 +153,40 @@ struct GroupView: View {
                     Image(systemName: "trash.fill")
                 }
             }
+            #endif
         }
+        // TODO: Could use toolbar on Mac as well
+        #if os(iOS)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    groupAddSheet.toggle()
+                }) {
+                    Label("Add Item", systemImage: "plus")
+                }
+                // TODO: The list does not refresh after a task is added
+            }
+            ToolbarItem {
+                Button(action: {
+                    if showDeleteConfirmation {
+                        showDeleteDialog.toggle()
+                    } else {
+                        deleteAllTasksInGroup()
+                    }
+                }) {
+                    Image(systemName: "trash.fill")
+                }
+            }
+        }
+        #endif
         .sheet(isPresented: $showingSheet, onDismiss: refreshGroup) {
             TaskEditView().environmentObject(clickedTask)
         }
-        .sheet(isPresented: $overallEditSheet) {
+        .sheet(isPresented: $overallEditSheet, onDismiss: refreshGroup) {
             GroupEditView()
         }
         .sheet(isPresented: $groupAddSheet, onDismiss: refreshGroup) {
+            // TODO: This could all be done just with a taskGroup parameter, which is already passed as an EO
             GroupAddView(taskName: clickedGroup.taskGroup?.name ?? "Unknown", taskTags: clickedGroup.taskGroup?.tags ?? "#tags", selectedStart: clickedGroup.taskGroup?.tasks.first?.stopTime ?? Date.now, selectedStop: Calendar.current.date(byAdding: .hour, value: 1, to: clickedGroup.taskGroup?.tasks.first?.stopTime ?? Date.now) ?? Date.now)
                 .environmentObject(clickedGroup)
         }
@@ -176,6 +203,7 @@ struct GroupView: View {
     }
 
     func refreshGroup() {
+        clickedGroup.taskGroup = clickedGroup.taskGroup
         if clickedGroup.taskGroup != nil {
             for task in clickedGroup.taskGroup!.tasks {
                 if task.id == nil {

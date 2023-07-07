@@ -138,7 +138,11 @@ struct ContentView: View {
             }
             // Task edit sheet
             .sheet(isPresented: $showingSheet) {
-                TaskEditView().environmentObject(clickedTask)
+                TaskEditView()
+                    .environmentObject(clickedTask)
+                #if os(iOS)
+                    .presentationDetents([.taskBar])
+                #endif
             }
             // Autosave alert
             .alert("Autosave Restored", isPresented: $autosave.showAlert) {
