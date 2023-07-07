@@ -45,22 +45,43 @@ struct GroupEditView: View {
                     titleField = newValue.trimmingCharacters(in: ["#"])
                 }
             ))
+#if os(macOS)
                 .frame(minWidth: 200)
+#else
+            .frame(minHeight: 30)
+            .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+            )
+#endif
             TextField(clickedGroup.taskGroup!.tags.isEmpty ? "#add #tags" : clickedGroup.taskGroup!.tags, text: $tagsField)
+#if os(macOS)
                 .frame(minWidth: 200)
+#else
+            .frame(minHeight: 30)
+            .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+            )
+#endif
             errorMessage.isEmpty ? nil : Text(errorMessage)
                 .foregroundColor(.red)
                 .multilineTextAlignment(.leading)
                 .frame(height: 50)
             Spacer()
                 .frame(height: 15)
-            HStack {
+            HStack(spacing: 20) {
                 Button(action: {
                     dismiss()
                 }) {
                     Text("Cancel")
                 }
                 .keyboardShortcut(.cancelAction)
+#if os(iOS)
+                .buttonStyle(.bordered)
+#endif
                 Button(action: {
                     errorMessage = ""
                     var error = [String]()
@@ -112,6 +133,10 @@ struct GroupEditView: View {
                     Text("Save")
                 }
                 .keyboardShortcut(.defaultAction)
+#if os(iOS)
+                .buttonStyle(.borderedProminent)
+                .tint(.accentColor)
+#endif
             }
         }
         .padding()

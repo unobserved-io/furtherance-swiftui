@@ -28,10 +28,12 @@ struct PomodoroSettingsView: View {
                         StopWatch.sharedInstance.getPomodoroTime()
                     }
             }
+#if os(macOS)
             .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
             .padding()
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
+#endif
 
             HStack {
                 Text("Start time in minutes:")
@@ -45,13 +47,17 @@ struct PomodoroSettingsView: View {
                     }
                     .disabled(!pomodoro)
             }
+#if os(macOS)
             .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
             .padding()
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
+#endif
         }
+        #if os(macOS)
         .padding(20)
         .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 200 : 150)
+#endif
     }
 }
 

@@ -181,9 +181,15 @@ struct GroupView: View {
         #endif
         .sheet(isPresented: $showingSheet, onDismiss: refreshGroup) {
             TaskEditView().environmentObject(clickedTask)
+#if os(iOS)
+    .presentationDetents([.taskBar])
+#endif
         }
         .sheet(isPresented: $overallEditSheet, onDismiss: refreshGroup) {
             GroupEditView()
+#if os(iOS)
+    .presentationDetents([.groupNameBar])
+#endif
         }
         .sheet(isPresented: $groupAddSheet, onDismiss: refreshGroup) {
             // TODO: This could all be done just with a taskGroup parameter, which is already passed as an EO

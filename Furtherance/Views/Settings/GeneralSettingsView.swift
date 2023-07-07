@@ -21,6 +21,7 @@ struct GeneralSettingsView: View {
         Form {
             BuyProView()
 
+#if os(macOS)
             HStack {
                 storeModel.purchasedIds.isEmpty ? Text("Show icon badge when timer is running (Pro)") : Text("Show icon badge when timer is running")
                 Spacer()
@@ -29,17 +30,16 @@ struct GeneralSettingsView: View {
                     .labelsHidden()
                     .disabled(storeModel.purchasedIds.isEmpty)
             }
-#if os(macOS)
             .onChange(of: showIconBadge) { newVal in
                 if !newVal {
                     NSApp.dockTile.badgeLabel = nil
                 }
             }
-#endif
             .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
             .padding()
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
+#endif
             
             HStack {
                 Text("Show delete confirmation")
@@ -48,10 +48,12 @@ struct GeneralSettingsView: View {
                     .toggleStyle(.switch)
                     .labelsHidden()
             }
+#if os(macOS)
             .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
             .padding()
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
+#endif
             
             Section(header: Text("Task History").bold()) {
                 HStack {
@@ -62,10 +64,12 @@ struct GeneralSettingsView: View {
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
-                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-                .padding()
-                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-                .cornerRadius(20)
+#if os(macOS)
+            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+            .padding()
+            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+            .cornerRadius(20)
+#endif
                 
                 HStack {
                     storeModel.purchasedIds.isEmpty ? Text("Show seconds (Pro)") : Text("Show seconds")
@@ -75,10 +79,12 @@ struct GeneralSettingsView: View {
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
-                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-                .padding()
-                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-                .cornerRadius(20)
+#if os(macOS)
+            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+            .padding()
+            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+            .cornerRadius(20)
+#endif
                 
                 HStack {
                     storeModel.purchasedIds.isEmpty ? Text("Show daily time sum (Pro)") : Text("Show daily time sum")
@@ -88,14 +94,18 @@ struct GeneralSettingsView: View {
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
-                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-                .padding()
-                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-                .cornerRadius(20)
+#if os(macOS)
+            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+            .padding()
+            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+            .cornerRadius(20)
+#endif
             }
         }
+        #if os(macOS)
         .padding(20)
         .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 400 : 350)
+        #endif
     }
 }
 

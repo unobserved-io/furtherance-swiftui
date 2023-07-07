@@ -45,4 +45,5 @@ extension Date {
 
 extension PresentationDetent {
     static let taskBar = Self.fraction(0.4)
+    static let groupNameBar = Self.fraction(0.25)
 }

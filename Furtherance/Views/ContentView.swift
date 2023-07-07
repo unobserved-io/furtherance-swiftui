@@ -45,7 +45,6 @@ struct ContentView: View {
         let willBecomeActive = NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
     #endif
     
-    
     init(tasksCount: Binding<Int>, navPath: Binding<[String]>, showExportCSV: Binding<Bool>) {
         self._tasksCount = tasksCount
         self._navPath = navPath
@@ -55,6 +54,20 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $navPath) {
             VStack {
+                #if os(iOS)
+                    HStack {
+                        Spacer()
+                        Button {
+                            navPath.append("settings")
+                        } label: {
+                            Image(systemName: "gearshape.fill")
+                                .foregroundColor(.gray)
+                                .imageScale(.large)
+                        }
+                    }
+                    .padding(.horizontal)
+                #endif
+                
                 Text(stopWatch.timeElapsedFormatted)
                     .font(Font.monospacedDigit(.system(size: 80.0))())
                     .lineLimit(1)
@@ -103,6 +116,7 @@ struct ContentView: View {
                     }
                 }
                 .padding(.horizontal)
+                
                 tasks.isEmpty ? nil : showTaskHistoryListBasedOnDevice()
             }
             // Update tasks count every time tasks is changed
@@ -115,6 +129,9 @@ struct ContentView: View {
                 } else if s == "reports" {
                     ReportsView()
                         .navigationTitle("Time Reports")
+                } else if s == "settings" {
+                    SettingsView()
+                        .navigationTitle("Settings")
                 }
             }
             // Initial task count update when view is loaded
@@ -161,7 +178,7 @@ struct ContentView: View {
             } message: {
                 Text("The task name cannot be empty.")
             }
-#if os(macOS)
+            #if os(macOS)
             // Idle alert
             .alert(isPresented: $stopWatch.showingAlert) {
                 Alert(
@@ -175,7 +192,7 @@ struct ContentView: View {
                     })
                 )
             }
-#endif
+            #endif
             // CSV Export
             .fileExporter(
                 isPresented: $showExportCSV,
@@ -184,7 +201,7 @@ struct ContentView: View {
                 defaultFilename: "Furtherance.csv"
             ) { _ in }
             #if os(macOS)
-            .frame(minWidth: 360, idealWidth: 400, minHeight: 170, idealHeight: 600)
+                .frame(minWidth: 360, idealWidth: 400, minHeight: 170, idealHeight: 600)
             #endif
         }
         .environmentObject(clickedGroup)
@@ -355,7 +372,7 @@ struct ContentView: View {
     }
     
     private func showTaskHistoryListBasedOnDevice() -> some View {
-            #if os(macOS)
+        #if os(macOS)
             return ScrollView {
                 Form {
                     if limitHistory {
@@ -370,7 +387,7 @@ struct ContentView: View {
                 }
                 .padding(.horizontal)
             }
-            #else
+        #else
             return List {
                 if limitHistory {
                     ForEach(0 ..< historyListLimit, id: \.self) { index in
@@ -385,7 +402,7 @@ struct ContentView: View {
                 }
             }
             .scrollContentBackground(.hidden)
-            #endif
+        #endif
     }
 }
 
