@@ -107,13 +107,23 @@ struct ContentView: View {
             }
             #if os(iOS)
             .toolbar {
-                ToolbarItem {
-                    Button {
-                        navPath.append("settings")
+                ToolbarItem(placement: .primaryAction) {
+                    Menu {
+                        Button {
+                            navPath.append("settings")
+                        } label: {
+                            Label("Settings", systemImage: "gearshape")
+                        }
+                        
+                        Button {
+                            navPath.append("reports")
+                        } label: {
+                            Label("Reports", systemImage: "list.bullet.clipboard")
+                        }
+                        
+                        
                     } label: {
                         Image(systemName: "gearshape.fill")
-                            .foregroundColor(.gray)
-                            .imageScale(.large)
                     }
                 }
             }
@@ -122,18 +132,24 @@ struct ContentView: View {
             .onChange(of: tasks.count) { _ in
                 tasksCount = tasks.count
             }
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .navigationDestination(for: String.self) { s in
                 if s == "group" {
                     GroupView()
                 } else if s == "reports" {
                     ReportsView()
                         .navigationTitle("Time Reports")
-                        .navigationBarTitleDisplayMode(.inline)
+#if os(iOS)
+.navigationBarTitleDisplayMode(.inline)
+#endif
                 } else if s == "settings" {
                     SettingsView()
                         .navigationTitle("Settings")
-                        .navigationBarTitleDisplayMode(.inline)
+#if os(iOS)
+.navigationBarTitleDisplayMode(.inline)
+#endif
                 }
             }
             // Initial task count update when view is loaded
