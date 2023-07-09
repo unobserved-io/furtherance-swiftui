@@ -32,6 +32,7 @@ final class StopWatch: ObservableObject {
     var startTime = Date.now
     var completedSecondsElapsed = 0
     var timer = Timer()
+    var pomodoroStop = Date.now
     var idleTimeReached = false
     var idleNotified = false
     var idleStartTime = Date.now
@@ -77,7 +78,7 @@ final class StopWatch: ObservableObject {
                 if notificationType == "idle" {
                     self.scheduleLocalIdleNotification()
                 } else if notificationType == "pomodoro" {
-                    self.scheduleLocalPomodoroNotification()
+                    self.scheduleLocalPomodoroNotification(in: 1)
                 }
             } else if let error = error {
                 print(error.localizedDescription)
@@ -101,7 +102,7 @@ final class StopWatch: ObservableObject {
         UNUserNotificationCenter.current().add(request)
     }
     
-    func scheduleLocalPomodoroNotification() {
+    func scheduleLocalPomodoroNotification(in scheduledFor: Double) {
         /// Set up notifications for Pomodoro timer
         let content = UNMutableNotificationContent()
         content.title = "Time's up!"
@@ -111,33 +112,54 @@ final class StopWatch: ObservableObject {
         content.relevanceScore = 1.0
         content.interruptionLevel = UNNotificationInterruptionLevel.active
         
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: scheduledFor, repeats: false)
 
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
+        print("Notification set")
     }
 
     func start() {
         /// Start the timer
         isRunning = true
         startTime = Date.now
+        var timesAlreadyUp = false
+        if pomodoro {
+            var components = DateComponents()
+            // Without adding one the timer is always one second off
+            components.second = (pomodoroTime * 60) + 1
+            pomodoroStop = Calendar.current.date(byAdding: components, to: startTime) ?? Date.now
+            scheduleLocalPomodoroNotification(in: Double(pomodoroTime * 60))
+        }
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
                 if self.pomodoro {
                     self.secondsElapsedPositive = Calendar.current.dateComponents([.second], from: self.startTime, to: Date.now).second ?? 0
                     self.secondsElapsed = (self.pomodoroTime * 60) - self.secondsElapsedPositive
+#if os(iOS)
+                    if self.secondsElapsed < 0 {
+                        timesAlreadyUp = true
+                    }
+#endif
                 } else {
                     self.secondsElapsed = Calendar.current.dateComponents([.second], from: self.startTime, to: Date.now).second ?? 0
                     self.secondsElapsedPositive = self.secondsElapsed
                 }
-                self.formatTime()
-#if os(macOS)
-                if self.idleDetect {
-                    self.checkUserIdle()
-                }
-#endif
-                if self.secondsElapsed != 0 && self.secondsElapsed % 60 == 0 {
-                    Autosave().write()
+                
+                if !timesAlreadyUp {
+                    self.formatTime()
+    #if os(macOS)
+                    if self.idleDetect {
+                        self.checkUserIdle()
+                    }
+    #endif
+                    if self.secondsElapsed != 0 && self.secondsElapsed % 60 == 0 {
+                        Autosave().write()
+                    }
+                } else {
+                    self.stop()
+                    TaskTagsInput.sharedInstance.text = ""
+                    TimerHelper.sharedInstance.onStop(context: self.persistenceController.container.viewContext, taskStopTime: self.pomodoroStop)
                 }
             }
         }
@@ -207,9 +229,22 @@ final class StopWatch: ObservableObject {
             TaskTagsInput.sharedInstance.text = ""
             TimerHelper.sharedInstance.onStop(context: persistenceController.container.viewContext, taskStopTime: Date.now)
             
+            // TODO: Remove
             // Show notification
-            registerLocal(notificationType: "pomodoro")
+            // This should already be scheduled
+//            registerLocal(notificationType: "pomodoro")
         }
+        // TODO: Add option to stop pomodoro timer at specified time, not based on secs
+//        if pomodoro {
+//            if secondsElapsed == 0 || Date.now == pomodoroStop {
+//                stop()
+//                TaskTagsInput.sharedInstance.text = ""
+//                TimerHelper.sharedInstance.onStop(context: persistenceController.container.viewContext, taskStopTime: Date.now)
+//
+//                // Show notification
+//                registerLocal(notificationType: "pomodoro")
+//            }
+//        }
     }
     
 #if os(macOS)
