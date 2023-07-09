@@ -23,9 +23,27 @@ struct AddTaskView: View {
     var body: some View {
         VStack(spacing: 10) {
             TextField("Task name", text: $titleField)
-                .frame(minWidth: 200)
+#if os(macOS)
+            .frame(minWidth: 200)
+#else
+            .frame(minHeight: 30)
+            .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+            )
+#endif
             TextField("#tags", text: $tagsField)
-                .frame(minWidth: 200)
+#if os(macOS)
+            .frame(minWidth: 200)
+#else
+            .frame(minHeight: 30)
+            .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+            )
+#endif
             DatePicker(
                 selection: $selectedStart,
                 in: getStartRange(),
@@ -51,6 +69,9 @@ struct AddTaskView: View {
                     Text("Cancel")
                 }
                 .keyboardShortcut(.cancelAction)
+#if os(iOS)
+                .buttonStyle(.bordered)
+#endif
                 Button(action: {
                     errorMessage = ""
                     var error = [String]()
@@ -88,6 +109,10 @@ struct AddTaskView: View {
                     Text("Save")
                 }
                 .keyboardShortcut(.defaultAction)
+#if os(iOS)
+.buttonStyle(.borderedProminent)
+.tint(.accentColor)
+#endif
             }
         }
         .padding()

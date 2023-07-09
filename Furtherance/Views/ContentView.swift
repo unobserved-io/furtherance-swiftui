@@ -35,7 +35,7 @@ struct ContentView: View {
     @StateObject var autosave = Autosave()
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
-    @State private var showingSheet = false
+    @State private var showTaskEditSheet = false
     @State private var hashtagAlert = false
     @State private var showingTaskEmptyAlert = false
     let timerHelper = TimerHelper.sharedInstance
@@ -43,6 +43,7 @@ struct ContentView: View {
         let willBecomeActive = NotificationCenter.default.publisher(for: NSApplication.willBecomeActiveNotification)
     #else
         let willBecomeActive = NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
+        @State private var showAddTaskSheet = false
     #endif
     
     init(tasksCount: Binding<Int>, navPath: Binding<[String]>, showExportCSV: Binding<Bool>) {
@@ -121,6 +122,11 @@ struct ContentView: View {
                             Label("Reports", systemImage: "list.bullet.clipboard")
                         }
                         
+                        Button {
+                            showAddTaskSheet.toggle()
+                        } label: {
+                            Label("Add Task", systemImage: "plus")
+                        }
                     } label: {
                         Image(systemName: "gearshape.fill")
                     }
@@ -173,14 +179,20 @@ struct ContentView: View {
                     }
                 }
             }
-            // Task edit sheet
-            .sheet(isPresented: $showingSheet) {
+            .sheet(isPresented: $showTaskEditSheet) {
                 TaskEditView()
                     .environmentObject(clickedTask)
                 #if os(iOS)
                     .presentationDetents([.taskBar])
                 #endif
             }
+            #if os(iOS)
+            .sheet(isPresented: $showAddTaskSheet) {
+                AddTaskView()
+                    .environment(\.managedObjectContext, viewContext)
+                    .presentationDetents([.taskBar])
+            }
+            #endif
             // Autosave alert
             .alert("Autosave Restored", isPresented: $autosave.showAlert) {
                 Button("OK") { autosave.read(viewContext: viewContext) }
@@ -363,7 +375,7 @@ struct ContentView: View {
                             navPath.append("group")
                         } else {
                             clickedTask.task = taskGroup.tasks.first!
-                            showingSheet.toggle()
+                            showTaskEditSheet.toggle()
                         }
                     }
                 #if os(iOS)
