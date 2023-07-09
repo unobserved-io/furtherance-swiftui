@@ -137,24 +137,29 @@ struct ContentView: View {
                         }
                         
                         Section {
-                            Button("Export as CSV") {
+                            Button {
                                 if storeModel.purchasedIds.isEmpty {
                                     showProAlert.toggle()
                                 } else {
                                     showExportCSV.toggle()
                                 }
+                            } label: {
+                                Label("Export as CSV", systemImage: "square.and.arrow.up")
                             }
                             .disabled(tasksCount == 0)
-                            Button("Import CSV") {
+                            Button {
                                 if storeModel.purchasedIds.isEmpty {
                                     showProAlert.toggle()
                                 } else {
                                     showImportCSV.toggle()
                                 }
+                            } label: {
+                                Label("Import CSV", systemImage: "square.and.arrow.down")
                             }
                         }
                     } label: {
-                        Image(systemName: "gearshape.fill")
+                        Image(systemName: "line.3.horizontal")
+                            .foregroundColor(Color.black)
                     }
                 }
             }
