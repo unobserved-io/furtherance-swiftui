@@ -16,6 +16,10 @@ struct AdvancedSettingsView: View {
     @AppStorage("totalInclusive") private var totalInclusive = false
     @AppStorage("limitHistory") private var limitHistory = false
     @AppStorage("historyListLimit") private var historyListLimit = 50
+    #if os(iOS)
+    @State private var showDeleteDialog = false
+    @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
+    #endif
 
     var body: some View {
         Form {
@@ -99,10 +103,31 @@ struct AdvancedSettingsView: View {
                 .cornerRadius(20)
 #endif
             }
+            
+#if os(iOS)
+            Section {
+                Button("Delete entire task history", role: .destructive) {
+                    if showDeleteConfirmation {
+                        showDeleteDialog = true
+                    } else {
+                        deleteAllTasks()
+                    }
+                }
+            }
+            #endif
         }
 #if os(macOS)
         .padding(20)
         .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 400 : 350)
+        #else
+        .confirmationDialog("Delete all data?", isPresented: $showDeleteDialog) {
+            Button("Delete", role: .destructive) {
+                deleteAllTasks()
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will delete all of your saved tasks.")
+        }
 #endif
     }
 }

@@ -17,6 +17,7 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.requestReview) private var requestReview
+    @ObservedObject var storeModel = StoreModel.sharedInstance
     @AppStorage("launchCount") private var launchCount = 0
     @AppStorage("totalInclusive") private var totalInclusive = false
     @AppStorage("limitHistory") private var limitHistory = false
@@ -44,6 +45,9 @@ struct ContentView: View {
     #else
         let willBecomeActive = NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
         @State private var showAddTaskSheet = false
+        @State private var showProAlert = false
+        @State private var showImportCSV = false
+        @State private var showInvalidCSVAlert = false
     #endif
     
     init(tasksCount: Binding<Int>, navPath: Binding<[String]>, showExportCSV: Binding<Bool>) {
@@ -110,36 +114,112 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Menu {
-                        Button {
-                            navPath.append("settings")
-                        } label: {
-                            Label("Settings", systemImage: "gearshape")
+                        Section {
+                            Button {
+                                navPath.append("settings")
+                            } label: {
+                                Label("Settings", systemImage: "gearshape")
+                            }
+                            
+                            Button {
+                                navPath.append("reports")
+                            } label: {
+                                Label("Reports", systemImage: "list.bullet.clipboard")
+                            }
+                            
+                            Button {
+                                showAddTaskSheet.toggle()
+                            } label: {
+                                Label("Add Task", systemImage: "plus")
+                            }
                         }
                         
-                        Button {
-                            navPath.append("reports")
-                        } label: {
-                            Label("Reports", systemImage: "list.bullet.clipboard")
-                        }
-                        
-                        Button {
-                            showAddTaskSheet.toggle()
-                        } label: {
-                            Label("Add Task", systemImage: "plus")
+                        Section {
+                            Button("Export as CSV") {
+                                if storeModel.purchasedIds.isEmpty {
+                                    showProAlert.toggle()
+                                } else {
+                                    showExportCSV.toggle()
+                                }
+                            }
+                            .disabled(tasksCount == 0)
+                            Button("Import CSV") {
+                                if storeModel.purchasedIds.isEmpty {
+                                    showProAlert.toggle()
+                                } else {
+                                    showImportCSV.toggle()
+                                }
+                            }
                         }
                     } label: {
                         Image(systemName: "gearshape.fill")
                     }
                 }
             }
+            .fileImporter(isPresented: $showImportCSV, allowedContentTypes: [UTType.commaSeparatedText]) { result in
+                do {
+                    let fileURL = try result.get()
+                    if fileURL.startAccessingSecurityScopedResource() {
+                        let data = try String(contentsOf: fileURL)
+                        // Split string into rows
+                        var rows = data.components(separatedBy: "\n")
+                        // Remove headers
+                        if rows[0] == "Name,Tags,Start Time,Stop Time,Total Seconds" {
+                            rows.removeFirst()
+
+                            // Split rows into columns
+                            var furTasks = [FurTask]()
+                            for row in rows {
+                                let columns = row.components(separatedBy: ",")
+                                
+                                if columns.count == 5 {
+                                    let task = FurTask(context: viewContext)
+                                    task.id = UUID()
+                                    task.name = columns[0]
+                                    task.tags = columns[1]
+                                    task.startTime = localDateFormatter.date(from: columns[2])
+                                    task.stopTime = localDateFormatter.date(from: columns[3])
+                                    furTasks.append(task)
+                                }
+                            }
+                            try? viewContext.save()
+                        } else {
+                            showInvalidCSVAlert.toggle()
+                        }
+                    }
+                    fileURL.stopAccessingSecurityScopedResource()
+                } catch {
+                    print("Failed to import data: \(error.localizedDescription)")
+                }
+            }
+            .alert("Invalid CSV", isPresented: $showInvalidCSVAlert) {
+                Button("OK") {}
+            } message: {
+                Text("The CSV you chose is not a valid Furtherance CSV.")
+            }
+            .alert("Upgrade to Pro", isPresented: $showProAlert) {
+                Button("Cancel") {}
+                if let product = storeModel.products.first {
+                    Button(action: {
+                        Task {
+                            if storeModel.purchasedIds.isEmpty {
+                                try await storeModel.purchase()
+                            }
+                        }
+                    }) {
+                        Text("Buy Pro \(product.displayPrice)")
+                    }
+                    .keyboardShortcut(.defaultAction)
+                }
+            } message: {
+                Text("That feature is only available in Furtherance Pro.")
+            }
+            .navigationBarTitleDisplayMode(.inline)
             #endif
             // Update tasks count every time tasks is changed
             .onChange(of: tasks.count) { _ in
                 tasksCount = tasks.count
             }
-            #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            #endif
             .navigationDestination(for: String.self) { s in
                 if s == "group" {
                     GroupView()

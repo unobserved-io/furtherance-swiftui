@@ -5,7 +5,8 @@
 //  Created by Ricky Kresslein on 3/12/23.
 //
 
-import Foundation
+import SwiftUI
+import CoreData
 
 let localDateFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -49,5 +50,35 @@ func formatTimeLongWithoutSeconds(_ totalSeconds: Int) -> String {
         return "< 0:01"
     } else {
         return hoursString + ":" + minutesString
+    }
+}
+
+func deleteAllTasks() {
+    do {
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult>
+        fetchRequest = NSFetchRequest(entityName: "FurTask")
+        
+        let deleteRequest = NSBatchDeleteRequest(
+            fetchRequest: fetchRequest
+        )
+        deleteRequest.resultType = .resultTypeObjectIDs
+        
+        let batchDelete = try PersistenceController.shared.container.viewContext.execute(deleteRequest)
+            as? NSBatchDeleteResult
+        
+        guard let deleteResult = batchDelete?.result
+            as? [NSManagedObjectID]
+        else { return }
+        
+        let deletedObjects: [AnyHashable: Any] = [
+            NSDeletedObjectsKey: deleteResult
+        ]
+        
+        NSManagedObjectContext.mergeChanges(
+            fromRemoteContextSave: deletedObjects,
+            into: [PersistenceController.shared.container.viewContext]
+        )
+    } catch {
+        print("Error deleting all tasks: \(error)")
     }
 }
