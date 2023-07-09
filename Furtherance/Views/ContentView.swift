@@ -54,19 +54,19 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $navPath) {
             VStack {
-                #if os(iOS)
-                    HStack {
-                        Spacer()
-                        Button {
-                            navPath.append("settings")
-                        } label: {
-                            Image(systemName: "gearshape.fill")
-                                .foregroundColor(.gray)
-                                .imageScale(.large)
-                        }
-                    }
-                    .padding(.horizontal)
-                #endif
+//                #if os(iOS)
+//                    HStack {
+//                        Spacer()
+//                        Button {
+//                            navPath.append("settings")
+//                        } label: {
+//                            Image(systemName: "gearshape.fill")
+//                                .foregroundColor(.gray)
+//                                .imageScale(.large)
+//                        }
+//                    }
+//                    .padding(.horizontal)
+//                #endif
                 
                 Text(stopWatch.timeElapsedFormatted)
                     .font(Font.monospacedDigit(.system(size: 80.0))())
@@ -119,6 +119,19 @@ struct ContentView: View {
                 
                 tasks.isEmpty ? nil : showTaskHistoryListBasedOnDevice()
             }
+#if os(iOS)
+.toolbar {
+    ToolbarItem {
+        Button {
+            navPath.append("settings")
+        } label: {
+            Image(systemName: "gearshape.fill")
+                .foregroundColor(.gray)
+                .imageScale(.large)
+        }
+    }
+}
+#endif
             // Update tasks count every time tasks is changed
             .onChange(of: tasks.count) { _ in
                 tasksCount = tasks.count
