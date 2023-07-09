@@ -31,10 +31,10 @@ struct AdvancedSettingsView: View {
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
-            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-            .padding()
-            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-            .cornerRadius(20)
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
 
                 HStack {
                     Text("Minutes before user is idle:")
@@ -45,13 +45,13 @@ struct AdvancedSettingsView: View {
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty || !idleDetect)
                 }
-            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-            .padding()
-            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-            .cornerRadius(20)
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
             }
-            #endif
-            
+#endif
+
             Section(header: Text("Task History").bold()) {
                 HStack {
                     storeModel.purchasedIds.isEmpty ? Text("Today's total time ticks up with timer (Pro)") : Text("Today's total time ticks up with timer")
@@ -62,12 +62,14 @@ struct AdvancedSettingsView: View {
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
 #if os(macOS)
-            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-            .padding()
-            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-            .cornerRadius(20)
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+#else
+                .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
 #endif
-                
+
                 HStack {
                     storeModel.purchasedIds.isEmpty ? Text("Limit days shown in task history (Pro)") : Text("Limit days shown in task history")
                     Spacer()
@@ -77,12 +79,14 @@ struct AdvancedSettingsView: View {
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
 #if os(macOS)
-            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-            .padding()
-            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-            .cornerRadius(20)
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+#else
+                .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
 #endif
-                
+
                 HStack {
                     Text("Only show X number of days in task history:")
                     Spacer()
@@ -93,17 +97,19 @@ struct AdvancedSettingsView: View {
                         .disabled(storeModel.purchasedIds.isEmpty || !limitHistory)
                 }
 #if os(macOS)
-            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-            .padding()
-            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-            .cornerRadius(20)
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+#else
+                .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
 #endif
             }
         }
-        #if os(macOS)
+#if os(macOS)
         .padding(20)
         .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 400 : 350)
-        #endif
+#endif
     }
 }
 

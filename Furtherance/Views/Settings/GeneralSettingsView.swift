@@ -40,7 +40,7 @@ struct GeneralSettingsView: View {
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
 #endif
-            
+
             HStack {
                 Text("Show delete confirmation")
                 Spacer()
@@ -53,8 +53,10 @@ struct GeneralSettingsView: View {
             .padding()
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
+#else
+            .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
 #endif
-            
+
             Section(header: Text("Task History").bold()) {
                 HStack {
                     storeModel.purchasedIds.isEmpty ? Text("Show tags (Pro)") : Text("Show tags")
@@ -65,12 +67,14 @@ struct GeneralSettingsView: View {
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
 #if os(macOS)
-            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-            .padding()
-            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-            .cornerRadius(20)
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+#else
+                .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
 #endif
-                
+
                 HStack {
                     storeModel.purchasedIds.isEmpty ? Text("Show seconds (Pro)") : Text("Show seconds")
                     Spacer()
@@ -80,12 +84,14 @@ struct GeneralSettingsView: View {
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
 #if os(macOS)
-            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-            .padding()
-            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-            .cornerRadius(20)
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+#else
+                .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
 #endif
-                
+
                 HStack {
                     storeModel.purchasedIds.isEmpty ? Text("Show daily time sum (Pro)") : Text("Show daily time sum")
                     Spacer()
@@ -95,17 +101,19 @@ struct GeneralSettingsView: View {
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
 #if os(macOS)
-            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-            .padding()
-            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-            .cornerRadius(20)
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+#else
+                .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
 #endif
             }
         }
-        #if os(macOS)
+#if os(macOS)
         .padding(20)
         .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 400 : 350)
-        #endif
+#endif
     }
 }
 

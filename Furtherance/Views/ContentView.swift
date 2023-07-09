@@ -105,19 +105,19 @@ struct ContentView: View {
                 
                 tasks.isEmpty ? nil : showTaskHistoryListBasedOnDevice()
             }
-#if os(iOS)
-.toolbar {
-    ToolbarItem {
-        Button {
-            navPath.append("settings")
-        } label: {
-            Image(systemName: "gearshape.fill")
-                .foregroundColor(.gray)
-                .imageScale(.large)
-        }
-    }
-}
-#endif
+            #if os(iOS)
+            .toolbar {
+                ToolbarItem {
+                    Button {
+                        navPath.append("settings")
+                    } label: {
+                        Image(systemName: "gearshape.fill")
+                            .foregroundColor(.gray)
+                            .imageScale(.large)
+                    }
+                }
+            }
+            #endif
             // Update tasks count every time tasks is changed
             .onChange(of: tasks.count) { _ in
                 tasksCount = tasks.count
@@ -395,12 +395,12 @@ struct ContentView: View {
                     ForEach(0 ..< historyListLimit, id: \.self) { index in
                         showHistoryList(tasks[index])
                     }
-                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.10))
+                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
                 } else {
                     ForEach(tasks) { section in
                         showHistoryList(section)
                     }
-                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.10))
+                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
                 }
             }
             .scrollContentBackground(.hidden)
