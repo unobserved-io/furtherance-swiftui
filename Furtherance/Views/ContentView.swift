@@ -121,7 +121,6 @@ struct ContentView: View {
                             Label("Reports", systemImage: "list.bullet.clipboard")
                         }
                         
-                        
                     } label: {
                         Image(systemName: "gearshape.fill")
                     }
@@ -139,17 +138,20 @@ struct ContentView: View {
                 if s == "group" {
                     GroupView()
                 } else if s == "reports" {
-                    ReportsView()
-                        .navigationTitle("Time Reports")
-#if os(iOS)
-.navigationBarTitleDisplayMode(.inline)
-#endif
+                    #if os(macOS)
+                        ReportsView()
+                            .navigationTitle("Time Reports")
+                    #else
+                        IOSReportsView()
+                            .navigationTitle("Time Reports")
+                            .navigationBarTitleDisplayMode(.inline)
+                    #endif
                 } else if s == "settings" {
                     SettingsView()
                         .navigationTitle("Settings")
-#if os(iOS)
-.navigationBarTitleDisplayMode(.inline)
-#endif
+                    #if os(iOS)
+                        .navigationBarTitleDisplayMode(.inline)
+                    #endif
                 }
             }
             // Initial task count update when view is loaded
