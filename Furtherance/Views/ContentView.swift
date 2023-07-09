@@ -54,20 +54,6 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $navPath) {
             VStack {
-//                #if os(iOS)
-//                    HStack {
-//                        Spacer()
-//                        Button {
-//                            navPath.append("settings")
-//                        } label: {
-//                            Image(systemName: "gearshape.fill")
-//                                .foregroundColor(.gray)
-//                                .imageScale(.large)
-//                        }
-//                    }
-//                    .padding(.horizontal)
-//                #endif
-                
                 Text(stopWatch.timeElapsedFormatted)
                     .font(Font.monospacedDigit(.system(size: 80.0))())
                     .lineLimit(1)
@@ -136,15 +122,18 @@ struct ContentView: View {
             .onChange(of: tasks.count) { _ in
                 tasksCount = tasks.count
             }
+            .navigationBarTitleDisplayMode(.inline)
             .navigationDestination(for: String.self) { s in
                 if s == "group" {
                     GroupView()
                 } else if s == "reports" {
                     ReportsView()
                         .navigationTitle("Time Reports")
+                        .navigationBarTitleDisplayMode(.inline)
                 } else if s == "settings" {
                     SettingsView()
                         .navigationTitle("Settings")
+                        .navigationBarTitleDisplayMode(.inline)
                 }
             }
             // Initial task count update when view is loaded
