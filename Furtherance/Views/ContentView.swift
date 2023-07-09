@@ -395,12 +395,12 @@ struct ContentView: View {
                     ForEach(0 ..< historyListLimit, id: \.self) { index in
                         showHistoryList(tasks[index])
                     }
-                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
+                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
                 } else {
                     ForEach(tasks) { section in
                         showHistoryList(section)
                     }
-                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
+                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
                 }
             }
             .scrollContentBackground(.hidden)
