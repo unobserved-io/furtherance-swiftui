@@ -33,8 +33,6 @@ struct PomodoroSettingsView: View {
             .padding()
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
-#else
-            .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
 #endif
 
             HStack {
@@ -54,8 +52,6 @@ struct PomodoroSettingsView: View {
             .padding()
             .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
             .cornerRadius(20)
-#else
-            .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : Color.white.opacity(0.20))
 #endif
         }
 #if os(macOS)
