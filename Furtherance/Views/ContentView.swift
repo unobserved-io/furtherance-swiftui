@@ -80,12 +80,14 @@ struct ContentView: View {
                     #if os(iOS)
                     .disableAutocorrection(true)
                     .frame(height: 40)
+                    .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
                     .overlay(
                         RoundedRectangle(cornerRadius: 14)
                             .stroke(Color.accentColor, lineWidth: 3)
                     )
-                    #endif
+                    #else
                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                    #endif
                     .disabled(stopWatch.isRunning)
                     .onSubmit {
                         startStopPress()
