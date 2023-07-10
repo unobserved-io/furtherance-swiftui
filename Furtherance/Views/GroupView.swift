@@ -135,7 +135,7 @@ struct GroupView: View {
                 }
             }
             Spacer()
-            #if os(macOS)
+#if os(macOS)
             HStack {
                 Spacer()
                 Button(action: {
@@ -153,59 +153,60 @@ struct GroupView: View {
                     Image(systemName: "trash.fill")
                 }
             }
-            #endif
-        }
-        // TODO: Could use toolbar on Mac as well
-        #if os(iOS)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    groupAddSheet.toggle()
-                }) {
-                    Label("Add Item", systemImage: "plus")
-                }
-                // TODO: The list does not refresh after a task is added
-            }
-            ToolbarItem {
-                Button(action: {
-                    if showDeleteConfirmation {
-                        showDeleteDialog.toggle()
-                    } else {
-                        deleteAllTasksInGroup()
-                    }
-                }) {
-                    Image(systemName: "trash.fill")
-                }
-            }
-        }
-        #endif
-        .sheet(isPresented: $showingSheet, onDismiss: refreshGroup) {
-            TaskEditView().environmentObject(clickedTask)
-#if os(iOS)
-    .presentationDetents([.taskBar])
 #endif
         }
-        .sheet(isPresented: $overallEditSheet, onDismiss: refreshGroup) {
-            GroupEditView()
+// TODO: Could use toolbar on Mac as well
 #if os(iOS)
-    .presentationDetents([.groupNameBar])
-#endif
+.toolbar {
+    ToolbarItem(placement: .navigationBarTrailing) {
+        Button(action: {
+            groupAddSheet.toggle()
+        }) {
+            Label("Add Item", systemImage: "plus")
         }
-        .sheet(isPresented: $groupAddSheet, onDismiss: refreshGroup) {
-            // TODO: This could all be done just with a taskGroup parameter, which is already passed as an EO
-            GroupAddView(taskName: clickedGroup.taskGroup?.name ?? "Unknown", taskTags: clickedGroup.taskGroup?.tags ?? "#tags", selectedStart: clickedGroup.taskGroup?.tasks.first?.stopTime ?? Date.now, selectedStop: Calendar.current.date(byAdding: .hour, value: 1, to: clickedGroup.taskGroup?.tasks.first?.stopTime ?? Date.now) ?? Date.now)
-                .environmentObject(clickedGroup)
-        }
-        .confirmationDialog("Delete all?", isPresented: $showDeleteDialog) {
-            Button("Delete", role: .destructive) {
+    }
+    ToolbarItem {
+        Button(action: {
+            if showDeleteConfirmation {
+                showDeleteDialog.toggle()
+            } else {
                 deleteAllTasksInGroup()
             }
-            Button("Cancel", role: .cancel) {}
-        } message: {
-            Text("This will delete all of the tasks listed here.")
+        }) {
+            Image(systemName: "trash.fill")
         }
-        .padding()
-        .frame(minWidth: 360, idealWidth: 400, idealHeight: 600)
+    }
+}
+#endif
+.sheet(isPresented: $showingSheet, onDismiss: refreshGroup) {
+    TaskEditView().environmentObject(clickedTask)
+#if os(iOS)
+        .presentationDetents([.taskBar])
+#endif
+}
+.sheet(isPresented: $overallEditSheet, onDismiss: refreshGroup) {
+    GroupEditView()
+#if os(iOS)
+        .presentationDetents([.groupNameBar])
+#endif
+}
+.sheet(isPresented: $groupAddSheet, onDismiss: refreshGroup) {
+    GroupAddView(taskName: clickedGroup.taskGroup?.name ?? "Unknown", taskTags: clickedGroup.taskGroup?.tags ?? "#tags", selectedStart: Calendar.current.date(byAdding: .hour, value: -1, to: Date.now) ?? Date.now, selectedStop: Date.now)
+        .environmentObject(clickedGroup)
+#if os(iOS)
+        .presentationDetents([.taskBar])
+#endif
+}
+.confirmationDialog("Delete all?", isPresented: $showDeleteDialog) {
+    Button("Delete", role: .destructive) {
+        deleteAllTasksInGroup()
+    }
+    Button("Cancel", role: .cancel) {}
+} message: {
+    Text("This will delete all of the tasks listed here.")
+}
+.padding()
+.frame(minWidth: 360, idealWidth: 400, idealHeight: 600)
     }
 
     func refreshGroup() {
@@ -219,7 +220,8 @@ struct GroupView: View {
                 } else {
                     if task.name != clickedGroup.taskGroup?.name
                         || task.tags != clickedGroup.taskGroup?.tags
-                        || taskDate != clickedGroup.taskGroup?.date {
+                        || taskDate != clickedGroup.taskGroup?.date
+                    {
                         let index = clickedGroup.taskGroup?.tasks.firstIndex(of: task)
                         clickedGroup.taskGroup?.tasks.remove(at: index!)
                     }

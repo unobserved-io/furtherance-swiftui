@@ -25,10 +25,28 @@ struct GroupAddView: View {
     var body: some View {
         VStack(spacing: 10) {
             TextField(taskName, text: $titleField)
+#if os(macOS)
                 .frame(minWidth: 200)
+#else
+                .frame(minHeight: 30)
+                .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 3)
+                        .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+                )
+#endif
                 .disabled(true)
             TextField(taskTags, text: $tagsField)
+#if os(macOS)
                 .frame(minWidth: 200)
+#else
+                .frame(minHeight: 30)
+                .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 3)
+                        .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+                )
+#endif
                 .disabled(true)
             DatePicker(
                 selection: $selectedStart,
@@ -51,6 +69,9 @@ struct GroupAddView: View {
                     Text("Cancel")
                 }
                 .keyboardShortcut(.cancelAction)
+#if os(iOS)
+                    .buttonStyle(.bordered)
+#endif
                 Button(action: {
                     let task = FurTask(context: viewContext)
                     task.id = UUID()
@@ -66,6 +87,10 @@ struct GroupAddView: View {
                     Text("Save")
                 }
                 .keyboardShortcut(.defaultAction)
+#if os(iOS)
+                    .buttonStyle(.borderedProminent)
+                    .tint(.accentColor)
+#endif
             }
         }
         .padding()
