@@ -82,6 +82,7 @@
 		9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerHelper.swift; sourceTree = "<group>"; };
 		9CAB8E3129C1331C00610E6E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		9CD6B96C2A5C20EC007A65FA /* Empty.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Empty.xcassets; sourceTree = "<group>"; };
+		9CD6B96E2A5C2525007A65FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9CDC03882A5447AE0060EF4E /* Info-macOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-macOS.plist"; sourceTree = "<group>"; };
 		9CDC038A2A5448D20060EF4E /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		9CE227312A3C3DD50008032D /* CSVFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVFile.swift; sourceTree = "<group>"; };
@@ -179,6 +180,7 @@
 		9CA84E0F29A7721200A28FDA /* Furtherance */ = {
 			isa = PBXGroup;
 			children = (
+				9CD6B96E2A5C2525007A65FA /* Info.plist */,
 				9C46A04F2A5446E70092EE90 /* macOS */,
 				9C46A04E2A5446DA0092EE90 /* iOS */,
 				9C3BD94429BE7A1A00637D36 /* Globals */,
@@ -495,6 +497,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Furtherance/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Furtherance;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
@@ -538,6 +541,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Furtherance/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Furtherance;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
