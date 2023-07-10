@@ -129,7 +129,6 @@ final class StopWatch: ObservableObject {
             // Without adding one the timer is always one second off
             components.second = (pomodoroTime * 60) + 1
             pomodoroStop = Calendar.current.date(byAdding: components, to: startTime) ?? Date.now
-//            scheduleLocalPomodoroNotification(in: Double(pomodoroTime * 60))
             registerLocal(notificationType: "pomodoro")
         }
         DispatchQueue.main.async {
@@ -149,11 +148,11 @@ final class StopWatch: ObservableObject {
                 
                 if !timesAlreadyUp {
                     self.formatTime()
-    #if os(macOS)
+#if os(macOS)
                     if self.idleDetect {
                         self.checkUserIdle()
                     }
-    #endif
+#endif
                     if self.secondsElapsed != 0 && self.secondsElapsed % 60 == 0 {
                         Autosave().write()
                     }
@@ -229,23 +228,7 @@ final class StopWatch: ObservableObject {
             stop()
             TaskTagsInput.sharedInstance.text = ""
             TimerHelper.sharedInstance.onStop(context: persistenceController.container.viewContext, taskStopTime: Date.now)
-            
-            // TODO: Remove
-            // Show notification
-            // This should already be scheduled
-//            registerLocal(notificationType: "pomodoro")
         }
-        // TODO: Add option to stop pomodoro timer at specified time, not based on secs
-//        if pomodoro {
-//            if secondsElapsed == 0 || Date.now == pomodoroStop {
-//                stop()
-//                TaskTagsInput.sharedInstance.text = ""
-//                TimerHelper.sharedInstance.onStop(context: persistenceController.container.viewContext, taskStopTime: Date.now)
-//
-//                // Show notification
-//                registerLocal(notificationType: "pomodoro")
-//            }
-//        }
     }
     
 #if os(macOS)
@@ -264,11 +247,11 @@ final class StopWatch: ObservableObject {
         let idleTimeSecs = getIdleTime()
         
         // Find out if user is idle or back from being idle
-        if idleTimeSecs < selectedIdle && idleTimeReached && !idleNotified {
+        if idleTimeSecs < selectedIdle, idleTimeReached, !idleNotified {
             // User is back - show idle message
             idleNotified = true
             resumeFromIdle()
-        } else if idleTimeSecs >= selectedIdle && !idleTimeReached {
+        } else if idleTimeSecs >= selectedIdle, !idleTimeReached {
             // User is idle
             idleTimeReached = true
             idleStartTime = Date.now.addingTimeInterval(Double(-selectedIdle))

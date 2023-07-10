@@ -89,12 +89,12 @@ struct TaskEditView: View {
 #if os(macOS)
                 .frame(minWidth: 200)
 #else
-            .frame(minHeight: 30)
-            .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
-            .overlay(
-                RoundedRectangle(cornerRadius: 3)
-                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
-            )
+                .frame(minHeight: 30)
+                .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 3)
+                        .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+                )
 #endif
             DatePicker(
                 selection: $selectedStart,
@@ -122,7 +122,7 @@ struct TaskEditView: View {
                 }
                 .keyboardShortcut(.cancelAction)
 #if os(iOS)
-                .buttonStyle(.bordered)
+                    .buttonStyle(.bordered)
 #endif
                 Button(action: {
                     let newTask: FurTask = clickedTask.task!
@@ -179,10 +179,10 @@ struct TaskEditView: View {
                     Text("Save")
                 }
                 .keyboardShortcut(.defaultAction)
-                #if os(iOS)
-                .buttonStyle(.borderedProminent)
-                .tint(.accentColor)
-                #endif
+#if os(iOS)
+                    .buttonStyle(.borderedProminent)
+                    .tint(.accentColor)
+#endif
             }
         }
         .confirmationDialog("Delete task?", isPresented: $showDeleteDialog) {
