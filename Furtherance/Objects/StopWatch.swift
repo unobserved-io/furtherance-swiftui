@@ -73,12 +73,12 @@ final class StopWatch: ObservableObject {
     func registerLocal(notificationType: String) {
         /// Register notification handler
         let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge, .provisional]) { granted, error in
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             if granted {
                 if notificationType == "idle" {
                     self.scheduleLocalIdleNotification()
                 } else if notificationType == "pomodoro" {
-                    self.scheduleLocalPomodoroNotification(in: 1)
+                    self.scheduleLocalPomodoroNotification(in: Double(self.pomodoroTime * 60))
                 }
             } else if let error = error {
                 print(error.localizedDescription)
@@ -129,7 +129,8 @@ final class StopWatch: ObservableObject {
             // Without adding one the timer is always one second off
             components.second = (pomodoroTime * 60) + 1
             pomodoroStop = Calendar.current.date(byAdding: components, to: startTime) ?? Date.now
-            scheduleLocalPomodoroNotification(in: Double(pomodoroTime * 60))
+//            scheduleLocalPomodoroNotification(in: Double(pomodoroTime * 60))
+            registerLocal(notificationType: "pomodoro")
         }
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
