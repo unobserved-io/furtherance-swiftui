@@ -214,18 +214,18 @@ struct GroupView: View {
             for task in clickedGroup.taskGroup!.tasks {
                 let taskDate = localDateFormatter.string(from: task.startTime ?? Date.now)
                 if task.id == nil {
-                    let index = clickedGroup.taskGroup!.tasks.firstIndex(of: task)
-                    clickedGroup.taskGroup!.tasks.remove(at: index!)
+                    let index = clickedGroup.taskGroup?.tasks.firstIndex(of: task)
+                    clickedGroup.taskGroup?.tasks.remove(at: index!)
                 } else {
-                    if task.name != clickedGroup.taskGroup!.name
-                        || task.tags != clickedGroup.taskGroup!.tags
+                    if task.name != clickedGroup.taskGroup?.name
+                        || task.tags != clickedGroup.taskGroup?.tags
                         || taskDate != clickedGroup.taskGroup?.date {
-                        let index = clickedGroup.taskGroup!.tasks.firstIndex(of: task)
-                        clickedGroup.taskGroup!.tasks.remove(at: index!)
+                        let index = clickedGroup.taskGroup?.tasks.firstIndex(of: task)
+                        clickedGroup.taskGroup?.tasks.remove(at: index!)
                     }
                 }
             }
-            if clickedGroup.taskGroup!.tasks.count <= 1 {
+            if clickedGroup.taskGroup?.tasks.count ?? 0 <= 1 {
                 presentationMode.wrappedValue.dismiss()
             }
         }
