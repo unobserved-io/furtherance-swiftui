@@ -21,9 +21,6 @@ class Autosave: ObservableObject {
         let text = "\(timerHelper.taskName)$FUR$\(convertedStart)$FUR$\(convertedStop)$FUR$\(timerHelper.taskTags)"
         
         do {
-//            if !FileManager.default.fileExists(atPath: folder.path) {
-//                try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true, attributes: nil)
-//            }
             try text.write(to: autosaveUrl, atomically: false, encoding: .utf8)
         }
         catch {
