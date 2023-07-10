@@ -98,8 +98,8 @@ struct FurtheranceApp: App {
                                         task.id = UUID()
                                         task.name = columns[0]
                                         task.tags = columns[1]
-                                        task.startTime = localDateFormatter.date(from: columns[2])
-                                        task.stopTime = localDateFormatter.date(from: columns[3])
+                                        task.startTime = localDateTimeFormatter.date(from: columns[2])
+                                        task.stopTime = localDateTimeFormatter.date(from: columns[3])
                                         furTasks.append(task)
                                     }
                                 }

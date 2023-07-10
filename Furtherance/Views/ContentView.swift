@@ -184,8 +184,8 @@ struct ContentView: View {
                                     task.id = UUID()
                                     task.name = columns[0]
                                     task.tags = columns[1]
-                                    task.startTime = localDateFormatter.date(from: columns[2])
-                                    task.stopTime = localDateFormatter.date(from: columns[3])
+                                    task.startTime = localDateTimeFormatter.date(from: columns[2])
+                                    task.stopTime = localDateTimeFormatter.date(from: columns[3])
                                     furTasks.append(task)
                                 }
                             }
@@ -445,8 +445,8 @@ struct ContentView: View {
     
     private func furTaskToString(_ task: FurTask) -> String {
         let totalSeconds = task.stopTime?.timeIntervalSince(task.startTime ?? Date.now)
-        let startString = localDateFormatter.string(from: task.startTime ?? Date.now)
-        let stopString = localDateFormatter.string(from: task.stopTime ?? Date.now)
+        let startString = localDateTimeFormatter.string(from: task.startTime ?? Date.now)
+        let stopString = localDateTimeFormatter.string(from: task.stopTime ?? Date.now)
         return "\(task.name ?? "Unknown"),\(task.tags ?? ""),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
     }
     

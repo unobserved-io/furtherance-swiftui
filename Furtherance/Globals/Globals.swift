@@ -8,9 +8,15 @@
 import SwiftUI
 import CoreData
 
-let localDateFormatter: DateFormatter = {
+let localDateTimeFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+    return formatter
+}()
+
+let localDateFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd"
     return formatter
 }()
 

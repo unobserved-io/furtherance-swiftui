@@ -12,11 +12,13 @@ class FurTaskGroup: Identifiable, ObservableObject {
     var name: String
     var tags: String
     var tasks: [FurTask] = []
+    var date: String
     var totalTime: Int
 
     init(task: FurTask) {
         name = task.name!
         tags = task.tags!
+        date = localDateFormatter.string(from: task.startTime ?? Date.now)
         tasks.append(task)
         totalTime = Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0
     }
