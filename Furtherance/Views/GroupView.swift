@@ -15,7 +15,7 @@ struct GroupView: View {
     @AppStorage("showSeconds") private var showSeconds = true
     @StateObject var clickedTask = ClickedTask(task: nil)
     @State private var clickedID = UUID()
-    @State private var showingSheet = false
+    @State private var showTaskEditSheet = false
     @State private var overallEditSheet = false
     @State private var groupAddSheet = false
     @State private var showDeleteDialog = false
@@ -119,8 +119,8 @@ struct GroupView: View {
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 clickedTask.task = task
-                                clickedID = clickedTask.task?.id ?? UUID() // TODO: Can this be removed?
-                                showingSheet.toggle()
+                                clickedID = clickedTask.task?.id ?? UUID()
+                                showTaskEditSheet.toggle()
                             }
 #if os(macOS)
                             .onHover { inside in
@@ -134,15 +134,16 @@ struct GroupView: View {
                     }
                 }
             }
-            Spacer()
-#if os(macOS)
-            HStack {
-                Spacer()
+        }
+        .toolbar {
+            ToolbarItem {
                 Button(action: {
                     groupAddSheet.toggle()
                 }) {
-                    Image(systemName: "plus")
+                    Label("Add Item", systemImage: "plus")
                 }
+            }
+            ToolbarItem {
                 Button(action: {
                     if showDeleteConfirmation {
                         showDeleteDialog.toggle()
@@ -153,60 +154,36 @@ struct GroupView: View {
                     Image(systemName: "trash.fill")
                 }
             }
+        }
+        .sheet(isPresented: $showTaskEditSheet, onDismiss: refreshGroup) {
+            TaskEditView().environmentObject(clickedTask)
+#if os(iOS)
+                .presentationDetents([.taskBar])
 #endif
         }
-// TODO: Could use toolbar on Mac as well
+        .sheet(isPresented: $overallEditSheet, onDismiss: refreshGroup) {
+            GroupEditView()
 #if os(iOS)
-.toolbar {
-    ToolbarItem(placement: .navigationBarTrailing) {
-        Button(action: {
-            groupAddSheet.toggle()
-        }) {
-            Label("Add Item", systemImage: "plus")
+                .presentationDetents([.groupNameBar])
+#endif
         }
-    }
-    ToolbarItem {
-        Button(action: {
-            if showDeleteConfirmation {
-                showDeleteDialog.toggle()
-            } else {
+        .sheet(isPresented: $groupAddSheet, onDismiss: refreshGroup) {
+            GroupAddView(taskName: clickedGroup.taskGroup?.name ?? "Unknown", taskTags: clickedGroup.taskGroup?.tags ?? "#tags", selectedStart: Calendar.current.date(byAdding: .hour, value: -1, to: Date.now) ?? Date.now, selectedStop: Date.now)
+                .environmentObject(clickedGroup)
+#if os(iOS)
+                .presentationDetents([.taskBar])
+#endif
+        }
+        .confirmationDialog("Delete all?", isPresented: $showDeleteDialog) {
+            Button("Delete", role: .destructive) {
                 deleteAllTasksInGroup()
             }
-        }) {
-            Image(systemName: "trash.fill")
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will delete all of the tasks listed here.")
         }
-    }
-}
-#endif
-.sheet(isPresented: $showingSheet, onDismiss: refreshGroup) {
-    TaskEditView().environmentObject(clickedTask)
-#if os(iOS)
-        .presentationDetents([.taskBar])
-#endif
-}
-.sheet(isPresented: $overallEditSheet, onDismiss: refreshGroup) {
-    GroupEditView()
-#if os(iOS)
-        .presentationDetents([.groupNameBar])
-#endif
-}
-.sheet(isPresented: $groupAddSheet, onDismiss: refreshGroup) {
-    GroupAddView(taskName: clickedGroup.taskGroup?.name ?? "Unknown", taskTags: clickedGroup.taskGroup?.tags ?? "#tags", selectedStart: Calendar.current.date(byAdding: .hour, value: -1, to: Date.now) ?? Date.now, selectedStop: Date.now)
-        .environmentObject(clickedGroup)
-#if os(iOS)
-        .presentationDetents([.taskBar])
-#endif
-}
-.confirmationDialog("Delete all?", isPresented: $showDeleteDialog) {
-    Button("Delete", role: .destructive) {
-        deleteAllTasksInGroup()
-    }
-    Button("Cancel", role: .cancel) {}
-} message: {
-    Text("This will delete all of the tasks listed here.")
-}
-.padding()
-.frame(minWidth: 360, idealWidth: 400, idealHeight: 600)
+        .padding()
+        .frame(minWidth: 360, idealWidth: 400, idealHeight: 600)
     }
 
     func refreshGroup() {
