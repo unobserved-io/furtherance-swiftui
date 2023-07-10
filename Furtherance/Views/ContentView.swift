@@ -124,7 +124,11 @@ struct ContentView: View {
                             }
                             
                             Button {
-                                navPath.append("reports")
+                                if storeModel.purchasedIds.isEmpty {
+                                    showProAlert.toggle()
+                                } else {
+                                    navPath.append("reports")
+                                }
                             } label: {
                                 Label("Reports", systemImage: "list.bullet.clipboard")
                             }
