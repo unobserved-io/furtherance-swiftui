@@ -38,6 +38,7 @@
 		9CA84E3429A7A4F500A28FDA /* FurTaskGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */; };
 		9CA84E3629A7AE0600A28FDA /* TimerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */; };
 		9CAB8E3229C1331C00610E6E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CAB8E3129C1331C00610E6E /* StoreKit.framework */; };
+		9CD6B96D2A5C20EC007A65FA /* Empty.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CD6B96C2A5C20EC007A65FA /* Empty.xcassets */; };
 		9CDC03892A5447AE0060EF4E /* Info-macOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9CDC03882A5447AE0060EF4E /* Info-macOS.plist */; platformFilters = (macos, ); };
 		9CDC038B2A5448D20060EF4E /* Info-iOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9CDC038A2A5448D20060EF4E /* Info-iOS.plist */; platformFilter = ios; };
 		9CE227322A3C3DD50008032D /* CSVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE227312A3C3DD50008032D /* CSVFile.swift */; };
@@ -80,6 +81,7 @@
 		9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurTaskGroup.swift; sourceTree = "<group>"; };
 		9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerHelper.swift; sourceTree = "<group>"; };
 		9CAB8E3129C1331C00610E6E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		9CD6B96C2A5C20EC007A65FA /* Empty.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Empty.xcassets; sourceTree = "<group>"; };
 		9CDC03882A5447AE0060EF4E /* Info-macOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-macOS.plist"; sourceTree = "<group>"; };
 		9CDC038A2A5448D20060EF4E /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		9CE227312A3C3DD50008032D /* CSVFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVFile.swift; sourceTree = "<group>"; };
@@ -130,6 +132,7 @@
 		9C46A04E2A5446DA0092EE90 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
+				9CD6B96C2A5C20EC007A65FA /* Empty.xcassets */,
 				9C108A432A5ADF3A00BD60D3 /* Views */,
 				9C9DB0642A54405A00E0DC2B /* Assets-iOS.xcassets */,
 				9CDC038A2A5448D20060EF4E /* Info-iOS.plist */,
@@ -310,6 +313,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9CDC038B2A5448D20060EF4E /* Info-iOS.plist in Resources */,
+				9CD6B96D2A5C20EC007A65FA /* Empty.xcassets in Resources */,
 				9C9DB0652A54405A00E0DC2B /* Assets-iOS.xcassets in Resources */,
 				9C9DB0622A543F0600E0DC2B /* Assets-macOS.xcassets in Resources */,
 				9CDC03892A5447AE0060EF4E /* Info-macOS.plist in Resources */,
@@ -484,7 +488,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Furtherance/Preview Content\"";
 				DEVELOPMENT_TEAM = Z5MKQX2NCZ;
@@ -504,7 +508,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lakoliu.furtherance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -527,7 +531,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_ASSET_PATHS = "\"Furtherance/Preview Content\"";
 				DEVELOPMENT_TEAM = Z5MKQX2NCZ;
@@ -547,7 +551,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 1.1.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.lakoliu.furtherance;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
