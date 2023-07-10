@@ -80,9 +80,9 @@ struct ContentView: View {
                     #if os(iOS)
                     .disableAutocorrection(true)
                     .frame(height: 40)
-                    .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+                    .padding(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 14)
+                        RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.accentColor, lineWidth: 3)
                     )
                     #else
