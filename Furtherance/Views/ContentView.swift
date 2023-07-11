@@ -163,7 +163,7 @@ struct ContentView: View {
                         }
                     } label: {
                         Image(systemName: "line.3.horizontal")
-                            .foregroundColor(Color.black)
+                            .foregroundColor(Color.primary)
                     }
                 }
             }
