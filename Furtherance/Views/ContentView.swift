@@ -17,6 +17,8 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.requestReview) private var requestReview
+    @Environment(StopWatchHelper.self) private var stopWatchHelper
+    
     @ObservedObject var storeModel = StoreModel.sharedInstance
     @AppStorage("launchCount") private var launchCount = 0
     @AppStorage("totalInclusive") private var totalInclusive = false
@@ -24,6 +26,7 @@ struct ContentView: View {
     @AppStorage("historyListLimit") private var historyListLimit = 50
     @AppStorage("showDailySum") private var showDailySum = true
     @AppStorage("showSeconds") private var showSeconds = true
+
     @SectionedFetchRequest(
         sectionIdentifier: \.startDateRelative,
         sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
@@ -31,7 +34,6 @@ struct ContentView: View {
     )
     var tasks: SectionedFetchResults<String, FurTask>
     
-    @ObservedObject var stopWatch = StopWatch.sharedInstance
     @StateObject var taskTagsInput = TaskTagsInput.sharedInstance
     @StateObject var autosave = Autosave()
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
@@ -39,10 +41,12 @@ struct ContentView: View {
     @State private var showTaskEditSheet = false
     @State private var hashtagAlert = false
     @State private var showingTaskEmptyAlert = false
+    
     let timerHelper = TimerHelper.sharedInstance
+
     #if os(macOS)
         let willBecomeActive = NotificationCenter.default.publisher(for: NSApplication.willBecomeActiveNotification)
-    #else
+    #elseif os(iOS)
         let willBecomeActive = NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)
         @State private var showAddTaskSheet = false
         @State private var showProAlert = false
@@ -59,13 +63,10 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $navPath) {
             VStack {
-                Text(stopWatch.timeElapsedFormatted)
-                    .font(Font.monospacedDigit(.system(size: 80.0))())
-                    .lineLimit(1)
-                    .lineSpacing(0)
-                    .allowsTightening(false)
-                    .frame(maxHeight: 90)
-                    .padding(.horizontal)
+                // This is in its own view for performance
+                // Updating the Pomodoro time is far faster this way
+                TimeDisplayView()
+                    
                 HStack {
                     TextField("Task Name #tag #another tag", text: Binding(
                         get: { taskTagsInput.text },
@@ -88,7 +89,8 @@ struct ContentView: View {
                     #else
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     #endif
-                    .disabled(stopWatch.isRunning)
+                    // TODO: User should be able to change task before it's done
+                    .disabled(stopWatchHelper.isRunning)
                     .onSubmit {
                         startStopPress()
                     }
@@ -99,7 +101,7 @@ struct ContentView: View {
                             startStopPress()
                         }
                     } label: {
-                        Image(systemName: stopWatch.isRunning ? "stop.fill" : "play.fill")
+                        Image(systemName: stopWatchHelper.isRunning ? "stop.fill" : "play.fill")
                         #if os(iOS)
                             .padding()
                             .background(Color.accentColor)
@@ -228,7 +230,7 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
             #endif
             // Update tasks count every time tasks is changed
-            .onChange(of: tasks.count) { _ in
+            .onChange(of: tasks.count) {
                 tasksCount = tasks.count
             }
             .navigationDestination(for: String.self) { s in
@@ -303,15 +305,15 @@ struct ContentView: View {
             }
             #if os(macOS)
             // Idle alert
-            .alert(isPresented: $stopWatch.showingAlert) {
+            .alert(isPresented: stopWatchHelper.showingIdleAlertBinding) {
                 Alert(
-                    title: Text("You have been idle for \(stopWatch.howLongIdle)"),
+                    title: Text("You have been idle for \(stopWatchHelper.idleLength)"),
                     message: Text("Would you like to discard that time, or continue the clock?"),
                     primaryButton: .default(Text("Discard"), action: {
-                        stopTimer(stopTime: stopWatch.idleStartTime)
+                        stopTimer(stopTime: stopWatchHelper.idleStartTime)
                     }),
                     secondaryButton: .cancel(Text("Continue"), action: {
-                        stopWatch.resetIdle()
+                        stopWatchHelper.resetIdle()
                     })
                 )
             }
@@ -331,7 +333,7 @@ struct ContentView: View {
     }
         
     private func startStopPress() {
-        if stopWatch.isRunning {
+        if stopWatchHelper.isRunning {
             stopTimer(stopTime: Date.now)
         } else {
             startTimer()
@@ -340,7 +342,7 @@ struct ContentView: View {
     
     private func startTimer() {
         if taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "#" {
-            stopWatch.start()
+            stopWatchHelper.start()
             timerHelper.onStart(nameAndTags: taskTagsInput.text)
         } else {
             hashtagAlert.toggle()
@@ -348,8 +350,8 @@ struct ContentView: View {
     }
     
     private func stopTimer(stopTime: Date) {
-        stopWatch.stop()
-        timerHelper.onStop(context: viewContext, taskStopTime: stopTime)
+        stopWatchHelper.stop()
+        timerHelper.onStop(taskStopTime: stopTime)
         taskTagsInput.text = ""
         
         // Refresh the viewContext if the timer goes past midnight
@@ -366,9 +368,17 @@ struct ContentView: View {
             Spacer()
             if showDailySum {
                 if taskSection.id == "today", totalInclusive {
-                    Text(totalSectionTimeIncludingTimer(taskSection, secsElapsed: stopWatch.secondsElapsedPositive))
+                    if stopWatchHelper.isRunning {
+                        let adjustedStartTime = Calendar.current.date(byAdding: .second, value: -totalSectionTime(taskSection), to: stopWatchHelper.startTime)
+                        Text(
+                            timerInterval: (adjustedStartTime ?? .now) ... stopWatchHelper.stopTime,
+                            countsDown: false
+                        )
+                    } else {
+                        Text(totalSectionTimeFormatted(taskSection))
+                    }
                 } else {
-                    Text(totalSectionTime(taskSection))
+                    Text(totalSectionTimeFormatted(taskSection))
                 }
             }
         }
@@ -376,24 +386,16 @@ struct ContentView: View {
         .padding(.top).padding(.bottom)
     }
     
-    private func totalSectionTime(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> String {
+    private func totalSectionTime(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> Int {
         var totalTime = 0
         for task in taskSection {
             totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
         }
-        if showSeconds {
-            return formatTimeShort(totalTime)
-        } else {
-            return formatTimeLongWithoutSeconds(totalTime)
-        }
+        return totalTime
     }
-
-    private func totalSectionTimeIncludingTimer(_ taskSection: SectionedFetchResults<String, FurTask>.Element, secsElapsed: Int) -> String {
-        var totalTime = 0
-        for task in taskSection {
-            totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
-        }
-        totalTime += secsElapsed
+    
+    private func totalSectionTimeFormatted(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> String {
+        let totalTime: Int = totalSectionTime(taskSection)
         if showSeconds {
             return formatTimeShort(totalTime)
         } else {
@@ -480,16 +482,16 @@ struct ContentView: View {
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         Button("Repeat") {
-                            if !StopWatch.sharedInstance.isRunning {
+                            if !stopWatchHelper.isRunning {
                                 let taskTagsInput = TaskTagsInput.sharedInstance
                                 taskTagsInput.text = taskGroup.name + " " + taskGroup.tags
-                                StopWatch.sharedInstance.start()
+                                stopWatchHelper.start()
                                 TimerHelper.sharedInstance.onStart(nameAndTags: taskTagsInput.text)
                             }
                         }
                     }
                 #endif
-                    .disabled(stopWatch.isRunning)
+                    .disabled(stopWatchHelper.isRunning)
             }
         }
     }

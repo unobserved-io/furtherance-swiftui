@@ -10,6 +10,8 @@ import SwiftUI
 struct TaskRow: View {
     var taskGroup: FurTaskGroup
     @Environment(\.colorScheme) var colorScheme
+    @Environment(StopWatchHelper.self) private var stopWatchHelper
+    
     @AppStorage("showTags") private var showTags = true
     @AppStorage("showSeconds") private var showSeconds = true
 
@@ -45,10 +47,10 @@ struct TaskRow: View {
             Image(systemName: "arrow.counterclockwise.circle")
                 .contentShape(Circle())
                 .onTapGesture {
-                    if !StopWatch.sharedInstance.isRunning {
+                    if !stopWatchHelper.isRunning {
                         let taskTagsInput = TaskTagsInput.sharedInstance
                         taskTagsInput.text = taskGroup.name + " " + taskGroup.tags
-                        StopWatch.sharedInstance.start()
+                        stopWatchHelper.start()
                         TimerHelper.sharedInstance.onStart(nameAndTags: taskTagsInput.text)
                     }
                 }

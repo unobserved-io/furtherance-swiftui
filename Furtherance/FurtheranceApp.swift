@@ -5,20 +5,22 @@
 //  Created by Ricky Kresslein on 2/23/23.
 //
 
-import SwiftUI
 import CoreData
+import SwiftUI
 import UniformTypeIdentifiers
 
 @main
 struct FurtheranceApp: App {
     let persistenceController = PersistenceController.shared
-    
+
     #if os(macOS)
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     #endif
     @AppStorage("launchCount") private var launchCount = 0
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
     @ObservedObject var storeModel = StoreModel.sharedInstance
+
+    @State private var stopWatchHelper = StopWatchHelper()
     @State private var showDeleteDialog = false
     @State private var showProAlert = false
     @State private var dialogTitle = ""
@@ -30,7 +32,7 @@ struct FurtheranceApp: App {
     @State(initialValue: 0) var tasksCount: Int
     @State(initialValue: []) var navPath: [String]
     @State(initialValue: false) var showExportCSV: Bool
-    
+
     init() {
         launchCount += 1
     }
@@ -39,6 +41,7 @@ struct FurtheranceApp: App {
         WindowGroup {
             ContentView(tasksCount: $tasksCount, navPath: $navPath, showExportCSV: $showExportCSV)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                .environment(stopWatchHelper)
                 .onAppear {
                     #if os(macOS)
                     NSWindow.allowsAutomaticWindowTabbing = false
@@ -92,7 +95,7 @@ struct FurtheranceApp: App {
                                 var furTasks = [FurTask]()
                                 for row in rows {
                                     let columns = row.components(separatedBy: ",")
-                                    
+
                                     if columns.count == 5 {
                                         let task = FurTask(context: persistenceController.container.viewContext)
                                         task.id = UUID()
@@ -174,12 +177,12 @@ struct FurtheranceApp: App {
         #if os(macOS)
         .defaultSize(width: 360, height: 600)
         #endif
-        
-#if os(macOS)
+
+        #if os(macOS)
         Settings {
             SettingsView()
         }
         .defaultSize(width: 400, height: 450)
-#endif
+        #endif
     }
 }

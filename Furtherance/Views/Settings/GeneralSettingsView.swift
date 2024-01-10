@@ -30,7 +30,7 @@ struct GeneralSettingsView: View {
                     .labelsHidden()
                     .disabled(storeModel.purchasedIds.isEmpty)
             }
-            .onChange(of: showIconBadge) { newVal in
+            .onChange(of: showIconBadge) { _, newVal in
                 if !newVal {
                     NSApp.dockTile.badgeLabel = nil
                 }

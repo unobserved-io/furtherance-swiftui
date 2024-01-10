@@ -5,12 +5,13 @@
 //  Created by Ricky Kresslein on 2/23/23.
 //
 
+import CoreData
 import Foundation
 import SwiftUI
-import CoreData
 
 final class TimerHelper {
     static let sharedInstance = TimerHelper()
+    let persistenceController = PersistenceController.shared
     
     var startTime: Date = .now
     var stopTime: Date = .now
@@ -32,16 +33,16 @@ final class TimerHelper {
         separateTags()
     }
     
-    func onStop(context: NSManagedObjectContext, taskStopTime: Date) {
+    func onStop(taskStopTime: Date) {
         setStopTime(stop: taskStopTime)
         
-        let task = FurTask(context: context)
+        let task = FurTask(context: persistenceController.container.viewContext)
         task.id = UUID()
         task.name = taskName
         task.startTime = startTime
         task.stopTime = stopTime
         task.tags = taskTags
-        try? context.save()
+        try? persistenceController.container.viewContext.save()
     }
     
     func separateTags() {
