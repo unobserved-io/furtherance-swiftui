@@ -22,6 +22,7 @@
 		9C4683EF2A503059006D1B7A /* BuyProView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4683EE2A503059006D1B7A /* BuyProView.swift */; };
 		9C4F069E29A9282D009D1AFE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4F069D29A9282D009D1AFE /* SettingsView.swift */; };
 		9C4F06A229A928E8009D1AFE /* StoreModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C4F06A129A928E8009D1AFE /* StoreModel.swift */; };
+		9C74DED02B5D804400322F21 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C74DECF2B5D804400322F21 /* CloudKit.framework */; };
 		9C75182F2A35FEEF005100B6 /* GroupAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C75182E2A35FEEF005100B6 /* GroupAddView.swift */; };
 		9C98E11129A8BFF70064F63F /* ClickedTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11029A8BFF70064F63F /* ClickedTask.swift */; };
 		9C98E11329A8C0790064F63F /* TaskEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11229A8C0790064F63F /* TaskEditView.swift */; };
@@ -64,6 +65,7 @@
 		9C4F069D29A9282D009D1AFE /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		9C4F06A029A928A1009D1AFE /* Furtherance.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Furtherance.storekit; sourceTree = "<group>"; };
 		9C4F06A129A928E8009D1AFE /* StoreModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreModel.swift; sourceTree = "<group>"; };
+		9C74DECF2B5D804400322F21 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.2.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		9C75182E2A35FEEF005100B6 /* GroupAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupAddView.swift; sourceTree = "<group>"; };
 		9C98E11029A8BFF70064F63F /* ClickedTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickedTask.swift; sourceTree = "<group>"; };
 		9C98E11229A8C0790064F63F /* TaskEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditView.swift; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9CAB8E3229C1331C00610E6E /* StoreKit.framework in Frameworks */,
+				9C74DED02B5D804400322F21 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -253,6 +256,7 @@
 		9CAB8E3029C1331C00610E6E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				9C74DECF2B5D804400322F21 /* CloudKit.framework */,
 				9CAB8E3129C1331C00610E6E /* StoreKit.framework */,
 			);
 			name = Frameworks;
