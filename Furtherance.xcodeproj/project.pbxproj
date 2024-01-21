@@ -41,8 +41,6 @@
 		9CA84E3629A7AE0600A28FDA /* TimerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */; };
 		9CAB8E3229C1331C00610E6E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CAB8E3129C1331C00610E6E /* StoreKit.framework */; };
 		9CDA71822B4E694A00758CE2 /* TimeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDA71812B4E694A00758CE2 /* TimeDisplayView.swift */; };
-		9CDC03892A5447AE0060EF4E /* Info-macOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9CDC03882A5447AE0060EF4E /* Info-macOS.plist */; platformFilters = (macos, ); };
-		9CDC038B2A5448D20060EF4E /* Info-iOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9CDC038A2A5448D20060EF4E /* Info-iOS.plist */; platformFilter = ios; };
 		9CE227322A3C3DD50008032D /* CSVFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE227312A3C3DD50008032D /* CSVFile.swift */; };
 		9CE733E12A45C40800BF8165 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE733E02A45C40800BF8165 /* AppDelegate.swift */; platformFilters = (macos, ); };
 		9CFD857B2B4CA63500A8C5D8 /* DockTileContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFD857A2B4CA63500A8C5D8 /* DockTileContents.swift */; };
@@ -87,8 +85,6 @@
 		9CAB8E3129C1331C00610E6E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		9CD6B96E2A5C2525007A65FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		9CDA71812B4E694A00758CE2 /* TimeDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeDisplayView.swift; sourceTree = "<group>"; };
-		9CDC03882A5447AE0060EF4E /* Info-macOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-macOS.plist"; sourceTree = "<group>"; };
-		9CDC038A2A5448D20060EF4E /* Info-iOS.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-iOS.plist"; sourceTree = "<group>"; };
 		9CE227312A3C3DD50008032D /* CSVFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVFile.swift; sourceTree = "<group>"; };
 		9CE733E02A45C40800BF8165 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9CFD85792B4C9D8800A8C5D8 /* Furtherance.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Furtherance.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,7 +138,6 @@
 			children = (
 				9C108A432A5ADF3A00BD60D3 /* Views */,
 				9C9DB0642A54405A00E0DC2B /* Assets-iOS.xcassets */,
-				9CDC038A2A5448D20060EF4E /* Info-iOS.plist */,
 				9C3B41362A54966E002F3F5B /* Storyboard.storyboard */,
 			);
 			path = iOS;
@@ -152,7 +147,6 @@
 			isa = PBXGroup;
 			children = (
 				9CA84E1429A7721300A28FDA /* Assets-macOS.xcassets */,
-				9CDC03882A5447AE0060EF4E /* Info-macOS.plist */,
 			);
 			path = macOS;
 			sourceTree = "<group>";
@@ -324,10 +318,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9CDC038B2A5448D20060EF4E /* Info-iOS.plist in Resources */,
 				9C9DB0652A54405A00E0DC2B /* Assets-iOS.xcassets in Resources */,
 				9C9DB0622A543F0600E0DC2B /* Assets-macOS.xcassets in Resources */,
-				9CDC03892A5447AE0060EF4E /* Info-macOS.plist in Resources */,
 				9C3B41372A54966E002F3F5B /* Storyboard.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
