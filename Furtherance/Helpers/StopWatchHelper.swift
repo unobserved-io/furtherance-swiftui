@@ -61,14 +61,15 @@ class StopWatchHelper {
             RunLoop.main.add(pomodoroEndTimer, forMode: .common)
             registerLocal(notificationType: "pomodoro")
         }
-        
+ 
+#if os(macOS)
         // One minute timer for autosave
         DispatchQueue.main.async {
             self.minuteTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
                 Autosave().write()
             }
         }
-#if os(macOS)
+
         // One second timer for idle detection and icon badge updating
         if idleDetect || showIconBadge {
             DispatchQueue.main.async {
@@ -116,6 +117,24 @@ class StopWatchHelper {
         if autosave.exists() {
             autosave.delete()
         }
+    }
+    
+    func resume() {
+#if os(iOS)
+        /// Resume from a previously running timer
+        isRunning = true
+        
+        if pomodoro {
+            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60) + 1, to: startTime) ?? Date.now
+            if Date.now < stopTime {
+                let pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(pomodoroEndTasks), userInfo: nil, repeats: false)
+                RunLoop.main.add(pomodoroEndTimer, forMode: .common)
+                registerLocal(notificationType: "pomodoro")
+            } else {
+                pomodoroEndTasks()
+            }
+        }
+#endif
     }
     
     func registerLocal(notificationType: String) {

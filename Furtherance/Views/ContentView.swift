@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -15,6 +16,7 @@ struct ContentView: View {
     @Binding var showExportCSV: Bool
     
     @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.requestReview) private var requestReview
     @Environment(StopWatchHelper.self) private var stopWatchHelper
@@ -33,6 +35,7 @@ struct ContentView: View {
         animation: .default
     )
     var tasks: SectionedFetchResults<String, FurTask>
+    @Query private var persistentTimer: [PersistentTimer]
     
     @StateObject var taskTagsInput = TaskTagsInput.sharedInstance
     @StateObject var autosave = Autosave()
@@ -257,13 +260,31 @@ struct ContentView: View {
             .onAppear {
                 tasksCount = tasks.count
                 
+                #if os(iOS)
+                    // Continue running timer if it was running when the app was closed and it is less than 48 hours old
+                    if persistentTimer.first != nil {
+                        if persistentTimer.first?.isRunning ?? false {
+                            stopWatchHelper.startTime = persistentTimer.first?.startTime ?? .now
+                            timerHelper.startTime = persistentTimer.first?.startTime ?? .now
+                            timerHelper.taskName = persistentTimer.first?.taskName ?? ""
+                            timerHelper.taskTags = persistentTimer.first?.taskTags ?? ""
+                            timerHelper.nameAndTags = persistentTimer.first?.nameAndTags ?? ""
+                            taskTagsInput.text = timerHelper.nameAndTags
+                            stopWatchHelper.resume()
+                        }
+                    }
+                #endif
+                
+                #if os(macOS)
+                    checkForAutosave()
+                #endif
+                
                 // Ask for in-app review
                 if launchCount > 0 && launchCount % 10 == 0 {
                     DispatchQueue.main.async {
                         requestReview()
                     }
                 }
-                checkForAutosave()
             }
             .onReceive(willBecomeActive) { _ in
                 if !tasks.isEmpty {
@@ -344,6 +365,9 @@ struct ContentView: View {
         if taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "#" {
             stopWatchHelper.start()
             timerHelper.onStart(nameAndTags: taskTagsInput.text)
+            #if os(iOS)
+                initiatePersistentTimer()
+            #endif
         } else {
             hashtagAlert.toggle()
         }
@@ -360,6 +384,36 @@ struct ContentView: View {
         if startDate.day != stopDate.day {
             viewContext.refreshAllObjects()
         }
+        
+        #if os(iOS)
+            resetPersistentTimer()
+        #endif
+    }
+    
+    private func initiatePersistentTimer() {
+        if persistentTimer.first == nil {
+            let newPersistentTimer = PersistentTimer()
+            newPersistentTimer.isRunning = true
+            newPersistentTimer.startTime = timerHelper.startTime
+            newPersistentTimer.taskName = timerHelper.taskName
+            newPersistentTimer.taskTags = timerHelper.taskTags
+            newPersistentTimer.nameAndTags = timerHelper.nameAndTags
+            modelContext.insert(newPersistentTimer)
+        } else {
+            persistentTimer.first?.isRunning = true
+            persistentTimer.first?.startTime = timerHelper.startTime
+            persistentTimer.first?.taskName = timerHelper.taskName
+            persistentTimer.first?.taskTags = timerHelper.taskTags
+            persistentTimer.first?.nameAndTags = timerHelper.nameAndTags
+        }
+    }
+    
+    private func resetPersistentTimer() {
+        persistentTimer.first?.isRunning = false
+        persistentTimer.first?.startTime = nil
+        persistentTimer.first?.taskName = nil
+        persistentTimer.first?.taskTags = nil
+        persistentTimer.first?.nameAndTags = nil
     }
     
     private func sectionHeader(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> some View {
@@ -431,7 +485,7 @@ struct ContentView: View {
         let allData: [FurTask] = fetchAllData()
         var csvString = "Name,Tags,Start Time,Stop Time,Total Seconds\n"
         
-        allData.forEach { task in
+        for task in allData {
             csvString += furTaskToString(task)
         }
         
@@ -474,7 +528,7 @@ struct ContentView: View {
                 #if os(iOS)
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         Button("Delete", role: .destructive) {
-                            taskGroup.tasks.forEach { task in
+                            for task in taskGroup.tasks {
                                 viewContext.delete(task)
                             }
                             try? viewContext.save()

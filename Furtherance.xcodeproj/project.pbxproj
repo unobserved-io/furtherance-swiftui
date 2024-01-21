@@ -27,11 +27,12 @@
 		9C98E11329A8C0790064F63F /* TaskEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11229A8C0790064F63F /* TaskEditView.swift */; };
 		9C98E11529A8F6B80064F63F /* GroupEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11429A8F6B80064F63F /* GroupEditView.swift */; };
 		9C98E11729A918BC0064F63F /* Autosave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11629A918BC0064F63F /* Autosave.swift */; };
+		9C9974A92B5D540700852592 /* PersistentTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C9974A82B5D540700852592 /* PersistentTimer.swift */; };
 		9C9DB0622A543F0600E0DC2B /* Assets-macOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CA84E1429A7721300A28FDA /* Assets-macOS.xcassets */; platformFilters = (macos, ); };
 		9C9DB0652A54405A00E0DC2B /* Assets-iOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C9DB0642A54405A00E0DC2B /* Assets-iOS.xcassets */; platformFilter = ios; };
 		9CA84E1129A7721200A28FDA /* FurtheranceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */; };
 		9CA84E1329A7721200A28FDA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1229A7721200A28FDA /* ContentView.swift */; };
-		9CA84E1A29A7721300A28FDA /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1929A7721300A28FDA /* Persistence.swift */; };
+		9CA84E1A29A7721300A28FDA /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1929A7721300A28FDA /* PersistenceController.swift */; };
 		9CA84E1D29A7721300A28FDA /* Furtherance.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1B29A7721300A28FDA /* Furtherance.xcdatamodeld */; };
 		9CA84E2729A7767500A28FDA /* TaskTagsInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E2629A7767500A28FDA /* TaskTagsInput.swift */; };
 		9CA84E3029A79EE600A28FDA /* TaskRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E2F29A79EE600A28FDA /* TaskRow.swift */; };
@@ -68,12 +69,13 @@
 		9C98E11229A8C0790064F63F /* TaskEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditView.swift; sourceTree = "<group>"; };
 		9C98E11429A8F6B80064F63F /* GroupEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupEditView.swift; sourceTree = "<group>"; };
 		9C98E11629A918BC0064F63F /* Autosave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autosave.swift; sourceTree = "<group>"; };
+		9C9974A82B5D540700852592 /* PersistentTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentTimer.swift; sourceTree = "<group>"; };
 		9C9DB0642A54405A00E0DC2B /* Assets-iOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-iOS.xcassets"; sourceTree = "<group>"; };
 		9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurtheranceApp.swift; sourceTree = "<group>"; };
 		9CA84E1229A7721200A28FDA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		9CA84E1429A7721300A28FDA /* Assets-macOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-macOS.xcassets"; sourceTree = "<group>"; };
 		9CA84E1729A7721300A28FDA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		9CA84E1929A7721300A28FDA /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
+		9CA84E1929A7721300A28FDA /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		9CA84E1C29A7721300A28FDA /* Furtherance.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Furtherance.xcdatamodel; sourceTree = "<group>"; };
 		9CA84E1E29A7721300A28FDA /* Furtherance.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Furtherance.entitlements; sourceTree = "<group>"; };
 		9CA84E2629A7767500A28FDA /* TaskTagsInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTagsInput.swift; sourceTree = "<group>"; };
@@ -161,6 +163,16 @@
 			path = Store;
 			sourceTree = "<group>";
 		};
+		9C9974A72B5D53E100852592 /* Data Models */ = {
+			isa = PBXGroup;
+			children = (
+				9CA84E1929A7721300A28FDA /* PersistenceController.swift */,
+				9CA84E1B29A7721300A28FDA /* Furtherance.xcdatamodeld */,
+				9C9974A82B5D540700852592 /* PersistentTimer.swift */,
+			);
+			path = "Data Models";
+			sourceTree = "<group>";
+		};
 		9CA84E0429A7721200A28FDA = {
 			isa = PBXGroup;
 			children = (
@@ -173,6 +185,7 @@
 		9CA84E0F29A7721200A28FDA /* Furtherance */ = {
 			isa = PBXGroup;
 			children = (
+				9C9974A72B5D53E100852592 /* Data Models */,
 				9CD6B96E2A5C2525007A65FA /* Info.plist */,
 				9C46A04F2A5446E70092EE90 /* macOS */,
 				9C46A04E2A5446DA0092EE90 /* iOS */,
@@ -182,9 +195,7 @@
 				9CA84E2B29A77A8000A28FDA /* Helpers */,
 				9CA84E2529A7766000A28FDA /* Objects */,
 				9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */,
-				9CA84E1929A7721300A28FDA /* Persistence.swift */,
 				9CA84E1E29A7721300A28FDA /* Furtherance.entitlements */,
-				9CA84E1B29A7721300A28FDA /* Furtherance.xcdatamodeld */,
 				9CA84E1629A7721300A28FDA /* Preview Content */,
 			);
 			path = Furtherance;
@@ -326,6 +337,7 @@
 			files = (
 				9CE733E12A45C40800BF8165 /* AppDelegate.swift in Sources */,
 				9C4683E82A502E56006D1B7A /* GeneralSettingsView.swift in Sources */,
+				9C9974A92B5D540700852592 /* PersistentTimer.swift in Sources */,
 				9C4F06A229A928E8009D1AFE /* StoreModel.swift in Sources */,
 				9CDA71822B4E694A00758CE2 /* TimeDisplayView.swift in Sources */,
 				9C4683ED2A503015006D1B7A /* PomodoroSettingsView.swift in Sources */,
@@ -334,7 +346,7 @@
 				9CA84E3629A7AE0600A28FDA /* TimerHelper.swift in Sources */,
 				9C98E11729A918BC0064F63F /* Autosave.swift in Sources */,
 				9C98E11329A8C0790064F63F /* TaskEditView.swift in Sources */,
-				9CA84E1A29A7721300A28FDA /* Persistence.swift in Sources */,
+				9CA84E1A29A7721300A28FDA /* PersistenceController.swift in Sources */,
 				9CA84E1329A7721200A28FDA /* ContentView.swift in Sources */,
 				9C3BD94629BE7A2900637D36 /* Globals.swift in Sources */,
 				9C75182F2A35FEEF005100B6 /* GroupAddView.swift in Sources */,
@@ -414,6 +426,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -471,6 +484,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -506,7 +520,7 @@
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -550,7 +564,7 @@
 				INFOPLIST_KEY_UIStatusBarStyle = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",

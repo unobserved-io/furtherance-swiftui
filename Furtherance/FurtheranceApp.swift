@@ -6,18 +6,20 @@
 //
 
 import CoreData
+import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
 @main
 struct FurtheranceApp: App {
     let persistenceController = PersistenceController.shared
-
+    
     #if os(macOS)
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     #endif
     @AppStorage("launchCount") private var launchCount = 0
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
+    
     @ObservedObject var storeModel = StoreModel.sharedInstance
 
     @State private var stopWatchHelper = StopWatchHelper()
@@ -122,6 +124,9 @@ struct FurtheranceApp: App {
                     Text("The CSV you chose is not a valid Furtherance CSV.")
                 }
         }
+        .modelContainer(for: [
+            PersistentTimer.self
+        ])
         .commands {
             CommandMenu("Database") {
                 Button("Export as CSV") {

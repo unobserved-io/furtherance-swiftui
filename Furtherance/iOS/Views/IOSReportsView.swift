@@ -60,7 +60,7 @@ struct IOSReportsView: View {
                     Text("All time").tag(Timeframe.allTime)
                     Text("Date range").tag(Timeframe.custom)
                 }
-                .onChange(of: timeframe) { newTimeframe in
+                .onChange(of: timeframe) { _, newTimeframe in
                     var newStartDate = Calendar.current.startOfDay(for: Date.now)
                     var newStopDate = Date.now
                     switch newTimeframe {
@@ -102,7 +102,7 @@ struct IOSReportsView: View {
                             label: {}
                         )
                         .labelsHidden()
-                        .onChange(of: customStartDate) { newStartDate in
+                        .onChange(of: customStartDate) { _, newStartDate in
                             customStartDate = newStartDate.startOfDay
                             allTasks.nsPredicate = NSPredicate(format: "(startTime > %@) AND (startTime <= %@)", customStartDate as NSDate, customStopDate as NSDate)
                         }
@@ -115,7 +115,7 @@ struct IOSReportsView: View {
                         )
                         .frame(minHeight: 35)
                         .labelsHidden()
-                        .onChange(of: customStopDate) { newStopDate in
+                        .onChange(of: customStopDate) { _, newStopDate in
                             customStopDate = newStopDate.endOfDay
                             allTasks.nsPredicate = NSPredicate(format: "(startTime > %@) AND (startTime <= %@)", customStartDate as NSDate, customStopDate as NSDate)
                         }
