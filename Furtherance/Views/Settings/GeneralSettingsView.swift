@@ -10,6 +10,7 @@ import SwiftUI
 struct GeneralSettingsView: View {
     @ObservedObject var storeModel = StoreModel.sharedInstance
     @Environment(\.colorScheme) var colorScheme
+    @Environment(StopWatchHelper.self) private var stopWatchHelper
 
     @AppStorage("showIconBadge") private var showIconBadge = false
     @AppStorage("showDailySum") private var showDailySum = true
@@ -23,7 +24,13 @@ struct GeneralSettingsView: View {
 
 #if os(macOS)
             HStack {
-                storeModel.purchasedIds.isEmpty ? Text("Show icon badge when timer is running (Pro)") : Text("Show icon badge when timer is running")
+                VStack(alignment: .leading) {
+                    storeModel.purchasedIds.isEmpty ? Text("Show icon badge when timer is running (Pro)") : Text("Show icon badge when timer is running")
+                    if stopWatchHelper.isRunning, !showIconBadge {
+                       Text("This may only take effect on the next timer.")
+                            .font(.caption)
+                    }
+                }
                 Spacer()
                 Toggle("Show icon badge when timer is running", isOn: $showIconBadge)
                     .toggleStyle(.switch)
