@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct AdvancedSettingsView: View {
-    @ObservedObject var storeModel = StoreModel.sharedInstance
     @Environment(\.colorScheme) var colorScheme
+    @Environment(StopWatchHelper.self) private var stopWatchHelper
+    
+    @ObservedObject var storeModel = StoreModel.sharedInstance
 
     @AppStorage("idleDetect") private var idleDetect = false
     @AppStorage("idleLimit") private var idleLimit = 6
     @AppStorage("totalInclusive") private var totalInclusive = false
     @AppStorage("limitHistory") private var limitHistory = false
     @AppStorage("historyListLimit") private var historyListLimit = 50
+    @AppStorage("showIconBadge") private var showIconBadge = false
     #if os(iOS)
     @State private var showDeleteDialog = false
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
@@ -34,6 +37,17 @@ struct AdvancedSettingsView: View {
                         .toggleStyle(.switch)
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty)
+                }
+                .onChange(of: idleDetect) { _, newVal in
+                    if newVal {
+                        if !stopWatchHelper.oneSecondTimer.isValid {
+                            stopWatchHelper.setOneSecondTimer()
+                        }
+                    } else {
+                        if !showIconBadge {
+                            stopWatchHelper.oneSecondTimer.invalidate()
+                        }
+                    }
                 }
                 .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
                 .padding()

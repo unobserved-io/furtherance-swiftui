@@ -17,6 +17,7 @@ struct GeneralSettingsView: View {
     @AppStorage("showTags") private var showTags = true
     @AppStorage("showSeconds") private var showSeconds = true
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
+    @AppStorage("idleDetect") private var idleDetect = false
 
     var body: some View {
         Form {
@@ -26,10 +27,6 @@ struct GeneralSettingsView: View {
             HStack {
                 VStack(alignment: .leading) {
                     storeModel.purchasedIds.isEmpty ? Text("Show icon badge when timer is running (Pro)") : Text("Show icon badge when timer is running")
-                    if stopWatchHelper.isRunning, !showIconBadge {
-                       Text("This may only take effect on the next timer.")
-                            .font(.caption)
-                    }
                 }
                 Spacer()
                 Toggle("Show icon badge when timer is running", isOn: $showIconBadge)
@@ -38,8 +35,15 @@ struct GeneralSettingsView: View {
                     .disabled(storeModel.purchasedIds.isEmpty)
             }
             .onChange(of: showIconBadge) { _, newVal in
-                if !newVal {
+                if newVal {
+                    if !stopWatchHelper.oneSecondTimer.isValid {
+                        stopWatchHelper.setOneSecondTimer()
+                    }
+                } else {
                     NSApp.dockTile.badgeLabel = nil
+                    if !idleDetect {
+                        stopWatchHelper.oneSecondTimer.invalidate() //TODO: Do the same for the idleDetect setting
+                    }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)

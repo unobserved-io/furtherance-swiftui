@@ -25,6 +25,7 @@ class StopWatchHelper {
     }
     
     @ObservationIgnored var minuteTimer = Timer()
+    @ObservationIgnored var oneSecondTimer = Timer()
     @ObservationIgnored var idleNotified: Bool = false
     @ObservationIgnored var idleTimeReached: Bool = false
     @ObservationIgnored var idleStartTime: Date = .now
@@ -71,23 +72,7 @@ class StopWatchHelper {
         }
 
         // One second timer for idle detection and icon badge updating
-        if idleDetect || showIconBadge {
-            DispatchQueue.main.async {
-                self.minuteTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-                    if self.idleDetect {
-                        self.checkUserIdle()
-                    }
-                    
-                    if self.showIconBadge {
-                        if self.pomodoro {
-                            NSApp.dockTile.badgeLabel = self.dockBadgeFormatter.string(from: abs(Date.now.timeIntervalSince(self.stopTime)))
-                        } else {
-                            NSApp.dockTile.badgeLabel = self.dockBadgeFormatter.string(from: Date.now.timeIntervalSince(self.startTime))
-                        }
-                    }
-                }
-            }
-        }
+        setOneSecondTimer()
         
         // Set computer sleep observers
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(sleepListener(_:)), name: NSWorkspace.willSleepNotification, object: nil)
@@ -98,6 +83,7 @@ class StopWatchHelper {
     func stop() {
         /// Stop running the timer
         minuteTimer.invalidate()
+        oneSecondTimer.invalidate()
         isRunning = false
         startTime = .now
         stopTime = .distantFuture
@@ -119,8 +105,8 @@ class StopWatchHelper {
         }
     }
     
-    func resume() {
 #if os(iOS)
+    func resume() {
         /// Resume from a previously running timer
         isRunning = true
         
@@ -134,8 +120,8 @@ class StopWatchHelper {
                 pomodoroEndTasks()
             }
         }
-#endif
     }
+#endif
     
     func registerLocal(notificationType: String) {
         /// Register notification handler
@@ -245,6 +231,26 @@ class StopWatchHelper {
         // Remove pending idle notifications
         let center = UNUserNotificationCenter.current()
         center.removeAllPendingNotificationRequests()
+    }
+    
+    func setOneSecondTimer() {
+        if idleDetect || showIconBadge {
+            DispatchQueue.main.async {
+                self.minuteTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                    if self.idleDetect {
+                        self.checkUserIdle()
+                    }
+                    
+                    if self.showIconBadge {
+                        if self.pomodoro {
+                            NSApp.dockTile.badgeLabel = self.dockBadgeFormatter.string(from: abs(Date.now.timeIntervalSince(self.stopTime)))
+                        } else {
+                            NSApp.dockTile.badgeLabel = self.dockBadgeFormatter.string(from: Date.now.timeIntervalSince(self.startTime))
+                        }
+                    }
+                }
+            }
+        }
     }
     
     @objc private func sleepListener(_ aNotification: Notification) {
