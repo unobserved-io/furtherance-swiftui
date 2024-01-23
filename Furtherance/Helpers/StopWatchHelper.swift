@@ -24,7 +24,7 @@ class StopWatchHelper {
         )
     }
     
-    @ObservationIgnored var minuteTimer = Timer()
+    @ObservationIgnored var oneMinuteTimer = Timer()
     @ObservationIgnored var oneSecondTimer = Timer()
     @ObservationIgnored var idleNotified: Bool = false
     @ObservationIgnored var idleTimeReached: Bool = false
@@ -65,11 +65,8 @@ class StopWatchHelper {
  
 #if os(macOS)
         // One minute timer for autosave
-        DispatchQueue.main.async {
-            self.minuteTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
-                Autosave().write()
-            }
-        }
+        setOneMinuteTimer()
+        
 
         // One second timer for idle detection and icon badge updating
         setOneSecondTimer()
@@ -82,7 +79,7 @@ class StopWatchHelper {
     
     func stop() {
         /// Stop running the timer
-        minuteTimer.invalidate()
+        oneMinuteTimer.invalidate()
         oneSecondTimer.invalidate()
         isRunning = false
         startTime = .now
@@ -233,10 +230,18 @@ class StopWatchHelper {
         center.removeAllPendingNotificationRequests()
     }
     
+    func setOneMinuteTimer() {
+        DispatchQueue.main.async {
+            self.oneMinuteTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+                Autosave().write()
+            }
+        }
+    }
+    
     func setOneSecondTimer() {
         if idleDetect || showIconBadge {
             DispatchQueue.main.async {
-                self.minuteTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                self.oneSecondTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
                     if self.idleDetect {
                         self.checkUserIdle()
                     }
