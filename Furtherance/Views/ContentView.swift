@@ -24,8 +24,8 @@ struct ContentView: View {
     @ObservedObject var storeModel = StoreModel.sharedInstance
     @AppStorage("launchCount") private var launchCount = 0
     @AppStorage("totalInclusive") private var totalInclusive = false
-    @AppStorage("limitHistory") private var limitHistory = false
-    @AppStorage("historyListLimit") private var historyListLimit = 50
+    @AppStorage("limitHistory") private var limitHistory = true
+    @AppStorage("historyListLimit") private var historyListLimit = 10
     @AppStorage("showDailySum") private var showDailySum = true
     @AppStorage("showSeconds") private var showSeconds = true
 

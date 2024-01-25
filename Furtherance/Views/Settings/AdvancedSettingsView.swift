@@ -16,8 +16,8 @@ struct AdvancedSettingsView: View {
     @AppStorage("idleDetect") private var idleDetect = false
     @AppStorage("idleLimit") private var idleLimit = 6
     @AppStorage("totalInclusive") private var totalInclusive = false
-    @AppStorage("limitHistory") private var limitHistory = false
-    @AppStorage("historyListLimit") private var historyListLimit = 50
+    @AppStorage("limitHistory") private var limitHistory = true
+    @AppStorage("historyListLimit") private var historyListLimit = 10
     @AppStorage("showIconBadge") private var showIconBadge = false
     #if os(iOS)
     @State private var showDeleteDialog = false
@@ -102,7 +102,7 @@ struct AdvancedSettingsView: View {
 #endif
 
                 HStack {
-                    Text("Only show X number of days in task history:")
+                    Text("Only show X number of days in task history (Pro):")
                     Spacer()
                     Text("\(historyListLimit)")
                         .bold()
