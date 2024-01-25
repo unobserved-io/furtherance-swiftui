@@ -18,7 +18,6 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.requestReview) private var requestReview
     @Environment(StopWatchHelper.self) private var stopWatchHelper
     
     @ObservedObject var storeModel = StoreModel.sharedInstance
@@ -278,13 +277,6 @@ struct ContentView: View {
                 #if os(macOS)
                     checkForAutosave()
                 #endif
-                
-                // Ask for in-app review
-                if launchCount > 0 && launchCount % 10 == 0 {
-                    DispatchQueue.main.async {
-                        requestReview()
-                    }
-                }
             }
             .onReceive(willBecomeActive) { _ in
                 if !tasks.isEmpty {
