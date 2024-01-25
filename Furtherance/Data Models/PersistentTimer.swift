@@ -10,11 +10,11 @@ import SwiftData
 
 @Model
 final class PersistentTimer {
-    var isRunning: Bool?
-    var startTime: Date?
-    var taskName: String?
-    var taskTags: String?
-    var nameAndTags: String?
+    @Attribute(.allowsCloudEncryption) var isRunning: Bool?
+    @Attribute(.allowsCloudEncryption) var startTime: Date?
+    @Attribute(.allowsCloudEncryption) var taskName: String?
+    @Attribute(.allowsCloudEncryption) var taskTags: String?
+    @Attribute(.allowsCloudEncryption) var nameAndTags: String?
 
     init() {
         self.isRunning = false
