@@ -51,7 +51,7 @@ struct TaskRow: View {
                         let taskTagsInput = TaskTagsInput.sharedInstance
                         taskTagsInput.text = taskGroup.name + " " + taskGroup.tags
                         stopWatchHelper.start()
-                        TimerHelper.sharedInstance.onStart(nameAndTags: taskTagsInput.text)
+                        TimerHelper.shared.onStart(nameAndTags: taskTagsInput.text)
                     }
                 }
             #endif
