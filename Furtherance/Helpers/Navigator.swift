@@ -6,3 +6,25 @@
 //
 
 import Foundation
+
+enum ViewPath {
+    case home
+    case reports
+    case group
+    case settings
+}
+
+@Observable
+class Navigator {
+    static let shared = Navigator()
+    
+    var path: [ViewPath] = []
+    
+    func openView(_ viewPath: ViewPath) {
+        if viewPath == .home {
+            path = []
+        } else {
+            path.append(viewPath)
+        }
+    }
+}

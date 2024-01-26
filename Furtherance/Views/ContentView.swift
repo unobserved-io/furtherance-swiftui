@@ -12,13 +12,15 @@ import UniformTypeIdentifiers
 
 struct ContentView: View {
     @Binding var tasksCount: Int
-    @Binding var navPath: [String]
     @Binding var showExportCSV: Bool
     
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
     @Environment(StopWatchHelper.self) private var stopWatchHelper
+//    @Environment(Navigator.self) private var navigator
+    
+    @Bindable var navigator = Navigator.shared
     
     @ObservedObject var storeModel = StoreModel.sharedInstance
     @AppStorage("launchCount") private var launchCount = 0
@@ -56,14 +58,13 @@ struct ContentView: View {
         @State private var showInvalidCSVAlert = false
     #endif
     
-    init(tasksCount: Binding<Int>, navPath: Binding<[String]>, showExportCSV: Binding<Bool>) {
+    init(tasksCount: Binding<Int>, showExportCSV: Binding<Bool>) {
         self._tasksCount = tasksCount
-        self._navPath = navPath
         self._showExportCSV = showExportCSV
     }
     
     var body: some View {
-        NavigationStack(path: $navPath) {
+        NavigationStack(path: $navigator.path) {
             VStack {
                 // This is in its own view for performance
                 // Updating the Pomodoro time is far faster this way
@@ -235,10 +236,10 @@ struct ContentView: View {
             .onChange(of: tasks.count) {
                 tasksCount = tasks.count
             }
-            .navigationDestination(for: String.self) { s in
-                if s == "group" {
+            .navigationDestination(for: ViewPath.self) { path in
+                if path == .group {
                     GroupView()
-                } else if s == "reports" {
+                } else if path == .reports {
                     #if os(macOS)
                         ReportsView()
                             .navigationTitle("Time Reports")
@@ -247,7 +248,7 @@ struct ContentView: View {
                             .navigationTitle("Time Reports")
                             .navigationBarTitleDisplayMode(.inline)
                     #endif
-                } else if s == "settings" {
+                } else if path == .settings {
                     SettingsView()
                         .navigationTitle("Settings")
                     #if os(iOS)
@@ -511,7 +512,7 @@ struct ContentView: View {
                     .onTapGesture {
                         if taskGroup.tasks.count > 1 {
                             clickedGroup.taskGroup = taskGroup
-                            navPath.append("group")
+                            navigator.openView(.group)
                         } else {
                             clickedTask.task = taskGroup.tasks.first!
                             showTaskEditSheet.toggle()
@@ -579,7 +580,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(tasksCount: .constant(0), navPath: .constant([""]), showExportCSV: .constant(false)).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ContentView(tasksCount: .constant(0), showExportCSV: .constant(false)).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
 
