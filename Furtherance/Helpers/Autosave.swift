@@ -15,7 +15,7 @@ class Autosave: ObservableObject {
     @Published var showAlert = false
     
     func write() {
-        let timerHelper = TimerHelper.sharedInstance
+        let timerHelper = TimerHelper.shared
         let convertedStart = convertToRFC3339(dateIn: timerHelper.startTime)
         let convertedStop = convertToRFC3339(dateIn: Date.now)
         

@@ -172,7 +172,7 @@ class StopWatchHelper {
         let recordedStopTime = stopTime
         stop()
         TaskTagsInput.sharedInstance.text = ""
-        TimerHelper.sharedInstance.onStop(taskStopTime: recordedStopTime)
+        TimerHelper.shared.onStop(taskStopTime: recordedStopTime)
     }
     
 #if os(macOS)

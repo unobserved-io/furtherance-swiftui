@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 final class TimerHelper {
-    static let sharedInstance = TimerHelper()
+    static let shared = TimerHelper()
     let persistenceController = PersistenceController.shared
     
     var startTime: Date = .now
