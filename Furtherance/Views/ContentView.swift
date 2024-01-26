@@ -44,7 +44,7 @@ struct ContentView: View {
     @State private var hashtagAlert = false
     @State private var showingTaskEmptyAlert = false
     
-    let timerHelper = TimerHelper.sharedInstance
+    let timerHelper = TimerHelper.shared
 
     #if os(macOS)
         let willBecomeActive = NotificationCenter.default.publisher(for: NSApplication.willBecomeActiveNotification)
