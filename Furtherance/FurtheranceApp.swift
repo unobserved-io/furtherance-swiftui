@@ -22,6 +22,7 @@ struct FurtheranceApp: App {
     
     @ObservedObject var storeModel = StoreModel.sharedInstance
 
+    @State private var navigator = Navigator.shared
     @State private var stopWatchHelper = StopWatchHelper()
     @State private var showDeleteDialog = false
     @State private var showProAlert = false
@@ -32,7 +33,6 @@ struct FurtheranceApp: App {
     @State private var showImportCSV = false
     @State private var showInvalidCSVAlert = false
     @State(initialValue: 0) var tasksCount: Int
-    @State(initialValue: []) var navPath: [String]
     @State(initialValue: false) var showExportCSV: Bool
 
     init() {
@@ -41,7 +41,7 @@ struct FurtheranceApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView(tasksCount: $tasksCount, navPath: $navPath, showExportCSV: $showExportCSV)
+            ContentView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .environment(stopWatchHelper)
                 .onAppear {
@@ -167,7 +167,7 @@ struct FurtheranceApp: App {
                     if storeModel.purchasedIds.isEmpty {
                         showProAlert.toggle()
                     } else {
-                        navPath.append("reports")
+                        navigator.openView(.reports)
                     }
                 }
                 .keyboardShortcut("R", modifiers: EventModifiers.command)
