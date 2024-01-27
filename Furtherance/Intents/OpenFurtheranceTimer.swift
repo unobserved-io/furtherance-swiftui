@@ -10,6 +10,11 @@ import AppIntents
 
 struct OpenFurtheranceTimer: AppIntent {
     static var title: LocalizedStringResource = "Open Furtherance Timer"
+    static var openAppWhenRun: Bool = true
     
-    
+    @MainActor
+    func perform() async throws -> some IntentResult {
+        Navigator.shared.openView(.home)
+        return .result()
+    }
 }
