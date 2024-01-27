@@ -18,7 +18,6 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
     @Environment(StopWatchHelper.self) private var stopWatchHelper
-//    @Environment(Navigator.self) private var navigator
     
     @Bindable var navigator = Navigator.shared
     
@@ -123,7 +122,7 @@ struct ContentView: View {
                     Menu {
                         Section {
                             Button {
-                                navPath.append("settings")
+                                navigator.openView(.settings)
                             } label: {
                                 Label("Settings", systemImage: "gearshape")
                             }
@@ -132,7 +131,7 @@ struct ContentView: View {
                                 if storeModel.purchasedIds.isEmpty {
                                     showProAlert.toggle()
                                 } else {
-                                    navPath.append("reports")
+                                    navigator.openView(.reports)
                                 }
                             } label: {
                                 Label("Reports", systemImage: "list.bullet.clipboard")
@@ -533,7 +532,7 @@ struct ContentView: View {
                                 let taskTagsInput = TaskTagsInput.sharedInstance
                                 taskTagsInput.text = taskGroup.name + " " + taskGroup.tags
                                 stopWatchHelper.start()
-                                TimerHelper.sharedInstance.onStart(nameAndTags: taskTagsInput.text)
+                                TimerHelper.shared.onStart(nameAndTags: taskTagsInput.text)
                             }
                         }
                     }
