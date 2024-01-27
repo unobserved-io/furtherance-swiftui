@@ -547,8 +547,14 @@ struct ContentView: View {
             return ScrollView {
                 Form {
                     if limitHistory {
-                        ForEach(0 ..< historyListLimit, id: \.self) { index in
-                            showHistoryList(tasks[index])
+                        if tasks.count > historyListLimit {
+                            ForEach(0 ..< historyListLimit, id: \.self) { index in
+                                showHistoryList(tasks[index])
+                            }
+                        } else {
+                            ForEach(0 ..< tasks.count, id: \.self) { index in
+                                showHistoryList(tasks[index])
+                            }
                         }
                     } else {
                         ForEach(tasks) { section in
