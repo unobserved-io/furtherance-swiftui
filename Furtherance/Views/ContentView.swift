@@ -17,11 +17,11 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
-    @Environment(StopWatchHelper.self) private var stopWatchHelper
     
     @Bindable var navigator = Navigator.shared
     
     @ObservedObject var storeModel = StoreModel.sharedInstance
+    @State private var stopWatchHelper = StopWatchHelper.shared
     @AppStorage("launchCount") private var launchCount = 0
     @AppStorage("totalInclusive") private var totalInclusive = false
     @AppStorage("limitHistory") private var limitHistory = true
@@ -353,7 +353,7 @@ struct ContentView: View {
         }
     }
     
-    private func startTimer() {
+    func startTimer() {
         if taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "#" {
             stopWatchHelper.start()
             timerHelper.onStart(nameAndTags: taskTagsInput.text)
@@ -561,10 +561,17 @@ struct ContentView: View {
         #else
             return List {
                 if limitHistory {
-                    ForEach(0 ..< historyListLimit, id: \.self) { index in
-                        showHistoryList(tasks[index])
+                    if tasks.count > historyListLimit {
+                        ForEach(0 ..< historyListLimit, id: \.self) { index in
+                            showHistoryList(tasks[index])
+                        }
+                        .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
+                    } else {
+                        ForEach(0 ..< tasks.count, id: \.self) { index in
+                            showHistoryList(tasks[index])
+                        }
+                        .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
                     }
-                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
                 } else {
                     ForEach(tasks) { section in
                         showHistoryList(section)

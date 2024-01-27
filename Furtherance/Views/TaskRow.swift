@@ -10,7 +10,7 @@ import SwiftUI
 struct TaskRow: View {
     var taskGroup: FurTaskGroup
     @Environment(\.colorScheme) var colorScheme
-    @Environment(StopWatchHelper.self) private var stopWatchHelper
+    @State var stopWatchHelper = StopWatchHelper.shared
     
     @AppStorage("showTags") private var showTags = true
     @AppStorage("showSeconds") private var showSeconds = true

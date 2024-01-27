@@ -10,7 +10,7 @@ import UserNotifications
 
 @Observable
 class StopWatchHelper {
-    let persistenceController = PersistenceController.shared
+    static let shared = StopWatchHelper()
     
     var isRunning: Bool = false
     var stopTime: Date = .distantFuture

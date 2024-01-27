@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class PersistentTimer {
+public class PersistentTimer {
     @Attribute(.allowsCloudEncryption) var isRunning: Bool?
     @Attribute(.allowsCloudEncryption) var startTime: Date?
     @Attribute(.allowsCloudEncryption) var taskName: String?
@@ -24,3 +24,11 @@ final class PersistentTimer {
         self.nameAndTags = nil
     }
 }
+//
+//public extension PersistentTimer {
+//    static let container = try! ModelContainer(for: schema, configurations: [.init(isStoredInMemoryOnly: false)])
+//    
+//    static let schema = SwiftData.Schema([
+//        PersistentTimer.self,
+//    ])
+//}

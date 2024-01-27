@@ -10,7 +10,7 @@ import SwiftUI
 struct GeneralSettingsView: View {
     @ObservedObject var storeModel = StoreModel.sharedInstance
     @Environment(\.colorScheme) var colorScheme
-    @Environment(StopWatchHelper.self) private var stopWatchHelper
+    @State private var stopWatchHelper = StopWatchHelper.shared
 
     @AppStorage("showIconBadge") private var showIconBadge = false
     @AppStorage("showDailySum") private var showDailySum = true

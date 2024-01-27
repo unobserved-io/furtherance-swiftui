@@ -23,7 +23,6 @@ struct FurtheranceApp: App {
     @ObservedObject var storeModel = StoreModel.sharedInstance
 
     @State private var navigator = Navigator.shared
-    @State private var stopWatchHelper = StopWatchHelper()
     @State private var showDeleteDialog = false
     @State private var showProAlert = false
     @State private var dialogTitle = ""
@@ -43,7 +42,6 @@ struct FurtheranceApp: App {
         WindowGroup {
             ContentView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
-                .environment(stopWatchHelper)
                 .onAppear {
                     #if os(macOS)
                     NSWindow.allowsAutomaticWindowTabbing = false
@@ -186,7 +184,6 @@ struct FurtheranceApp: App {
         #if os(macOS)
         Settings {
             SettingsView()
-                .environment(stopWatchHelper)
         }
         .defaultSize(width: 400, height: 450)
         #endif

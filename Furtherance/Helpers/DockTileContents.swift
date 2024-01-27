@@ -7,9 +7,7 @@
 
 import SwiftUI
 
-struct DockTileContents: View {
-//    @Environment(StopWatchHelper.self) private var stopWatchHelper
-    
+struct DockTileContents: View {    
     var body: some View {
         Text(
                 timerInterval: (.now) ... (.distantFuture),

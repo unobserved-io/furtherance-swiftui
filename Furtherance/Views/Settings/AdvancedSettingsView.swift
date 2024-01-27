@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AdvancedSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
-    @Environment(StopWatchHelper.self) private var stopWatchHelper
+    @State private var stopWatchHelper = StopWatchHelper.shared
     
     @ObservedObject var storeModel = StoreModel.sharedInstance
 
