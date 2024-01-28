@@ -464,7 +464,7 @@ struct ContentView: View {
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         Button("Repeat") {
                             if !stopWatchHelper.isRunning {
-                                TaskTagsInput.sharedInstance.text = "\(taskGroup.name) \(taskGroup.tags)"
+                                taskTagsInput.text = "\(taskGroup.name) \(taskGroup.tags)"
                                 timerHelper.start()
                             }
                         }
