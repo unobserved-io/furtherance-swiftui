@@ -464,12 +464,8 @@ struct ContentView: View {
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         Button("Repeat") {
                             if !stopWatchHelper.isRunning {
-                                // TODO: Can all of this be reduced to a timerHelper.start call?
-                                // TODO: This looks like it has the bug of not being persistent on iOS
-                                let taskTagsInput = TaskTagsInput.sharedInstance
-                                taskTagsInput.text = taskGroup.name + " " + taskGroup.tags
-                                stopWatchHelper.start()
-                                TimerHelper.shared.onStart(nameAndTags: taskTagsInput.text)
+                                TaskTagsInput.sharedInstance.text = "\(taskGroup.name) \(taskGroup.tags)"
+                                timerHelper.start()
                             }
                         }
                     }
