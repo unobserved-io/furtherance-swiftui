@@ -33,16 +33,15 @@ struct StartFurtheranceTimer: AppIntent {
             }
         }
         
-        // TODO: Do I need to do this again after the throws?
         if tags?.isEmpty ?? true {
-            TaskTagsInput.sharedInstance.text = task
+            TaskTagsInput.shared.text = task
         } else {
-            TaskTagsInput.sharedInstance.text = "\(task) \(tags!)"
+            TaskTagsInput.shared.text = "\(task) \(tags!)"
         }
             
         // Start timer and store persistent timer info
 
-        if !TaskTagsInput.sharedInstance.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, TaskTagsInput.sharedInstance.text.trimmingCharacters(in: .whitespaces).first != "#" {
+        if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#" {
             // Show confirmation to start timer
             try await requestConfirmation(
                 result: .result(value: task, dialog: "Start a timer for \(task)?"),
@@ -57,8 +56,10 @@ struct StartFurtheranceTimer: AppIntent {
         
         return .result(value: task, dialog: "Started a timer for \(task).") {
             HStack {
+                #if os(iOS)
                 Image(uiImage: UIImage(named: "AppIcon60x60") ?? UIImage())
                     .clipShape(RoundedRectangle(cornerRadius: 12))
+                #endif
                 Text(
                     timerInterval: Date.now ... Date.distantFuture,
                     countsDown: false

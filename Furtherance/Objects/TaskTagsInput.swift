@@ -8,6 +8,6 @@
 import Foundation
 
 class TaskTagsInput: ObservableObject {
-    static let sharedInstance = TaskTagsInput()
+    static let shared = TaskTagsInput()
     var text = ""
 }

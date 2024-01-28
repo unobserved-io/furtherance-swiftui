@@ -48,8 +48,8 @@ struct TaskRow: View {
                 .contentShape(Circle())
                 .onTapGesture {
                     if !stopWatchHelper.isRunning {
-                        TaskTagsInput.sharedInstance.text = "\(taskGroup.name) \(taskGroup.tags)"
-                        timerHelper.start()
+                        TaskTagsInput.shared.text = "\(taskGroup.name) \(taskGroup.tags)"
+                        TimerHelper.shared.start()
                     }
                 }
             #endif

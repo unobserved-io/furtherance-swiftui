@@ -5,8 +5,8 @@
 //  Created by Ricky Kresslein on 2/23/23.
 //
 
-import SwiftData
 import Foundation
+import SwiftData
 import SwiftUI
 
 final class TimerHelper {
@@ -24,11 +24,11 @@ final class TimerHelper {
     func start() {
         if !StopWatchHelper.shared.isRunning {
             if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
-                if !TaskTagsInput.sharedInstance.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, TaskTagsInput.sharedInstance.text.trimmingCharacters(in: .whitespaces).first != "#" {
-                    // Show confirmation to start timer
-                    
+                if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                   TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#"
+                {                    
                     StopWatchHelper.shared.start()
-                    onStart(nameAndTags: TaskTagsInput.sharedInstance.text)
+                    onStart(nameAndTags: TaskTagsInput.shared.text)
                     #if os(iOS)
                     // Initiate/store persistent timer values
                     if persistentTimer.first == nil {
@@ -57,7 +57,7 @@ final class TimerHelper {
     func stop(stopTime: Date) {
         StopWatchHelper.shared.stop()
         onStop(taskStopTime: stopTime)
-        TaskTagsInput.sharedInstance.text = ""
+        TaskTagsInput.shared.text = ""
         
         // Refresh the viewContext if the timer goes past midnight
         let startDate = Calendar.current.dateComponents([.day], from: startTime)

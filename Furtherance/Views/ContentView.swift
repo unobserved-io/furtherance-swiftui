@@ -37,7 +37,7 @@ struct ContentView: View {
     var tasksByDay: SectionedFetchResults<String, FurTask>
     @Query private var persistentTimer: [PersistentTimer]
     
-    @StateObject var taskTagsInput = TaskTagsInput.sharedInstance
+    @StateObject var taskTagsInput = TaskTagsInput.shared
     @StateObject var autosave = Autosave()
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
@@ -524,6 +524,7 @@ struct ContentView: View {
     
     private func resumeOngoingTimer() {
         /// Continue running timer if it was running when the app was closed and it is less than 48 hours old
+        #if os(iOS)
         if persistentTimer.first != nil {
             if persistentTimer.first?.isRunning ?? false {
                 stopWatchHelper.startTime = persistentTimer.first?.startTime ?? .now
@@ -535,6 +536,7 @@ struct ContentView: View {
                 stopWatchHelper.resume()
             }
         }
+        #endif
     }
     
     private func deleteExtraPersistentTimers() {
