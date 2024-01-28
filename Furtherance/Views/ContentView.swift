@@ -34,7 +34,7 @@ struct ContentView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
         animation: .default
     )
-    var tasks: SectionedFetchResults<String, FurTask>
+    var tasksByDay: SectionedFetchResults<String, FurTask>
     @Query private var persistentTimer: [PersistentTimer]
     
     @StateObject var taskTagsInput = TaskTagsInput.sharedInstance
@@ -114,7 +114,7 @@ struct ContentView: View {
                 }
                 .padding(.horizontal)
                 
-                tasks.isEmpty ? nil : showTaskHistoryListBasedOnDevice()
+                tasksByDay.isEmpty ? nil : showTaskHistoryListBasedOnDevice()
             }
             #if os(iOS)
             .toolbar {
@@ -232,8 +232,8 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
             #endif
             // Update tasks count every time tasks is changed
-            .onChange(of: tasks.count) {
-                tasksCount = tasks.count
+            .onChange(of: tasksByDay.count) {
+                tasksCount = tasksByDay.count
             }
             .navigationDestination(for: ViewPath.self) { path in
                 if path == .group {
@@ -257,9 +257,15 @@ struct ContentView: View {
             }
             // Initial task count update when view is loaded
             .onAppear {
-                tasksCount = tasks.count
+                tasksCount = tasksByDay.count
                 
                 #if os(iOS)
+                    // Make sure there is no more than 1 PersistentTimer, otherwise delete the extras
+                    // This is just a fail-safe and should never run
+                    while persistentTimer.count > 1 {
+                        modelContext.delete(persistentTimer.last!)
+                    }
+            
                     // Continue running timer if it was running when the app was closed and it is less than 48 hours old
                     if persistentTimer.first != nil {
                         if persistentTimer.first?.isRunning ?? false {
@@ -279,8 +285,8 @@ struct ContentView: View {
                 #endif
             }
             .onReceive(willBecomeActive) { _ in
-                if !tasks.isEmpty {
-                    if !Calendar.current.isDateInToday(tasks[0][0].stopTime ?? Date.now) {
+                if !tasksByDay.isEmpty {
+                    if !Calendar.current.isDateInToday(tasksByDay[0][0].stopTime ?? Date.now) {
                         viewContext.refreshAllObjects()
                     }
                 }
@@ -494,17 +500,17 @@ struct ContentView: View {
             return ScrollView {
                 Form {
                     if limitHistory {
-                        if tasks.count > historyListLimit {
+                        if tasksByDay.count > historyListLimit {
                             ForEach(0 ..< historyListLimit, id: \.self) { index in
-                                showHistoryList(tasks[index])
+                                showHistoryList(tasksByDay[index])
                             }
                         } else {
-                            ForEach(0 ..< tasks.count, id: \.self) { index in
-                                showHistoryList(tasks[index])
+                            ForEach(0 ..< tasksByDay.count, id: \.self) { index in
+                                showHistoryList(tasksByDay[index])
                             }
                         }
                     } else {
-                        ForEach(tasks) { section in
+                        ForEach(tasksByDay) { section in
                             showHistoryList(section)
                         }
                     }
@@ -514,19 +520,19 @@ struct ContentView: View {
         #else
             return List {
                 if limitHistory {
-                    if tasks.count > historyListLimit {
+                    if tasksByDay.count > historyListLimit {
                         ForEach(0 ..< historyListLimit, id: \.self) { index in
-                            showHistoryList(tasks[index])
+                            showHistoryList(tasksByDay[index])
                         }
                         .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
                     } else {
-                        ForEach(0 ..< tasks.count, id: \.self) { index in
-                            showHistoryList(tasks[index])
+                        ForEach(0 ..< tasksByDay.count, id: \.self) { index in
+                            showHistoryList(tasksByDay[index])
                         }
                         .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
                     }
                 } else {
-                    ForEach(tasks) { section in
+                    ForEach(tasksByDay) { section in
                         showHistoryList(section)
                     }
                     .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
