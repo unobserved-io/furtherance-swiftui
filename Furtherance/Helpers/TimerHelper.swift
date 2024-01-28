@@ -5,19 +5,75 @@
 //  Created by Ricky Kresslein on 2/23/23.
 //
 
-import CoreData
+import SwiftData
 import Foundation
 import SwiftUI
 
 final class TimerHelper {
     static let shared = TimerHelper()
     let persistenceController = PersistenceController.shared
+    let modelContext = ModelContext(PersistentTimer.container)
     
     var startTime: Date = .now
     var stopTime: Date = .now
     var taskName: String = ""
     var taskTags: String = ""
     var nameAndTags: String = ""
+    var showTaskBeginsWithHashtagAlert = false
+    
+    func start() {
+        if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
+            if !TaskTagsInput.sharedInstance.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, TaskTagsInput.sharedInstance.text.trimmingCharacters(in: .whitespaces).first != "#" {
+                // Show confirmation to start timer
+                
+                StopWatchHelper.shared.start()
+                onStart(nameAndTags: TaskTagsInput.sharedInstance.text)
+                #if os(iOS)
+                // Initiate/store persistent timer values
+                if persistentTimer.first == nil {
+                    let newPersistentTimer = PersistentTimer()
+                    newPersistentTimer.isRunning = true
+                    newPersistentTimer.startTime = startTime
+                    newPersistentTimer.taskName = taskName
+                    newPersistentTimer.taskTags = taskTags
+                    newPersistentTimer.nameAndTags = nameAndTags
+                    modelContext.insert(newPersistentTimer)
+                } else {
+                    persistentTimer.first?.isRunning = true
+                    persistentTimer.first?.startTime = startTime
+                    persistentTimer.first?.taskName = taskName
+                    persistentTimer.first?.taskTags = taskTags
+                    persistentTimer.first?.nameAndTags = nameAndTags
+                }
+                #endif
+            } else {
+                showTaskBeginsWithHashtagAlert = true
+            }
+        }
+    }
+    
+    func stop(stopTime: Date) {
+        StopWatchHelper.shared.stop()
+        onStop(taskStopTime: stopTime)
+        TaskTagsInput.sharedInstance.text = ""
+        
+        // Refresh the viewContext if the timer goes past midnight
+        let startDate = Calendar.current.dateComponents([.day], from: startTime)
+        let stopDate = Calendar.current.dateComponents([.day], from: Date.now)
+        if startDate.day != stopDate.day {
+            persistenceController.container.viewContext.refreshAllObjects()
+        }
+        
+        #if os(iOS)
+        if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
+            persistentTimer.first?.isRunning = false
+            persistentTimer.first?.startTime = nil
+            persistentTimer.first?.taskName = nil
+            persistentTimer.first?.taskTags = nil
+            persistentTimer.first?.nameAndTags = nil
+        }
+        #endif
+    }
     
     func setStartTime(start: Date) {
         startTime = start
@@ -27,6 +83,7 @@ final class TimerHelper {
         stopTime = stop
     }
     
+    // TODO: Remove or change this function
     func onStart(nameAndTags: String) {
         self.nameAndTags = nameAndTags
         setStartTime(start: Date.now)

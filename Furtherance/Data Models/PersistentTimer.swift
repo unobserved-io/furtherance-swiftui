@@ -24,11 +24,11 @@ public class PersistentTimer {
         self.nameAndTags = nil
     }
 }
-//
-//public extension PersistentTimer {
-//    static let container = try! ModelContainer(for: schema, configurations: [.init(isStoredInMemoryOnly: false)])
-//    
-//    static let schema = SwiftData.Schema([
-//        PersistentTimer.self,
-//    ])
-//}
+
+public extension PersistentTimer {
+    static let container = try! ModelContainer(for: schema, configurations: [.init(isStoredInMemoryOnly: false)])
+    
+    static let schema = SwiftData.Schema([
+        PersistentTimer.self,
+    ])
+}

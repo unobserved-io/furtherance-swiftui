@@ -323,7 +323,7 @@ struct ContentView: View {
                     title: Text("You have been idle for \(stopWatchHelper.idleLength)"),
                     message: Text("Would you like to discard that time, or continue the clock?"),
                     primaryButton: .default(Text("Discard"), action: {
-                        stopTimer(stopTime: stopWatchHelper.idleStartTime)
+                        timerHelper.stop(stopTime: stopWatchHelper.idleStartTime)
                     }),
                     secondaryButton: .cancel(Text("Continue"), action: {
                         stopWatchHelper.resetIdle()
@@ -347,65 +347,10 @@ struct ContentView: View {
         
     private func startStopPress() {
         if stopWatchHelper.isRunning {
-            stopTimer(stopTime: Date.now)
+            timerHelper.stop(stopTime: Date.now)
         } else {
-            startTimer()
+            timerHelper.start()
         }
-    }
-    
-    func startTimer() {
-        if taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "#" {
-            stopWatchHelper.start()
-            timerHelper.onStart(nameAndTags: taskTagsInput.text)
-            #if os(iOS)
-                initiatePersistentTimer()
-            #endif
-        } else {
-            hashtagAlert.toggle()
-        }
-    }
-    
-    private func stopTimer(stopTime: Date) {
-        stopWatchHelper.stop()
-        timerHelper.onStop(taskStopTime: stopTime)
-        taskTagsInput.text = ""
-        
-        // Refresh the viewContext if the timer goes past midnight
-        let startDate = Calendar.current.dateComponents([.day], from: timerHelper.startTime)
-        let stopDate = Calendar.current.dateComponents([.day], from: Date.now)
-        if startDate.day != stopDate.day {
-            viewContext.refreshAllObjects()
-        }
-        
-        #if os(iOS)
-            resetPersistentTimer()
-        #endif
-    }
-    
-    private func initiatePersistentTimer() {
-        if persistentTimer.first == nil {
-            let newPersistentTimer = PersistentTimer()
-            newPersistentTimer.isRunning = true
-            newPersistentTimer.startTime = timerHelper.startTime
-            newPersistentTimer.taskName = timerHelper.taskName
-            newPersistentTimer.taskTags = timerHelper.taskTags
-            newPersistentTimer.nameAndTags = timerHelper.nameAndTags
-            modelContext.insert(newPersistentTimer)
-        } else {
-            persistentTimer.first?.isRunning = true
-            persistentTimer.first?.startTime = timerHelper.startTime
-            persistentTimer.first?.taskName = timerHelper.taskName
-            persistentTimer.first?.taskTags = timerHelper.taskTags
-            persistentTimer.first?.nameAndTags = timerHelper.nameAndTags
-        }
-    }
-    
-    private func resetPersistentTimer() {
-        persistentTimer.first?.isRunning = false
-        persistentTimer.first?.startTime = nil
-        persistentTimer.first?.taskName = nil
-        persistentTimer.first?.taskTags = nil
-        persistentTimer.first?.nameAndTags = nil
     }
     
     private func sectionHeader(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> some View {
@@ -529,6 +474,8 @@ struct ContentView: View {
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         Button("Repeat") {
                             if !stopWatchHelper.isRunning {
+                                // TODO: Can all of this be reduced to a timerHelper.start call?
+                                // TODO: This looks like it has the bug of not being persistent on iOS
                                 let taskTagsInput = TaskTagsInput.sharedInstance
                                 taskTagsInput.text = taskGroup.name + " " + taskGroup.tags
                                 stopWatchHelper.start()

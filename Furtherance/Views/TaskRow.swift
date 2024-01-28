@@ -47,6 +47,7 @@ struct TaskRow: View {
             Image(systemName: "arrow.counterclockwise.circle")
                 .contentShape(Circle())
                 .onTapGesture {
+                    // TODO: Can all of this be reduced to a timerHelper.start call?
                     if !stopWatchHelper.isRunning {
                         let taskTagsInput = TaskTagsInput.sharedInstance
                         taskTagsInput.text = taskGroup.name + " " + taskGroup.tags
