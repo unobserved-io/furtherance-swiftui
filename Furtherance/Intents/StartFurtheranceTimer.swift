@@ -11,7 +11,12 @@ import SwiftUI
 
 struct StartFurtheranceTimer: AppIntent {
     static var title: LocalizedStringResource = "Start Furtherance Timer"
+    
+    #if os(iOS)
     var openAppWhenRun: Bool = false
+    #elseif os(macOS)
+    var openAppWhenRun: Bool = true
+    #endif
     
     @Parameter(title: "Task", requestValueDialog: "What is the task?")
     var task: String
