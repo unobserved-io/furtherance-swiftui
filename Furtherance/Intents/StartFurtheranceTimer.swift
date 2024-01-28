@@ -47,11 +47,13 @@ struct StartFurtheranceTimer: AppIntent {
         // Start timer and store persistent timer info
 
         if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#" {
+            #if os(iOS)
             // Show confirmation to start timer
             try await requestConfirmation(
                 result: .result(value: task, dialog: "Start a timer for \(task)?"),
                 confirmationActionName: .start
             )
+            #endif
             TimerHelper.shared.start()
         } else if task.trimmingCharacters(in: .whitespaces).first == "#" {
             throw $task.needsValueError("The task name cannot start with a #. Please retype it.")
