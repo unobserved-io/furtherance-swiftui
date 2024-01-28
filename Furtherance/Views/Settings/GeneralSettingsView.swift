@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct GeneralSettingsView: View {
-    @ObservedObject var storeModel = StoreModel.sharedInstance
+    @ObservedObject var storeModel = StoreModel.shared
     @Environment(\.colorScheme) var colorScheme
     @State private var stopWatchHelper = StopWatchHelper.shared
 

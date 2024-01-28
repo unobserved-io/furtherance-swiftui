@@ -20,7 +20,7 @@ struct FurtheranceApp: App {
     @AppStorage("launchCount") private var launchCount = 0
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
     
-    @ObservedObject var storeModel = StoreModel.sharedInstance
+    @ObservedObject var storeModel = StoreModel.shared
 
     @State private var navigator = Navigator.shared
     @State private var showDeleteDialog = false

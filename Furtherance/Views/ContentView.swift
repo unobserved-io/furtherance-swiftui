@@ -20,7 +20,7 @@ struct ContentView: View {
     
     @Bindable var navigator = Navigator.shared
     
-    @ObservedObject var storeModel = StoreModel.sharedInstance
+    @ObservedObject var storeModel = StoreModel.shared
     @State private var stopWatchHelper = StopWatchHelper.shared
     @AppStorage("launchCount") private var launchCount = 0
     @AppStorage("totalInclusive") private var totalInclusive = false

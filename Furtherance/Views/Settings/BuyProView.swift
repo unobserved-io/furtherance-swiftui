@@ -9,7 +9,7 @@ import StoreKit
 import SwiftUI
 
 struct BuyProView: View {
-    @ObservedObject var storeModel = StoreModel.sharedInstance
+    @ObservedObject var storeModel = StoreModel.shared
 
     var body: some View {
         if storeModel.purchasedIds.isEmpty {

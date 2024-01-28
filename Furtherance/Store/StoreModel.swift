@@ -13,7 +13,7 @@ public enum StoreError: Error {
 }
 
 class StoreModel: ObservableObject {
-    static let sharedInstance = StoreModel()
+    static let shared = StoreModel()
     
     @Published var products: [Product] = []
     @Published var purchasedIds: [String] = []

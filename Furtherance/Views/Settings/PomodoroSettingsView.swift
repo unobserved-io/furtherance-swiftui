@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PomodoroSettingsView: View {
-    @ObservedObject var storeModel = StoreModel.sharedInstance
+    @ObservedObject var storeModel = StoreModel.shared
     @Environment(\.colorScheme) var colorScheme
 
     @AppStorage("pomodoro") private var pomodoro = false

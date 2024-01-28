@@ -11,7 +11,7 @@ struct AdvancedSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var stopWatchHelper = StopWatchHelper.shared
     
-    @ObservedObject var storeModel = StoreModel.sharedInstance
+    @ObservedObject var storeModel = StoreModel.shared
 
     @AppStorage("idleDetect") private var idleDetect = false
     @AppStorage("idleLimit") private var idleLimit = 6

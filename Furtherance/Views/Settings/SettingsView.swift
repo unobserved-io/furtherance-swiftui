@@ -9,7 +9,7 @@ import Combine
 import SwiftUI
 
 struct SettingsView: View {
-    @ObservedObject var storeModel = StoreModel.sharedInstance
+    @ObservedObject var storeModel = StoreModel.shared
 
     var body: some View {
         TabView {
