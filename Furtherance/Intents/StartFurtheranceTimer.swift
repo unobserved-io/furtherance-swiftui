@@ -56,10 +56,10 @@ struct StartFurtheranceTimer: AppIntent {
         
         return .result(value: task, dialog: "Started a timer for \(task).") {
             HStack {
-                #if os(iOS)
-                Image(uiImage: UIImage(named: "AppIcon60x60") ?? UIImage())
+                Image("SquareIcon")
+                    .resizable()
+                    .frame(width: 64.0, height: 64.0)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
-                #endif
                 Text(
                     timerInterval: Date.now ... Date.distantFuture,
                     countsDown: false

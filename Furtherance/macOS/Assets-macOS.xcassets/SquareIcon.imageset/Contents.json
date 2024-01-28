@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "Furtherance-iOS-Icon-Square.jpg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
