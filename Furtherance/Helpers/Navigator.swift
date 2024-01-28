@@ -19,6 +19,7 @@ class Navigator {
     static let shared = Navigator()
     
     var path: [ViewPath] = []
+    var showTaskBeginsWithHashtagAlert: Bool = false
     
     func openView(_ viewPath: ViewPath) {
         if viewPath == .home {

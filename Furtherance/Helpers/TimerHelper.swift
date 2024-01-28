@@ -19,14 +19,13 @@ final class TimerHelper {
     var taskName: String = ""
     var taskTags: String = ""
     var nameAndTags: String = ""
-    var showTaskBeginsWithHashtagAlert = false
     
     func start() {
         if !StopWatchHelper.shared.isRunning {
             if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
                 if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                    TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#"
-                {                    
+                {
                     StopWatchHelper.shared.start()
                     onStart(nameAndTags: TaskTagsInput.shared.text)
                     #if os(iOS)
@@ -47,8 +46,8 @@ final class TimerHelper {
                         persistentTimer.first?.nameAndTags = nameAndTags
                     }
                     #endif
-                } else {
-                    showTaskBeginsWithHashtagAlert = true
+                } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "#" {
+                    Navigator.shared.showTaskBeginsWithHashtagAlert = true
                 }
             }
         }

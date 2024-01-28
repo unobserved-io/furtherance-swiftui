@@ -42,7 +42,6 @@ struct ContentView: View {
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
     @State private var showTaskEditSheet = false
-    @State private var hashtagAlert = false
     @State private var showingTaskEmptyAlert = false
     
     let timerHelper = TimerHelper.shared
@@ -295,7 +294,7 @@ struct ContentView: View {
             } message: {
                 Text("Furtherance shut down improperly. An autosave was restored.")
             }
-            .alert("Improper Task Name", isPresented: $hashtagAlert) {
+            .alert("Improper Task Name", isPresented: $navigator.showTaskBeginsWithHashtagAlert) {
                 Button("OK") {}
             } message: {
                 Text("A task name must be provided before tags. The first character cannot be a '#'.")
