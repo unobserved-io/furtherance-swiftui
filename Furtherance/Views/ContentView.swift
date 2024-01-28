@@ -260,24 +260,8 @@ struct ContentView: View {
                 tasksCount = tasksByDay.count
                 
                 #if os(iOS)
-                    // Make sure there is no more than 1 PersistentTimer, otherwise delete the extras
-                    // This is just a fail-safe and should never run
-                    while persistentTimer.count > 1 {
-                        modelContext.delete(persistentTimer.last!)
-                    }
-            
-                    // Continue running timer if it was running when the app was closed and it is less than 48 hours old
-                    if persistentTimer.first != nil {
-                        if persistentTimer.first?.isRunning ?? false {
-                            stopWatchHelper.startTime = persistentTimer.first?.startTime ?? .now
-                            timerHelper.startTime = persistentTimer.first?.startTime ?? .now
-                            timerHelper.taskName = persistentTimer.first?.taskName ?? ""
-                            timerHelper.taskTags = persistentTimer.first?.taskTags ?? ""
-                            timerHelper.nameAndTags = persistentTimer.first?.nameAndTags ?? ""
-                            taskTagsInput.text = timerHelper.nameAndTags
-                            stopWatchHelper.resume()
-                        }
-                    }
+                    deleteExtraPersistentTimers()
+                    resumeOngoingTimer()
                 #endif
                 
                 #if os(macOS)
@@ -540,6 +524,29 @@ struct ContentView: View {
             }
             .scrollContentBackground(.hidden)
         #endif
+    }
+    
+    private func resumeOngoingTimer() {
+        /// Continue running timer if it was running when the app was closed and it is less than 48 hours old
+        if persistentTimer.first != nil {
+            if persistentTimer.first?.isRunning ?? false {
+                stopWatchHelper.startTime = persistentTimer.first?.startTime ?? .now
+                timerHelper.startTime = persistentTimer.first?.startTime ?? .now
+                timerHelper.taskName = persistentTimer.first?.taskName ?? ""
+                timerHelper.taskTags = persistentTimer.first?.taskTags ?? ""
+                timerHelper.nameAndTags = persistentTimer.first?.nameAndTags ?? ""
+                taskTagsInput.text = timerHelper.nameAndTags
+                stopWatchHelper.resume()
+            }
+        }
+    }
+    
+    private func deleteExtraPersistentTimers() {
+        /// Make sure there is no more than 1 PersistentTimer, otherwise delete the extras
+        /// This is just a fail-safe and should never run
+        while persistentTimer.count > 1 {
+            modelContext.delete(persistentTimer.last!)
+        }
     }
 }
 
