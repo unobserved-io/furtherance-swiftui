@@ -23,18 +23,16 @@ final class TimerHelper {
     func start() {
         /// Start the timer and perform relative actions
         if !StopWatchHelper.shared.isRunning {
-            if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
-                if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-                   TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#"
-                {
-                    StopWatchHelper.shared.start()
-                    startTime = Date.now
-                    nameAndTags = TaskTagsInput.shared.text
-                    separateTags()
-                    initiatePersistentTimer()
-                } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "#" {
-                    Navigator.shared.showTaskBeginsWithHashtagAlert = true
-                }
+            if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#"
+            {
+                StopWatchHelper.shared.start()
+                startTime = Date.now
+                nameAndTags = TaskTagsInput.shared.text
+                separateTags()
+                initiatePersistentTimer()
+            } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "#" {
+                Navigator.shared.showTaskBeginsWithHashtagAlert = true
             }
         }
     }
@@ -92,20 +90,22 @@ final class TimerHelper {
     private func initiatePersistentTimer() {
         #if os(iOS)
         // Initiate/store persistent timer values
-        if persistentTimer.first == nil {
-            let newPersistentTimer = PersistentTimer()
-            newPersistentTimer.isRunning = true
-            newPersistentTimer.startTime = startTime
-            newPersistentTimer.taskName = taskName
-            newPersistentTimer.taskTags = taskTags
-            newPersistentTimer.nameAndTags = nameAndTags
-            modelContext.insert(newPersistentTimer)
-        } else {
-            persistentTimer.first?.isRunning = true
-            persistentTimer.first?.startTime = startTime
-            persistentTimer.first?.taskName = taskName
-            persistentTimer.first?.taskTags = taskTags
-            persistentTimer.first?.nameAndTags = nameAndTags
+        if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
+            if persistentTimer.first == nil {
+                let newPersistentTimer = PersistentTimer()
+                newPersistentTimer.isRunning = true
+                newPersistentTimer.startTime = startTime
+                newPersistentTimer.taskName = taskName
+                newPersistentTimer.taskTags = taskTags
+                newPersistentTimer.nameAndTags = nameAndTags
+                modelContext.insert(newPersistentTimer)
+            } else {
+                persistentTimer.first?.isRunning = true
+                persistentTimer.first?.startTime = startTime
+                persistentTimer.first?.taskName = taskName
+                persistentTimer.first?.taskTags = taskTags
+                persistentTimer.first?.nameAndTags = nameAndTags
+            }
         }
         #endif
     }
