@@ -37,7 +37,7 @@ final class TimerHelper {
         }
     }
     
-    func stop(stopTime: Date) {
+    func stop(stopTime: Date = .now) {
         /// Stop the timer and perform relative actions
         StopWatchHelper.shared.stop()
         self.stopTime = stopTime
