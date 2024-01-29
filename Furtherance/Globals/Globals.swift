@@ -5,8 +5,8 @@
 //  Created by Ricky Kresslein on 3/12/23.
 //
 
-import SwiftUI
 import CoreData
+import SwiftUI
 
 let localDateTimeFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -63,28 +63,46 @@ func deleteAllTasks() {
     do {
         let fetchRequest: NSFetchRequest<NSFetchRequestResult>
         fetchRequest = NSFetchRequest(entityName: "FurTask")
-        
+
         let deleteRequest = NSBatchDeleteRequest(
             fetchRequest: fetchRequest
         )
         deleteRequest.resultType = .resultTypeObjectIDs
-        
+
         let batchDelete = try PersistenceController.shared.container.viewContext.execute(deleteRequest)
             as? NSBatchDeleteResult
-        
+
         guard let deleteResult = batchDelete?.result
             as? [NSManagedObjectID]
         else { return }
-        
+
         let deletedObjects: [AnyHashable: Any] = [
             NSDeletedObjectsKey: deleteResult
         ]
-        
+
         NSManagedObjectContext.mergeChanges(
             fromRemoteContextSave: deletedObjects,
             into: [PersistenceController.shared.container.viewContext]
         )
     } catch {
         print("Error deleting all tasks: \(error)")
+    }
+}
+
+func separateTags(rawString: String) -> String {
+    var splitTags = rawString.trimmingCharacters(in: .whitespaces).split(separator: "#")
+    // Trim each element and lowercase them
+    for i in splitTags.indices {
+        splitTags[i] = .init(splitTags[i].trimmingCharacters(in: .whitespaces).lowercased())
+    }
+    // Don't allow empty tags
+    splitTags.removeAll(where: { $0.isEmpty })
+    // Don't allow duplicate tags
+    let splitTagsUnique = splitTags.uniqued()
+    let splitTagsJoined = splitTagsUnique.joined(separator: " #")
+    if !splitTagsJoined.trimmingCharacters(in: .whitespaces).isEmpty {
+        return "#\(splitTagsJoined)"
+    } else {
+        return ""
     }
 }

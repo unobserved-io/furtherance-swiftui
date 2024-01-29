@@ -129,24 +129,6 @@ struct AddTaskView: View {
         let max = Date.now
         return min...max
     }
-
-    func separateTags(rawString: String) -> String {
-        var splitTags = rawString.trimmingCharacters(in: .whitespaces).split(separator: "#")
-        // Trim each element and lowercase them
-        for i in splitTags.indices {
-            splitTags[i] = .init(splitTags[i].trimmingCharacters(in: .whitespaces).lowercased())
-        }
-        // Don't allow empty tags
-        splitTags.removeAll(where: { $0.isEmpty })
-        // Don't allow duplicate tags
-        let splitTagsUnique = splitTags.uniqued()
-        let splitTagsJoined = splitTagsUnique.joined(separator: " #")
-        if !splitTagsJoined.trimmingCharacters(in: .whitespaces).isEmpty {
-            return "#\(splitTagsJoined)"
-        } else {
-            return ""
-        }
-    }
 }
 
 struct AddTaskView_Previews: PreviewProvider {

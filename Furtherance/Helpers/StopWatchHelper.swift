@@ -169,10 +169,7 @@ class StopWatchHelper {
     }
     
     @objc private func pomodoroEndTasks() {
-        let recordedStopTime = stopTime
-        stop()
-        TaskTagsInput.shared.text = ""
-        TimerHelper.shared.onStop(taskStopTime: recordedStopTime)
+        TimerHelper.shared.stop(stopTime: stopTime)
     }
     
 #if os(macOS)
