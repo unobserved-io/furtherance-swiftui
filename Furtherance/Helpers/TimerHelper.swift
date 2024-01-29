@@ -30,7 +30,7 @@ final class TimerHelper {
                     StopWatchHelper.shared.start()
                     startTime = Date.now
                     nameAndTags = TaskTagsInput.shared.text
-                    self.separateTags()
+                    separateTags()
                     
                     #if os(iOS)
                     // Initiate/store persistent timer values
@@ -66,15 +66,7 @@ final class TimerHelper {
         
         refreshAfterMidnight()
         
-        #if os(iOS)
-        if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
-            persistentTimer.first?.isRunning = false
-            persistentTimer.first?.startTime = nil
-            persistentTimer.first?.taskName = nil
-            persistentTimer.first?.taskTags = nil
-            persistentTimer.first?.nameAndTags = nil
-        }
-        #endif
+        resetPersistentTimer()
     }
     
     private func saveTask() {
@@ -115,6 +107,18 @@ final class TimerHelper {
         if startDate.day != stopDate.day {
             persistenceController.container.viewContext.refreshAllObjects()
         }
+    }
+    
+    private func resetPersistentTimer() {
+        #if os(iOS)
+        if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
+            persistentTimer.first?.isRunning = false
+            persistentTimer.first?.startTime = nil
+            persistentTimer.first?.taskName = nil
+            persistentTimer.first?.taskTags = nil
+            persistentTimer.first?.nameAndTags = nil
+        }
+        #endif
     }
 }
 
