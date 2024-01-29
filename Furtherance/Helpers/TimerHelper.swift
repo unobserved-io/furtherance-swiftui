@@ -31,25 +31,7 @@ final class TimerHelper {
                     startTime = Date.now
                     nameAndTags = TaskTagsInput.shared.text
                     separateTags()
-                    
-                    #if os(iOS)
-                    // Initiate/store persistent timer values
-                    if persistentTimer.first == nil {
-                        let newPersistentTimer = PersistentTimer()
-                        newPersistentTimer.isRunning = true
-                        newPersistentTimer.startTime = startTime
-                        newPersistentTimer.taskName = taskName
-                        newPersistentTimer.taskTags = taskTags
-                        newPersistentTimer.nameAndTags = nameAndTags
-                        modelContext.insert(newPersistentTimer)
-                    } else {
-                        persistentTimer.first?.isRunning = true
-                        persistentTimer.first?.startTime = startTime
-                        persistentTimer.first?.taskName = taskName
-                        persistentTimer.first?.taskTags = taskTags
-                        persistentTimer.first?.nameAndTags = nameAndTags
-                    }
-                    #endif
+                    initiatePersistentTimer()
                 } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "#" {
                     Navigator.shared.showTaskBeginsWithHashtagAlert = true
                 }
@@ -63,9 +45,7 @@ final class TimerHelper {
         self.stopTime = stopTime
         saveTask()
         TaskTagsInput.shared.text = ""
-        
         refreshAfterMidnight()
-        
         resetPersistentTimer()
     }
     
@@ -107,6 +87,27 @@ final class TimerHelper {
         if startDate.day != stopDate.day {
             persistenceController.container.viewContext.refreshAllObjects()
         }
+    }
+    
+    private func initiatePersistentTimer() {
+        #if os(iOS)
+        // Initiate/store persistent timer values
+        if persistentTimer.first == nil {
+            let newPersistentTimer = PersistentTimer()
+            newPersistentTimer.isRunning = true
+            newPersistentTimer.startTime = startTime
+            newPersistentTimer.taskName = taskName
+            newPersistentTimer.taskTags = taskTags
+            newPersistentTimer.nameAndTags = nameAndTags
+            modelContext.insert(newPersistentTimer)
+        } else {
+            persistentTimer.first?.isRunning = true
+            persistentTimer.first?.startTime = startTime
+            persistentTimer.first?.taskName = taskName
+            persistentTimer.first?.taskTags = taskTags
+            persistentTimer.first?.nameAndTags = nameAndTags
+        }
+        #endif
     }
     
     private func resetPersistentTimer() {
