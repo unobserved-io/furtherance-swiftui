@@ -45,7 +45,6 @@ struct StartFurtheranceTimer: AppIntent {
         }
             
         // Start timer and store persistent timer info
-
         if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#" {
             #if os(iOS)
             // Show confirmation to start timer
