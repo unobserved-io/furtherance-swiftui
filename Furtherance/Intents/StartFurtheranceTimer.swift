@@ -26,16 +26,11 @@ struct StartFurtheranceTimer: AppIntent {
     @MainActor
     func perform() async throws -> some IntentResult & ShowsSnippetView & ProvidesDialog & ReturnsValue<String> {
         if StopWatchHelper.shared.isRunning {
-            // TODO: Implement this after converting FurTask to SwiftData
-//            try await requestConfirmation(
-//                result: .result(dialog: "Another Furtherance timer is currently running. Turn it off?"),
-//                confirmationActionName: .turnOff
-//            )
-//            StopWatchHelper.shared.stop()
-            
-            return .result(value: task, dialog: "Failed to start a timer for \(task).") {
-                Text("Stop your currently running timer before starting a new one.")
-            }
+            try await requestConfirmation(
+                result: .result(dialog: "Another Furtherance timer is currently running. Turn it off?"),
+                confirmationActionName: .turnOff
+            )
+            TimerHelper.shared.stop()
         }
         
         if tags?.isEmpty ?? true {
