@@ -42,7 +42,7 @@ struct GeneralSettingsView: View {
                 } else {
                     NSApp.dockTile.badgeLabel = nil
                     if !idleDetect {
-                        stopWatchHelper.oneSecondTimer.invalidate() //TODO: Do the same for the idleDetect setting
+                        stopWatchHelper.oneSecondTimer.invalidate()
                     }
                 }
             }

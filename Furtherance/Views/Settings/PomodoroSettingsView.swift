@@ -24,11 +24,6 @@ struct PomodoroSettingsView: View {
                 Toggle("Countdown timer", isOn: $pomodoro)
                     .toggleStyle(.switch)
                     .labelsHidden()
-                    .onChange(of: pomodoro) {
-//                        StopWatch.sharedInstance.getPomodoroTime()
-                        // TODO: Set timer starting text to be the Pomodoro time
-                        // I may be able to move this onChange to the ContentView since I believe AppStorage is Observable.
-                    }
             }
 #if os(macOS)
             .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -44,10 +39,6 @@ struct PomodoroSettingsView: View {
                     .bold()
                 Stepper("\(pomodoroTime)", value: $pomodoroTime, in: 1 ... 1440)
                     .labelsHidden()
-                    .onChange(of: pomodoroTime) {
-                        // TODO:
-//                        StopWatch.sharedInstance.getPomodoroTime()
-                    }
                     .disabled(!pomodoro)
             }
 #if os(macOS)
