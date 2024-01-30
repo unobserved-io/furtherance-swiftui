@@ -9,6 +9,21 @@ import AppIntents
 import SwiftData
 import SwiftUI
 
+
+enum ShouldIAsk: String {
+    case ask
+    case dontAsk
+}
+
+extension ShouldIAsk: AppEnum {
+    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Ask"
+
+    static var caseDisplayRepresentations: [ShouldIAsk: DisplayRepresentation] = [
+        .ask: "Ask",
+        .dontAsk: "Don't Ask",
+    ]
+}
+
 struct StartFurtheranceTimer: AppIntent {
     static var title: LocalizedStringResource = "Start Furtherance Timer"
     
@@ -20,6 +35,8 @@ struct StartFurtheranceTimer: AppIntent {
     
     @Parameter(title: "Task #tags", requestValueDialog: "Task name and tags")
     var taskTags: String
+    @Parameter(title: "Ask to start timer each time?", description: "Test description", requestValueDialog: "Start timer confirmation")
+    var confirmTimer: ShouldIAsk
     
     @MainActor
     func perform() async throws -> some IntentResult & ShowsSnippetView & ProvidesDialog & ReturnsValue<String> {
@@ -35,13 +52,15 @@ struct StartFurtheranceTimer: AppIntent {
             
         // Start timer and store persistent timer info
         if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#" {
-            #if os(iOS)
-            // Show confirmation to start timer
-            try await requestConfirmation(
-                result: .result(value: taskTags, dialog: "Start a timer for \(taskTags)?"),
-                confirmationActionName: .start
-            )
-            #endif
+            
+            if confirmTimer == .ask {
+                // Show confirmation to start timer
+                try await requestConfirmation(
+                    result: .result(value: taskTags, dialog: "Start a timer for \(taskTags)?"),
+                    confirmationActionName: .start
+                )
+            }
+            
             TimerHelper.shared.start()
         } else if taskTags.trimmingCharacters(in: .whitespaces).first == "#" {
             throw $taskTags.needsValueError("The task name cannot start with a #. Please retype it.")
@@ -71,6 +90,8 @@ struct StartFurtheranceTimer: AppIntent {
     }
     
     static var parameterSummary: some ParameterSummary {
-        Summary("Start Furtherance timer for \(\.$taskTags)")
+        Summary("Start Furtherance timer for \(\.$taskTags)") {
+            \.$confirmTimer
+        }
     }
 }
