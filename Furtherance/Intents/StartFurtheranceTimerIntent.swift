@@ -63,10 +63,10 @@ struct StartFurtheranceTimerIntent: AppIntent {
                     .frame(width: 64.0, height: 64.0)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 Text(
-                    timerInterval: Date.now ... Date.distantFuture,
+                    timerInterval: TimerHelper.shared.startTime ... Date.distantFuture,
                     countsDown: false
                 )
-                .font(Font.monospacedDigit(.system(size: 60.0))())
+                .font(Font.monospacedDigit(.system(size: 55.0))())
                 .lineLimit(1)
                 .lineSpacing(0)
                 .allowsTightening(false)
