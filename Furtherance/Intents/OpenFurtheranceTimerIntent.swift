@@ -8,7 +8,7 @@
 import AppIntents
 import Foundation
 
-struct OpenFurtheranceTimer: AppIntent {
+struct OpenFurtheranceTimerIntent: AppIntent {
     static var title: LocalizedStringResource = "Open Furtherance Timer"
     static var openAppWhenRun: Bool = true
 

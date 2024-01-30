@@ -9,22 +9,7 @@ import AppIntents
 import SwiftData
 import SwiftUI
 
-
-enum ShouldIAsk: String {
-    case ask
-    case dontAsk
-}
-
-extension ShouldIAsk: AppEnum {
-    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Ask"
-
-    static var caseDisplayRepresentations: [ShouldIAsk: DisplayRepresentation] = [
-        .ask: "Ask",
-        .dontAsk: "Don't Ask",
-    ]
-}
-
-struct StartFurtheranceTimer: AppIntent {
+struct StartFurtheranceTimerIntent: AppIntent {
     static var title: LocalizedStringResource = "Start Furtherance Timer"
     
     #if os(iOS)
@@ -35,15 +20,19 @@ struct StartFurtheranceTimer: AppIntent {
     
     @Parameter(title: "Task #tags", requestValueDialog: "Task name and tags")
     var taskTags: String
-    @Parameter(title: "Ask to start timer each time?", description: "Test description", requestValueDialog: "Start timer confirmation")
+    @Parameter(title: "Ask for confirmation?", description: "Test description", requestValueDialog: "Start timer confirmation")
     var confirmTimer: ShouldIAsk
+    
+    init() {
+        confirmTimer = .ask
+    }
     
     @MainActor
     func perform() async throws -> some IntentResult & ShowsSnippetView & ProvidesDialog & ReturnsValue<String> {
         if StopWatchHelper.shared.isRunning {
             try await requestConfirmation(
-                result: .result(dialog: "Another Furtherance timer is currently running. Turn it off?"),
-                confirmationActionName: .turnOff
+                result: .result(dialog: "Stop the currently running Furtherance timer?"),
+                confirmationActionName: .custom(acceptLabel: "Stop", acceptAlternatives: [], denyLabel: "Cancel", denyAlternatives: [])
             )
             TimerHelper.shared.stop()
         }
@@ -52,7 +41,6 @@ struct StartFurtheranceTimer: AppIntent {
             
         // Start timer and store persistent timer info
         if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#" {
-            
             if confirmTimer == .ask {
                 // Show confirmation to start timer
                 try await requestConfirmation(
