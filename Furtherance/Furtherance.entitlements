@@ -15,7 +15,7 @@
 	<key>com.apple.security.app-sandbox</key>
 	<true/>
 	<key>com.apple.developer.icloud-container-environment</key>
-	<string>Development</string>
+	<string>Production</string>
 	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
 </dict>
