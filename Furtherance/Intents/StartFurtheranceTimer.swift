@@ -18,10 +18,8 @@ struct StartFurtheranceTimer: AppIntent {
     static var openAppWhenRun: Bool = true
     #endif
     
-    @Parameter(title: "Task", requestValueDialog: "What is the task?")
-    var task: String
-    @Parameter(title: "#tags", requestValueDialog: "What tags should be included?")
-    var tags: String?
+    @Parameter(title: "Task #tags", requestValueDialog: "Task name and tags")
+    var taskTags: String
     
     @MainActor
     func perform() async throws -> some IntentResult & ShowsSnippetView & ProvidesDialog & ReturnsValue<String> {
@@ -33,29 +31,25 @@ struct StartFurtheranceTimer: AppIntent {
             TimerHelper.shared.stop()
         }
         
-        if tags?.isEmpty ?? true {
-            TaskTagsInput.shared.text = task
-        } else {
-            TaskTagsInput.shared.text = "\(task) \(tags!)"
-        }
+        TaskTagsInput.shared.text = taskTags
             
         // Start timer and store persistent timer info
         if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#" {
             #if os(iOS)
             // Show confirmation to start timer
             try await requestConfirmation(
-                result: .result(value: task, dialog: "Start a timer for \(task)?"),
+                result: .result(value: taskTags, dialog: "Start a timer for \(taskTags)?"),
                 confirmationActionName: .start
             )
             #endif
             TimerHelper.shared.start()
-        } else if task.trimmingCharacters(in: .whitespaces).first == "#" {
-            throw $task.needsValueError("The task name cannot start with a #. Please retype it.")
+        } else if taskTags.trimmingCharacters(in: .whitespaces).first == "#" {
+            throw $taskTags.needsValueError("The task name cannot start with a #. Please retype it.")
         } else {
-            throw $task.needsValueError("What task are you starting?")
+            throw $taskTags.needsValueError("What task are you starting?")
         }
         
-        return .result(value: task, dialog: "Started a timer for \(task).") {
+        return .result(value: taskTags, dialog: "Started a timer for \(taskTags).") {
             HStack {
                 Image("SquareIcon")
                     .resizable()
@@ -77,6 +71,6 @@ struct StartFurtheranceTimer: AppIntent {
     }
     
     static var parameterSummary: some ParameterSummary {
-        Summary("Start Furtherance timer with task \(\.$task) and tags \(\.$tags)")
+        Summary("Start Furtherance timer for \(\.$taskTags)")
     }
 }
