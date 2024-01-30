@@ -44,7 +44,7 @@ struct StopFurtheranceTimerIntent: AppIntent {
                     .frame(width: 64.0, height: 64.0)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 Text(formatTime(Calendar.current.dateComponents([.second], from: TimerHelper.shared.startTime, to: TimerHelper.shared.stopTime).second ?? 0))
-                    .font(Font.monospacedDigit(.system(size: 55.0))())
+                    .font(Font.monospacedDigit(.system(size: 50.0))())
                     .lineLimit(1)
                     .lineSpacing(0)
                     .allowsTightening(false)
@@ -53,7 +53,6 @@ struct StopFurtheranceTimerIntent: AppIntent {
             }
             .padding(.horizontal)
         }
-//        return .result()
     }
 
     private func formatTime(_ secondsElapsed: Int) -> String {
