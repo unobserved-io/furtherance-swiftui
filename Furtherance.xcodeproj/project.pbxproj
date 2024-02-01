@@ -41,7 +41,6 @@
 		9CA84E3429A7A4F500A28FDA /* FurTaskGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */; };
 		9CA84E3629A7AE0600A28FDA /* TimerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */; };
 		9CAB8E3229C1331C00610E6E /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9CAB8E3129C1331C00610E6E /* StoreKit.framework */; };
-		9CB640922B6AC77D0046162D /* TestFurtheranceTaskIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CB640912B6AC77D0046162D /* TestFurtheranceTaskIntent.swift */; };
 		9CBD0C812B696E3500BC43DD /* StopFurtheranceTimerIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CBD0C802B696E3500BC43DD /* StopFurtheranceTimerIntent.swift */; };
 		9CBD0C832B696EB000BC43DD /* ShouldIAskAppEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CBD0C822B696EB000BC43DD /* ShouldIAskAppEnum.swift */; };
 		9CDA71822B4E694A00758CE2 /* TimeDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CDA71812B4E694A00758CE2 /* TimeDisplayView.swift */; };
@@ -90,7 +89,6 @@
 		9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurTaskGroup.swift; sourceTree = "<group>"; };
 		9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerHelper.swift; sourceTree = "<group>"; };
 		9CAB8E3129C1331C00610E6E /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
-		9CB640912B6AC77D0046162D /* TestFurtheranceTaskIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFurtheranceTaskIntent.swift; sourceTree = "<group>"; };
 		9CBD0C802B696E3500BC43DD /* StopFurtheranceTimerIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopFurtheranceTimerIntent.swift; sourceTree = "<group>"; };
 		9CBD0C822B696EB000BC43DD /* ShouldIAskAppEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShouldIAskAppEnum.swift; sourceTree = "<group>"; };
 		9CD6B96E2A5C2525007A65FA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -277,7 +275,6 @@
 				9C4B2C762B6512530099CB9A /* StartFurtheranceTimerIntent.swift */,
 				9CBD0C802B696E3500BC43DD /* StopFurtheranceTimerIntent.swift */,
 				9CBD0C822B696EB000BC43DD /* ShouldIAskAppEnum.swift */,
-				9CB640912B6AC77D0046162D /* TestFurtheranceTaskIntent.swift */,
 			);
 			path = Intents;
 			sourceTree = "<group>";
@@ -361,7 +358,6 @@
 				9CF305172B642EE7007CDB5E /* Navigator.swift in Sources */,
 				9CBD0C832B696EB000BC43DD /* ShouldIAskAppEnum.swift in Sources */,
 				9C4683E82A502E56006D1B7A /* GeneralSettingsView.swift in Sources */,
-				9CB640922B6AC77D0046162D /* TestFurtheranceTaskIntent.swift in Sources */,
 				9C9974A92B5D540700852592 /* PersistentTimer.swift in Sources */,
 				9C4F06A229A928E8009D1AFE /* StoreModel.swift in Sources */,
 				9CDA71822B4E694A00758CE2 /* TimeDisplayView.swift in Sources */,
