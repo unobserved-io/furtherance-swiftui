@@ -56,7 +56,7 @@ struct StartFurtheranceTimerIntent: AppIntent {
             throw $taskTags.needsValueError("What task are you starting?")
         }
         
-        return .result(value: taskTags, dialog: "Started a timer for \(taskTags).") {
+        return .result(value: taskTags, dialog: "Okay, starting a Furtherance timer for \(taskTags).") {
             HStack {
                 Image("SquareIcon")
                     .resizable()

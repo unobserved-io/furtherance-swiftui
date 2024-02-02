@@ -37,7 +37,7 @@ struct StopFurtheranceTimerIntent: AppIntent {
             }
         }
 
-        return .result(dialog: "Stopped the '\(TimerHelper.shared.taskName)' timer.") {
+        return .result(dialog: "Okay, stopping the '\(TimerHelper.shared.taskName)' timer.") {
             HStack {
                 Image("SquareIcon")
                     .resizable()
