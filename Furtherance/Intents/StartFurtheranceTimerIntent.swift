@@ -18,9 +18,9 @@ struct StartFurtheranceTimerIntent: AppIntent {
     static var openAppWhenRun: Bool = true
     #endif
     
-    @Parameter(title: "Task #tags", requestValueDialog: "Task name and tags")
+    @Parameter(title: "Task #tags", requestValueDialog: "What task and tags?")
     var taskTags: String
-    @Parameter(title: "Ask for confirmation?", description: "Test description", requestValueDialog: "Start timer confirmation")
+    @Parameter(title: "Ask for confirmation?", description: "Test description", requestValueDialog: "Start the timer?")
     var confirmTimer: ShouldIAsk
     
     init() {
@@ -31,7 +31,7 @@ struct StartFurtheranceTimerIntent: AppIntent {
     func perform() async throws -> some IntentResult & ShowsSnippetView & ProvidesDialog & ReturnsValue<String> {
         if StopWatchHelper.shared.isRunning {
             try await requestConfirmation(
-                result: .result(dialog: "Stop the currently running Furtherance timer?"),
+                result: .result(dialog: "Do you want to stop the current Furtherance timer?"),
                 confirmationActionName: .custom(acceptLabel: "Stop", acceptAlternatives: [], denyLabel: "Cancel", denyAlternatives: [])
             )
             TimerHelper.shared.stop()
@@ -51,7 +51,7 @@ struct StartFurtheranceTimerIntent: AppIntent {
             
             TimerHelper.shared.start()
         } else if taskTags.trimmingCharacters(in: .whitespaces).first == "#" {
-            throw $taskTags.needsValueError("The task name cannot start with a #. Please retype it.")
+            throw $taskTags.needsValueError("The task name cannot start with a #. Please try again.")
         } else {
             throw $taskTags.needsValueError("What task are you starting?")
         }

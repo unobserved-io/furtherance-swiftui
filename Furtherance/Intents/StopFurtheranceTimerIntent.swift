@@ -12,7 +12,7 @@ struct StopFurtheranceTimerIntent: AppIntent {
     static var title: LocalizedStringResource = "Stop Furtherance Timer"
     static var openAppWhenRun: Bool = false
 
-    @Parameter(title: "Ask for confirmation?", description: "Test description", requestValueDialog: "Stop timer confirmation")
+    @Parameter(title: "Ask for confirmation?", description: "Test description", requestValueDialog: "Stop the Furtherance timer?")
     var confirmTimer: ShouldIAsk
     
     init() {
@@ -25,7 +25,7 @@ struct StopFurtheranceTimerIntent: AppIntent {
             if confirmTimer == .ask {
                 // Show confirmation to stop timer
                 try await requestConfirmation(
-                    result: .result(dialog: "Stop the '\(TimerHelper.shared.taskName)' timer?"),
+                    result: .result(dialog: "Stop the \(TimerHelper.shared.taskName) timer?"),
                     confirmationActionName: .custom(acceptLabel: "Stop", acceptAlternatives: [], denyLabel: "Cancel", denyAlternatives: [])
                 )
             }
@@ -37,7 +37,7 @@ struct StopFurtheranceTimerIntent: AppIntent {
             }
         }
 
-        return .result(dialog: "Okay, stopping the '\(TimerHelper.shared.taskName)' timer.") {
+        return .result(dialog: "Okay, stopping the \(TimerHelper.shared.taskName) timer.") {
             HStack {
                 Image("SquareIcon")
                     .resizable()
