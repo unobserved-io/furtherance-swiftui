@@ -26,6 +26,7 @@
 		9C74DED02B5D804400322F21 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C74DECF2B5D804400322F21 /* CloudKit.framework */; };
 		9C75182F2A35FEEF005100B6 /* GroupAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C75182E2A35FEEF005100B6 /* GroupAddView.swift */; };
 		9C7A69312B6D1DC40080E19F /* FurtheranceShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C7A69302B6D1DC40080E19F /* FurtheranceShortcuts.swift */; };
+		9C94FF3C2B6EC5F7007EC064 /* TaskInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C94FF3B2B6EC5F7007EC064 /* TaskInputView.swift */; };
 		9C98E11129A8BFF70064F63F /* ClickedTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11029A8BFF70064F63F /* ClickedTask.swift */; };
 		9C98E11329A8C0790064F63F /* TaskEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11229A8C0790064F63F /* TaskEditView.swift */; };
 		9C98E11529A8F6B80064F63F /* GroupEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11429A8F6B80064F63F /* GroupEditView.swift */; };
@@ -73,6 +74,7 @@
 		9C74DECF2B5D804400322F21 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS17.2.sdk/System/Library/Frameworks/CloudKit.framework; sourceTree = DEVELOPER_DIR; };
 		9C75182E2A35FEEF005100B6 /* GroupAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupAddView.swift; sourceTree = "<group>"; };
 		9C7A69302B6D1DC40080E19F /* FurtheranceShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurtheranceShortcuts.swift; sourceTree = "<group>"; };
+		9C94FF3B2B6EC5F7007EC064 /* TaskInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskInputView.swift; sourceTree = "<group>"; };
 		9C98E11029A8BFF70064F63F /* ClickedTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickedTask.swift; sourceTree = "<group>"; };
 		9C98E11229A8C0790064F63F /* TaskEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditView.swift; sourceTree = "<group>"; };
 		9C98E11429A8F6B80064F63F /* GroupEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupEditView.swift; sourceTree = "<group>"; };
@@ -172,6 +174,16 @@
 			path = Store;
 			sourceTree = "<group>";
 		};
+		9C94FF3A2B6EC5D7007EC064 /* Timer */ = {
+			isa = PBXGroup;
+			children = (
+				9CA84E1229A7721200A28FDA /* ContentView.swift */,
+				9CDA71812B4E694A00758CE2 /* TimeDisplayView.swift */,
+				9C94FF3B2B6EC5F7007EC064 /* TaskInputView.swift */,
+			);
+			path = Timer;
+			sourceTree = "<group>";
+		};
 		9C9974A72B5D53E100852592 /* Data Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -247,8 +259,8 @@
 		9CA84E2E29A79ECC00A28FDA /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9C94FF3A2B6EC5D7007EC064 /* Timer */,
 				9C4683E62A502E38006D1B7A /* Settings */,
-				9CA84E1229A7721200A28FDA /* ContentView.swift */,
 				9CA84E2F29A79EE600A28FDA /* TaskRow.swift */,
 				9C27D34529A8B2630012C274 /* GroupView.swift */,
 				9C75182E2A35FEEF005100B6 /* GroupAddView.swift */,
@@ -256,7 +268,6 @@
 				9C98E11429A8F6B80064F63F /* GroupEditView.swift */,
 				9C3BD94729BE808A00637D36 /* ReportsView.swift */,
 				9C1026662A361B5000FB95D8 /* AddTaskView.swift */,
-				9CDA71812B4E694A00758CE2 /* TimeDisplayView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -394,6 +405,7 @@
 				9C98E11129A8BFF70064F63F /* ClickedTask.swift in Sources */,
 				9CA84E1D29A7721300A28FDA /* Furtherance.xcdatamodeld in Sources */,
 				9C4683EA2A502F7C006D1B7A /* AdvancedSettingsView.swift in Sources */,
+				9C94FF3C2B6EC5F7007EC064 /* TaskInputView.swift in Sources */,
 				9C4B2C772B6512530099CB9A /* StartFurtheranceTimerIntent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

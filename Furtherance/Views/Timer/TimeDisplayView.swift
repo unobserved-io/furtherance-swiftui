@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct TimeDisplayView: View {
-//    @Environment(StopWatchHelper.self) private var stopWatchHelper
     @State private var stopWatchHelper = StopWatchHelper.shared
 
     @AppStorage("pomodoro") private var pomodoro = false
