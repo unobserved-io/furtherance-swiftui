@@ -13,16 +13,7 @@ struct TaskInputView: View {
     let timerHelper = TimerHelper.shared
     
     var body: some View {
-        TextField("Task Name #tag #another tag", text: Binding(
-            get: { taskTagsInput.text },
-            set: { newValue in
-                if taskTagsInput.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    taskTagsInput.text = newValue.trimmingCharacters(in: ["#"])
-                } else {
-                    taskTagsInput.text = newValue
-                }
-            }
-        ))
+        TextField("Task Name #tag #another tag", text: $taskTagsInput.text)
         #if os(iOS)
         .disableAutocorrection(true)
         .frame(height: 40)
