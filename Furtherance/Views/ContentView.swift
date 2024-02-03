@@ -537,7 +537,6 @@ struct ContentView: View {
     private func resumeOngoingTimer() {
         /// Continue running timer if it was running when the app was closed and it is less than 48 hours old
         #if os(iOS)
-        print(persistentTimer.first)
         if persistentTimer.first != nil {
             if persistentTimer.first?.isRunning ?? false {
                 stopWatchHelper.startTime = persistentTimer.first?.startTime ?? .now
