@@ -37,6 +37,7 @@ final class TimerHelper {
         }
     }
     
+    // TODO: Change "stopTime" var to at
     func stop(stopTime: Date = .now) {
         /// Stop the timer and perform relative actions
         StopWatchHelper.shared.stop()
@@ -48,12 +49,20 @@ final class TimerHelper {
         resetPersistentTimer()
     }
     
-    func updatePersistentTimer() {
+    func updatePersistentTimerTaskName() {
         #if os(iOS)
         if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
             persistentTimer.first?.taskName = taskName
             persistentTimer.first?.taskTags = taskTags
             persistentTimer.first?.nameAndTags = nameAndTags
+        }
+        #endif
+    }
+    
+    func updatePersistentTimerStartTime() {
+        #if os(iOS)
+        if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
+            persistentTimer.first?.startTime = startTime
         }
         #endif
     }
@@ -69,6 +78,15 @@ final class TimerHelper {
                 Navigator.shared.showTaskBeginsWithHashtagAlert = true
             }
         }
+    }
+    
+    func updateStartTime(to newStartTime: Date) {
+        /// Update the start time in all necessary locations when it is changed by the user
+        startTime = newStartTime
+        StopWatchHelper.shared.invalidatePomodoroTimer()
+        updatePersistentTimerStartTime()
+        StopWatchHelper.shared.startTime = newStartTime
+        StopWatchHelper.shared.updatePomodoroTimer()
     }
     
     private func separateTags() {

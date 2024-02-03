@@ -33,7 +33,7 @@ struct TaskInputView: View {
                     {
                         timerHelper.updateTaskAndTagsIfChanged()
                         #if os(iOS)
-                        timerHelper.updatePersistentTimer()
+                        timerHelper.updatePersistentTimerTaskName()
                         #endif
                     }
                 }

@@ -27,6 +27,8 @@
 		9C75182F2A35FEEF005100B6 /* GroupAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C75182E2A35FEEF005100B6 /* GroupAddView.swift */; };
 		9C7A69312B6D1DC40080E19F /* FurtheranceShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C7A69302B6D1DC40080E19F /* FurtheranceShortcuts.swift */; };
 		9C94FF3C2B6EC5F7007EC064 /* TaskInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C94FF3B2B6EC5F7007EC064 /* TaskInputView.swift */; };
+		9C94FF3E2B6EDDA9007EC064 /* StartTimeModifierView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C94FF3D2B6EDDA9007EC064 /* StartTimeModifierView.swift */; };
+		9C94FF402B6EE27F007EC064 /* EarliestPomodoroTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C94FF3F2B6EE27F007EC064 /* EarliestPomodoroTime.swift */; };
 		9C98E11129A8BFF70064F63F /* ClickedTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11029A8BFF70064F63F /* ClickedTask.swift */; };
 		9C98E11329A8C0790064F63F /* TaskEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11229A8C0790064F63F /* TaskEditView.swift */; };
 		9C98E11529A8F6B80064F63F /* GroupEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11429A8F6B80064F63F /* GroupEditView.swift */; };
@@ -75,6 +77,8 @@
 		9C75182E2A35FEEF005100B6 /* GroupAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupAddView.swift; sourceTree = "<group>"; };
 		9C7A69302B6D1DC40080E19F /* FurtheranceShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurtheranceShortcuts.swift; sourceTree = "<group>"; };
 		9C94FF3B2B6EC5F7007EC064 /* TaskInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskInputView.swift; sourceTree = "<group>"; };
+		9C94FF3D2B6EDDA9007EC064 /* StartTimeModifierView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartTimeModifierView.swift; sourceTree = "<group>"; };
+		9C94FF3F2B6EE27F007EC064 /* EarliestPomodoroTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EarliestPomodoroTime.swift; sourceTree = "<group>"; };
 		9C98E11029A8BFF70064F63F /* ClickedTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickedTask.swift; sourceTree = "<group>"; };
 		9C98E11229A8C0790064F63F /* TaskEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditView.swift; sourceTree = "<group>"; };
 		9C98E11429A8F6B80064F63F /* GroupEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupEditView.swift; sourceTree = "<group>"; };
@@ -177,9 +181,11 @@
 		9C94FF3A2B6EC5D7007EC064 /* Timer */ = {
 			isa = PBXGroup;
 			children = (
+				9CA84E2F29A79EE600A28FDA /* TaskRow.swift */,
 				9CA84E1229A7721200A28FDA /* TimerView.swift */,
 				9CDA71812B4E694A00758CE2 /* TimeDisplayView.swift */,
 				9C94FF3B2B6EC5F7007EC064 /* TaskInputView.swift */,
+				9C94FF3D2B6EDDA9007EC064 /* StartTimeModifierView.swift */,
 			);
 			path = Timer;
 			sourceTree = "<group>";
@@ -252,6 +258,7 @@
 				9C0657302B4C32C300745C90 /* StopWatchHelper.swift */,
 				9CFD857A2B4CA63500A8C5D8 /* DockTileContents.swift */,
 				9CF305162B642EE7007CDB5E /* Navigator.swift */,
+				9C94FF3F2B6EE27F007EC064 /* EarliestPomodoroTime.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -261,7 +268,6 @@
 			children = (
 				9C94FF3A2B6EC5D7007EC064 /* Timer */,
 				9C4683E62A502E38006D1B7A /* Settings */,
-				9CA84E2F29A79EE600A28FDA /* TaskRow.swift */,
 				9C27D34529A8B2630012C274 /* GroupView.swift */,
 				9C75182E2A35FEEF005100B6 /* GroupAddView.swift */,
 				9C98E11229A8C0790064F63F /* TaskEditView.swift */,
@@ -381,6 +387,7 @@
 				9C27D34829A8B5460012C274 /* ClickedGroup.swift in Sources */,
 				9CA84E3629A7AE0600A28FDA /* TimerHelper.swift in Sources */,
 				9C98E11729A918BC0064F63F /* Autosave.swift in Sources */,
+				9C94FF402B6EE27F007EC064 /* EarliestPomodoroTime.swift in Sources */,
 				9C98E11329A8C0790064F63F /* TaskEditView.swift in Sources */,
 				9CA84E1A29A7721300A28FDA /* PersistenceController.swift in Sources */,
 				9CA84E1329A7721200A28FDA /* TimerView.swift in Sources */,
@@ -389,6 +396,7 @@
 				9C1026672A361B5000FB95D8 /* AddTaskView.swift in Sources */,
 				9C0657312B4C32C300745C90 /* StopWatchHelper.swift in Sources */,
 				9CA84E1129A7721200A28FDA /* FurtheranceApp.swift in Sources */,
+				9C94FF3E2B6EDDA9007EC064 /* StartTimeModifierView.swift in Sources */,
 				9C4F069E29A9282D009D1AFE /* SettingsView.swift in Sources */,
 				9C3BD94829BE808A00637D36 /* ReportsView.swift in Sources */,
 				9CF305152B642D95007CDB5E /* OpenFurtheranceTimerIntent.swift in Sources */,

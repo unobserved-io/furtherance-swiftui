@@ -26,6 +26,7 @@ class StopWatchHelper {
     
     @ObservationIgnored var oneMinuteTimer = Timer()
     @ObservationIgnored var oneSecondTimer = Timer()
+    @ObservationIgnored var pomodoroEndTimer = Timer()
     @ObservationIgnored var idleNotified: Bool = false
     @ObservationIgnored var idleTimeReached: Bool = false
     @ObservationIgnored var idleStartTime: Date = .now
@@ -55,14 +56,8 @@ class StopWatchHelper {
         /// Start running the timer
         isRunning = true
         startTime = .now
+        initiatePomodoroTimer()
         
-        if pomodoro {
-            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60) + 1, to: startTime) ?? Date.now
-            let pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(pomodoroEndTasks), userInfo: nil, repeats: false)
-            RunLoop.main.add(pomodoroEndTimer, forMode: .common)
-            registerLocal(notificationType: "pomodoro")
-        }
- 
 #if os(macOS)
         // One minute timer for autosave
         setOneMinuteTimer()
@@ -84,7 +79,7 @@ class StopWatchHelper {
         isRunning = false
         startTime = .now
         stopTime = .distantFuture
-        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        invalidatePomodoroTimer()
         
 #if os(macOS)
         resetIdle()
@@ -119,6 +114,29 @@ class StopWatchHelper {
         }
     }
 #endif
+    
+    func initiatePomodoroTimer() {
+        if pomodoro {
+            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60) + 1, to: startTime) ?? Date.now
+            pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(pomodoroEndTasks), userInfo: nil, repeats: false)
+            RunLoop.main.add(pomodoroEndTimer, forMode: .common)
+            registerLocal(notificationType: "pomodoro")
+        }
+    }
+    
+    func invalidatePomodoroTimer() {
+        pomodoroEndTimer.invalidate()
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+    }
+    
+    func updatePomodoroTimer() {
+        if pomodoro {
+            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60) + 1, to: startTime) ?? Date.now
+            pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(pomodoroEndTasks), userInfo: nil, repeats: false)
+            RunLoop.main.add(pomodoroEndTimer, forMode: .common)
+            registerLocal(notificationType: "pomodoro")
+        }
+    }
     
     func registerLocal(notificationType: String) {
         /// Register notification handler

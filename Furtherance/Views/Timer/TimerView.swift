@@ -67,9 +67,9 @@ struct TimerView: View {
                     
                 HStack {
                     TaskInputView()
-                    .onSubmit {
-                        startStopPress()
-                    }
+                        .onSubmit {
+                            startStopPress()
+                        }
                     
                     Button {
                         if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -88,6 +88,10 @@ struct TimerView: View {
                     }
                 }
                 .padding(.horizontal)
+                
+                if stopWatchHelper.isRunning {
+                    StartTimeModifierView()
+                }
                 
                 tasksByDay.isEmpty ? nil : showTaskHistoryListBasedOnDevice()
             }
@@ -500,17 +504,17 @@ struct TimerView: View {
     private func resumeOngoingTimer() {
         /// Continue running timer if it was running when the app was closed and it is less than 48 hours old
         #if os(iOS)
-        if persistentTimer.first != nil {
-            if persistentTimer.first?.isRunning ?? false {
-                stopWatchHelper.startTime = persistentTimer.first?.startTime ?? .now
-                timerHelper.startTime = persistentTimer.first?.startTime ?? .now
-                timerHelper.taskName = persistentTimer.first?.taskName ?? ""
-                timerHelper.taskTags = persistentTimer.first?.taskTags ?? ""
-                timerHelper.nameAndTags = persistentTimer.first?.nameAndTags ?? ""
-                TaskTagsInput.shared.text = timerHelper.nameAndTags
-                stopWatchHelper.resume()
+            if persistentTimer.first != nil {
+                if persistentTimer.first?.isRunning ?? false {
+                    stopWatchHelper.startTime = persistentTimer.first?.startTime ?? .now
+                    timerHelper.startTime = persistentTimer.first?.startTime ?? .now
+                    timerHelper.taskName = persistentTimer.first?.taskName ?? ""
+                    timerHelper.taskTags = persistentTimer.first?.taskTags ?? ""
+                    timerHelper.nameAndTags = persistentTimer.first?.nameAndTags ?? ""
+                    TaskTagsInput.shared.text = timerHelper.nameAndTags
+                    stopWatchHelper.resume()
+                }
             }
-        }
         #endif
     }
     
