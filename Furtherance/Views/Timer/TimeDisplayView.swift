@@ -14,6 +14,7 @@ struct TimeDisplayView: View {
     @AppStorage("pomodoroTime") private var pomodoroTime = 25
 
     var body: some View {
+        /// This is in its own view for performance. Updating the Pomodoro time is far faster this way
         if stopWatchHelper.isRunning {
             Text(
                 timerInterval: stopWatchHelper.startTime ... stopWatchHelper.stopTime,

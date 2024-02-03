@@ -37,7 +37,6 @@ struct ContentView: View {
     var tasksByDay: SectionedFetchResults<String, FurTask>
     @Query private var persistentTimer: [PersistentTimer]
     
-    @StateObject var taskTagsInput = TaskTagsInput.shared
     @StateObject var autosave = Autosave()
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
@@ -64,8 +63,6 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $navigator.path) {
             VStack {
-                // This is in its own view for performance
-                // Updating the Pomodoro time is far faster this way
                 TimeDisplayView()
                     
                 HStack {
@@ -75,7 +72,7 @@ struct ContentView: View {
                     }
                     
                     Button {
-                        if taskTagsInput.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             showingTaskEmptyAlert.toggle()
                         } else {
                             startStopPress()
@@ -442,7 +439,7 @@ struct ContentView: View {
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         Button("Repeat") {
                             if !stopWatchHelper.isRunning {
-                                taskTagsInput.text = "\(taskGroup.name) \(taskGroup.tags)"
+                                TaskTagsInput.shared.text = "\(taskGroup.name) \(taskGroup.tags)"
                                 timerHelper.start()
                             }
                         }
@@ -510,7 +507,7 @@ struct ContentView: View {
                 timerHelper.taskName = persistentTimer.first?.taskName ?? ""
                 timerHelper.taskTags = persistentTimer.first?.taskTags ?? ""
                 timerHelper.nameAndTags = persistentTimer.first?.nameAndTags ?? ""
-                taskTagsInput.text = timerHelper.nameAndTags
+                TaskTagsInput.shared.text = timerHelper.nameAndTags
                 stopWatchHelper.resume()
             }
         }
