@@ -10,7 +10,7 @@ import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct ContentView: View {
+struct TimerView: View {
     @Binding var tasksCount: Int
     @Binding var showExportCSV: Bool
     
@@ -525,7 +525,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(tasksCount: .constant(0), showExportCSV: .constant(false)).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        TimerView(tasksCount: .constant(0), showExportCSV: .constant(false)).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }
 

@@ -40,7 +40,7 @@ struct FurtheranceApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
+            TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .onAppear {
                     #if os(macOS)
