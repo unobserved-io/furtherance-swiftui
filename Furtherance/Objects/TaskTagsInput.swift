@@ -9,5 +9,17 @@ import Foundation
 
 class TaskTagsInput: ObservableObject {
     static let shared = TaskTagsInput()
-    var text = ""
+    @Published var text = ""
+    @Published var debouncedText = ""
+    
+    init() {
+        setupTextDebounce()
+    }
+    
+    func setupTextDebounce() {
+        debouncedText = self.text
+        $text
+            .debounce(for: 1, scheduler: RunLoop.main)
+            .assign(to: &$debouncedText)
+    }
 }

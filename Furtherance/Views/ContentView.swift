@@ -90,11 +90,24 @@ struct ContentView: View {
                     #else
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     #endif
-                    // TODO: User should be able to change task before it's done
-                    .disabled(stopWatchHelper.isRunning)
+                    .onChange(of: taskTagsInput.debouncedText) { _, newVal in
+                        if stopWatchHelper.isRunning {
+                            if newVal != timerHelper.nameAndTags {
+                                if !newVal.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                                   newVal.trimmingCharacters(in: .whitespaces).first != "#"
+                                {
+                                    timerHelper.updateTaskAndTagsIfChanged()
+                                    #if os(iOS)
+                                    timerHelper.updatePersistentTimer()
+                                    #endif
+                                }
+                            }
+                        }
+                    }
                     .onSubmit {
                         startStopPress()
                     }
+                    
                     Button {
                         if taskTagsInput.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             showingTaskEmptyAlert.toggle()
@@ -524,6 +537,7 @@ struct ContentView: View {
     private func resumeOngoingTimer() {
         /// Continue running timer if it was running when the app was closed and it is less than 48 hours old
         #if os(iOS)
+        print(persistentTimer.first)
         if persistentTimer.first != nil {
             if persistentTimer.first?.isRunning ?? false {
                 stopWatchHelper.startTime = persistentTimer.first?.startTime ?? .now

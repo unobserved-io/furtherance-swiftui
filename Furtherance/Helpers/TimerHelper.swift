@@ -41,21 +41,34 @@ final class TimerHelper {
         /// Stop the timer and perform relative actions
         StopWatchHelper.shared.stop()
         self.stopTime = stopTime
+        updateTaskAndTagsIfChanged()
         saveTask()
         TaskTagsInput.shared.text = ""
         refreshAfterMidnight()
         resetPersistentTimer()
     }
     
-    private func saveTask() {
-        /// Create a new task in Core Data
-        let task = FurTask(context: persistenceController.container.viewContext)
-        task.id = UUID()
-        task.name = taskName
-        task.startTime = startTime
-        task.stopTime = stopTime
-        task.tags = taskTags
-        try? persistenceController.container.viewContext.save()
+    func updatePersistentTimer() {
+        #if os(iOS)
+        if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
+            persistentTimer.first?.taskName = taskName
+            persistentTimer.first?.taskTags = taskTags
+            persistentTimer.first?.nameAndTags = nameAndTags
+        }
+        #endif
+    }
+    
+    func updateTaskAndTagsIfChanged() {
+        if TaskTagsInput.shared.text != nameAndTags {
+            if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#"
+            {
+                nameAndTags = TaskTagsInput.shared.text
+                separateTags()
+            } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "#" {
+                Navigator.shared.showTaskBeginsWithHashtagAlert = true
+            }
+        }
     }
     
     private func separateTags() {
@@ -78,6 +91,17 @@ final class TimerHelper {
         }
     }
     
+    private func saveTask() {
+        /// Create a new task in Core Data
+        let task = FurTask(context: persistenceController.container.viewContext)
+        task.id = UUID()
+        task.name = taskName
+        task.startTime = startTime
+        task.stopTime = stopTime
+        task.tags = taskTags
+        try? persistenceController.container.viewContext.save()
+    }
+    
     private func refreshAfterMidnight() {
         /// Refresh the viewContext if the timer goes past midnight
         let startDate = Calendar.current.dateComponents([.day], from: startTime)
@@ -88,8 +112,8 @@ final class TimerHelper {
     }
     
     private func initiatePersistentTimer() {
+        /// Initiate/store persistent timer values
         #if os(iOS)
-        // Initiate/store persistent timer values
         if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
             if persistentTimer.first == nil {
                 let newPersistentTimer = PersistentTimer()
