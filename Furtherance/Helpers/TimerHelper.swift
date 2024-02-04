@@ -83,7 +83,6 @@ final class TimerHelper {
     func updateStartTime(to newStartTime: Date) {
         /// Update the start time in all necessary locations when it is changed by the user
         startTime = newStartTime
-        StopWatchHelper.shared.invalidatePomodoroTimer()
         updatePersistentTimerStartTime()
         StopWatchHelper.shared.startTime = newStartTime
         StopWatchHelper.shared.updatePomodoroTimer()

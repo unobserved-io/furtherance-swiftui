@@ -62,7 +62,6 @@ class StopWatchHelper {
         // One minute timer for autosave
         setOneMinuteTimer()
         
-
         // One second timer for idle detection and icon badge updating
         setOneSecondTimer()
         
@@ -78,7 +77,6 @@ class StopWatchHelper {
         oneSecondTimer.invalidate()
         isRunning = false
         startTime = .now
-        stopTime = .distantFuture
         invalidatePomodoroTimer()
         
 #if os(macOS)
@@ -121,23 +119,28 @@ class StopWatchHelper {
             pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(pomodoroEndTasks), userInfo: nil, repeats: false)
             RunLoop.main.add(pomodoroEndTimer, forMode: .common)
             registerLocal(notificationType: "pomodoro")
+            EarliestPomodoroTime.shared.setTimer()
         }
     }
     
     func invalidatePomodoroTimer() {
         pomodoroEndTimer.invalidate()
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        stopTime = .distantFuture
+        EarliestPomodoroTime.shared.invalidateTimer()
     }
     
     func updatePomodoroTimer() {
+        invalidatePomodoroTimer()
         if pomodoro {
             stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60) + 1, to: startTime) ?? Date.now
             pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(pomodoroEndTasks), userInfo: nil, repeats: false)
             RunLoop.main.add(pomodoroEndTimer, forMode: .common)
             registerLocal(notificationType: "pomodoro")
+            EarliestPomodoroTime.shared.setTimer()
         }
     }
-    
+
     func registerLocal(notificationType: String) {
         /// Register notification handler
         let center = UNUserNotificationCenter.current()
@@ -277,12 +280,10 @@ class StopWatchHelper {
         /// Check if the computer is going to sleep
         if idleDetect {
             if aNotification.name == NSWorkspace.willSleepNotification {
-                print("Going to sleep")
                 timeAtSleep = Date.now
                 idleAtSleep = getIdleTime()
                 idleStartTime = timeAtSleep.addingTimeInterval(Double(-idleAtSleep))
             } else if aNotification.name == NSWorkspace.didWakeNotification {
-                print("Woke up")
                 let selectedIdle = idleLimit * 60
                 let timeAsleep = Calendar.current.dateComponents([.second], from: timeAtSleep, to: Date.now).second ?? 0
                 let idleAfterSleep = timeAsleep + idleAtSleep

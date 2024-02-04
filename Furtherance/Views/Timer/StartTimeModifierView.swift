@@ -10,7 +10,7 @@ import SwiftUI
 struct StartTimeModifierView: View {
     @AppStorage("pomodoro") private var pomodoro = false
 
-    var earliestPomodoroTime = EarliestPomodoroTime()
+    @State private var earliestPomodoroTime = EarliestPomodoroTime.shared
 
     var body: some View {
         HStack {
@@ -28,13 +28,6 @@ struct StartTimeModifierView: View {
                 displayedComponents: [.hourAndMinute]
             )
             .labelsHidden()
-        }
-        .onChange(of: pomodoro) { _, newVal in
-            if newVal {
-                earliestPomodoroTime.setTimer()
-            } else {
-                earliestPomodoroTime.invalidateTimer()
-            }
         }
         .padding(.top, 5)
     }

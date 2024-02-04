@@ -9,24 +9,20 @@ import SwiftUI
 
 @Observable
 class EarliestPomodoroTime {
+    static var shared = EarliestPomodoroTime()
+    
     var minDate: Date = .now
     @ObservationIgnored var timer = Timer()
     
     @ObservationIgnored @AppStorage("pomodoro") private var pomodoro = false
     @ObservationIgnored @AppStorage("pomodoroTime") private var pomodoroTime = 25
     
-    init() {
-        if pomodoro {
-            setTimer()
-        }
-    }
-    
     func setTimer() {
         invalidateTimer()
         self.minDate = Calendar.current.date(byAdding: .minute, value: -(self.pomodoroTime - 1), to: .now) ?? StopWatchHelper.shared.startTime
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(withTimeInterval: 59, repeats: true) { _ in
-                print("Run")
+                print("RUN")
                 self.minDate = Calendar.current.date(byAdding: .minute, value: -(self.pomodoroTime - 1), to: .now) ?? StopWatchHelper.shared.startTime
             }
         }
