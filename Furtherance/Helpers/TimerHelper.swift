@@ -26,8 +26,9 @@ final class TimerHelper {
             if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#"
             {
-                StopWatchHelper.shared.start()
-                startTime = Date.now
+                let trimmedStartTime = Date.now.trimMilliseconds
+                StopWatchHelper.shared.start(at: trimmedStartTime)
+                startTime = trimmedStartTime
                 nameAndTags = TaskTagsInput.shared.text
                 separateTags()
                 initiatePersistentTimer()
@@ -82,9 +83,10 @@ final class TimerHelper {
     
     func updateStartTime(to newStartTime: Date) {
         /// Update the start time in all necessary locations when it is changed by the user
-        startTime = newStartTime
+        let trimmedStartTime = newStartTime.trimMilliseconds
+        startTime = trimmedStartTime
         updatePersistentTimerStartTime()
-        StopWatchHelper.shared.startTime = newStartTime
+        StopWatchHelper.shared.startTime = trimmedStartTime
         StopWatchHelper.shared.updatePomodoroTimer()
     }
     

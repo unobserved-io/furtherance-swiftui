@@ -52,10 +52,10 @@ class StopWatchHelper {
     let usbInfoRaw: io_service_t = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOHIDSystem"))
 #endif
     
-    func start( /* liveActivity: Bool = false */ ) {
+    func start(at startTime: Date = .now /* liveActivity: Bool = false */ ) {
         /// Start running the timer
         isRunning = true
-        startTime = .now
+        self.startTime = startTime
         initiatePomodoroTimer()
         
 #if os(macOS)
@@ -101,7 +101,7 @@ class StopWatchHelper {
         isRunning = true
         
         if pomodoro {
-            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60) + 1, to: startTime) ?? Date.now
+            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60), to: startTime) ?? Date.now
             if Date.now < stopTime {
                 let pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(pomodoroEndTasks), userInfo: nil, repeats: false)
                 RunLoop.main.add(pomodoroEndTimer, forMode: .common)
@@ -115,7 +115,7 @@ class StopWatchHelper {
     
     func initiatePomodoroTimer() {
         if pomodoro {
-            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60) + 1, to: startTime) ?? Date.now
+            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60), to: startTime) ?? Date.now
             pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(pomodoroEndTasks), userInfo: nil, repeats: false)
             RunLoop.main.add(pomodoroEndTimer, forMode: .common)
             registerLocal(notificationType: "pomodoro")
@@ -133,7 +133,7 @@ class StopWatchHelper {
     func updatePomodoroTimer() {
         invalidatePomodoroTimer()
         if pomodoro {
-            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60) + 1, to: startTime) ?? Date.now
+            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60), to: startTime) ?? Date.now
             pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(pomodoroEndTasks), userInfo: nil, repeats: false)
             RunLoop.main.add(pomodoroEndTimer, forMode: .common)
             registerLocal(notificationType: "pomodoro")
@@ -167,7 +167,7 @@ class StopWatchHelper {
         content.relevanceScore = 1.0
         content.interruptionLevel = UNNotificationInterruptionLevel.active
         
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(pomodoroTime * 60) + 1, repeats: false)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(pomodoroTime * 60), repeats: false)
 
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)

@@ -41,6 +41,13 @@ extension Date {
         components.second = -1
         return Calendar.current.date(byAdding: components, to: startOfMonth)!
     }
+    
+    var trimMilliseconds: Date {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], from: self)
+        return calendar.date(from: components) ?? self
+    }
+
 }
 
 extension PresentationDetent {
