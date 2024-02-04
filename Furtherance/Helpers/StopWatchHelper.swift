@@ -167,7 +167,7 @@ class StopWatchHelper {
         content.relevanceScore = 1.0
         content.interruptionLevel = UNNotificationInterruptionLevel.active
         
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(pomodoroTime * 60), repeats: false)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(pomodoroTime * 60) + 1, repeats: false)
 
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
