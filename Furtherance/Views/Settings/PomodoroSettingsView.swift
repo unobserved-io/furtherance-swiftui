@@ -50,6 +50,9 @@ struct PomodoroSettingsView: View {
                 Stepper("\(pomodoroTime)", value: $pomodoroTime, in: (stopWatchHelper.isRunning ? earliestPomodoroTime.minLength : 1) ... 1440)
                     .labelsHidden()
                     .disabled(!pomodoro)
+                    .onChange(of: pomodoroTime) { _, newVal in
+                        stopWatchHelper.updatePomodoroTimer()
+                    }
             }
 #if os(macOS)
             .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
