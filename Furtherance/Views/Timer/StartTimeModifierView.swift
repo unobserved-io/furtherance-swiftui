@@ -15,6 +15,7 @@ struct StartTimeModifierView: View {
     var body: some View {
         HStack {
             Image(systemName: "clock")
+                .help("Start time")
             DatePicker(
                 "Start time",
                 selection: Binding(get: {
@@ -35,6 +36,7 @@ struct StartTimeModifierView: View {
                 earliestPomodoroTime.invalidateTimer()
             }
         }
+        .padding(.top, 5)
     }
 }
 
