@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct StartTimeModifierView: View {
+    @ObservedObject var storeModel = StoreModel.shared
+    
     @AppStorage("pomodoro") private var pomodoro = false
 
     @State private var earliestPomodoroTime = EarliestPomodoroTime.shared
@@ -28,6 +30,15 @@ struct StartTimeModifierView: View {
                 displayedComponents: [.hourAndMinute]
             )
             .labelsHidden()
+            .disabled(storeModel.purchasedIds.isEmpty)
+            
+            if storeModel.purchasedIds.isEmpty {
+                Text("Pro")
+                    .padding(.vertical, 3.0)
+                    .padding(.horizontal, 8.0)
+                    .foregroundStyle(.background)
+                    .background(RoundedRectangle(cornerRadius: 20.0).fill(.gray.opacity(0.7)))
+            }
         }
         .padding(.top, 5)
     }
