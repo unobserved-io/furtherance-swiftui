@@ -15,6 +15,7 @@ struct PomodoroSettingsView: View {
     @AppStorage("pomodoroTime") private var pomodoroTime = 25
     
     @State private var stopWatchHelper = StopWatchHelper.shared
+    @State private var earliestPomodoroTime = EarliestPomodoroTime.shared
     
     var body: some View {
         Form {
@@ -30,7 +31,7 @@ struct PomodoroSettingsView: View {
                     .onChange(of: pomodoro) { _, newVal in
                         if !newVal && stopWatchHelper.isRunning {
                             stopWatchHelper.invalidatePomodoroTimer()
-                            EarliestPomodoroTime.shared.invalidateTimer()
+                            earliestPomodoroTime.invalidateTimer()
                         }
                     }
             }
@@ -46,7 +47,7 @@ struct PomodoroSettingsView: View {
                 Spacer()
                 Text("\(pomodoroTime)")
                     .bold()
-                Stepper("\(pomodoroTime)", value: $pomodoroTime, in: 1 ... 1440)
+                Stepper("\(pomodoroTime)", value: $pomodoroTime, in: (stopWatchHelper.isRunning ? earliestPomodoroTime.minLength : 1) ... 1440)
                     .labelsHidden()
                     .disabled(!pomodoro)
             }
