@@ -13,6 +13,8 @@ struct PomodoroSettingsView: View {
 
     @AppStorage("pomodoro") private var pomodoro = false
     @AppStorage("pomodoroTime") private var pomodoroTime = 25
+    
+    @State private var stopWatchHelper = StopWatchHelper.shared
 
     var body: some View {
         Form {
@@ -24,6 +26,7 @@ struct PomodoroSettingsView: View {
                 Toggle("Countdown timer", isOn: $pomodoro)
                     .toggleStyle(.switch)
                     .labelsHidden()
+                    .disabled(stopWatchHelper.isRunning && !pomodoro)
             }
 #if os(macOS)
             .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
