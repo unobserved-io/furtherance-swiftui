@@ -178,7 +178,7 @@ struct FurtheranceApp: App {
             #endif
         }
         #if os(macOS)
-        .defaultSize(width: 360, height: 600)
+        .defaultSize(width: 370, height: 600)
         #endif
 
         #if os(macOS)
