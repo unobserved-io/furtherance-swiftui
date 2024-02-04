@@ -23,8 +23,10 @@ class EarliestPomodoroTime {
     
     func setTimer() {
         invalidateTimer()
+        self.minDate = Calendar.current.date(byAdding: .minute, value: -(self.pomodoroTime - 1), to: .now) ?? StopWatchHelper.shared.startTime
         DispatchQueue.main.async {
             self.timer = Timer.scheduledTimer(withTimeInterval: 59, repeats: true) { _ in
+                print("Run")
                 self.minDate = Calendar.current.date(byAdding: .minute, value: -(self.pomodoroTime - 1), to: .now) ?? StopWatchHelper.shared.startTime
             }
         }
