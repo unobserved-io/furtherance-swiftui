@@ -51,7 +51,9 @@ struct PomodoroSettingsView: View {
                     .labelsHidden()
                     .disabled(!pomodoro)
                     .onChange(of: pomodoroTime) { _, newVal in
-                        stopWatchHelper.updatePomodoroTimer()
+                        if stopWatchHelper.isRunning {
+                            stopWatchHelper.updatePomodoroTimer()
+                        }
                     }
             }
 #if os(macOS)
