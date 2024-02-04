@@ -134,6 +134,7 @@ struct FurtheranceApp: App {
                         showExportCSV.toggle()
                     }
                 }
+                .badge(storeModel.purchasedIds.isEmpty ? "Pro" : nil)
                 .disabled(tasksCount == 0)
                 Button("Import CSV") {
                     if storeModel.purchasedIds.isEmpty {
@@ -142,6 +143,7 @@ struct FurtheranceApp: App {
                         showImportCSV.toggle()
                     }
                 }
+                .badge(storeModel.purchasedIds.isEmpty ? "Pro" : nil)
                 .disabled(tasksCount == 0)
                 Button("Delete All") {
                     if showDeleteConfirmation {
@@ -168,6 +170,7 @@ struct FurtheranceApp: App {
                         navigator.openView(.reports)
                     }
                 }
+                .badge(storeModel.purchasedIds.isEmpty ? "Pro" : nil)
                 .keyboardShortcut("R", modifiers: EventModifiers.command)
             }
             CommandGroup(before: CommandGroupPlacement.newItem) {
