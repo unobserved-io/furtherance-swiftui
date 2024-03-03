@@ -268,7 +268,6 @@ struct TimerView: View {
                     .presentationDetents([.taskBar])
             }
             #endif
-            // Autosave alert
             .alert("Autosave Restored", isPresented: $autosave.showAlert) {
                 Button("OK") { autosave.read(viewContext: viewContext) }
             } message: {
@@ -279,11 +278,23 @@ struct TimerView: View {
             } message: {
                 Text("A task name must be provided before tags. The first character cannot be a '#'.")
             }
-            // Empty task name alert
             .alert("Task Name Empty", isPresented: $showingTaskEmptyAlert) {
                 Button("OK") {}
             } message: {
                 Text("The task name cannot be empty.")
+            }
+            .alert(isPresented: stopWatchHelper.showingPomodoroEndedAlertBinding) {
+                Alert(
+                    title: Text("Time's up!"),
+                    message: Text("Are you ready to take a break?"),
+                    primaryButton: .default(Text("Break"), action: {
+                        stopWatchHelper.pomodoroBreak()
+                    }),
+                    // TODO: Replace X with number of chosen more minutes
+                    secondaryButton: .cancel(Text("X More Minutes"), action: {
+                        stopWatchHelper.pomodoroMoreMinutes()
+                    })
+                )
             }
             #if os(macOS)
             // Idle alert

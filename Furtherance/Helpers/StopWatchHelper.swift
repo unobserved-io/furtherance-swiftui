@@ -16,11 +16,20 @@ class StopWatchHelper {
     var stopTime: Date = .distantFuture
     var startTime: Date = .now
     var showingIdleAlert: Bool = false
+    var showingPomodoroEndedAlert: Bool = false
+    var pomodoroExtended: Bool = false
     
     var showingIdleAlertBinding: Binding<Bool> {
         Binding(
             get: { self.showingIdleAlert },
             set: { self.showingIdleAlert = $0 }
+        )
+    }
+    
+    var showingPomodoroEndedAlertBinding: Binding<Bool> {
+        Binding(
+            get: { self.showingPomodoroEndedAlert },
+            set: { self.showingPomodoroEndedAlert = $0 }
         )
     }
     
@@ -47,6 +56,7 @@ class StopWatchHelper {
     @ObservationIgnored @AppStorage("pomodoro") private var pomodoro = false
     @ObservationIgnored @AppStorage("pomodoroTime") private var pomodoroTime = 25
     @ObservationIgnored @AppStorage("showIconBadge") private var showIconBadge = false
+    @ObservationIgnored @AppStorage("pomodoroXMoreMinutes") private var pomodoroXMoreMinutes = 5
     
 #if os(macOS)
     let usbInfoRaw: io_service_t = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOHIDSystem"))
@@ -103,11 +113,11 @@ class StopWatchHelper {
         if pomodoro {
             stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60), to: startTime) ?? Date.now
             if Date.now < stopTime {
-                let pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(pomodoroEndTasks), userInfo: nil, repeats: false)
+                let pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroTimesUpAlert), userInfo: nil, repeats: false)
                 RunLoop.main.add(pomodoroEndTimer, forMode: .common)
                 registerLocal(notificationType: "pomodoro")
             } else {
-                pomodoroEndTasks()
+                TimerHelper.shared.stop(stopTime: stopTime)
             }
         }
     }
@@ -115,8 +125,9 @@ class StopWatchHelper {
     
     func initiatePomodoroTimer() {
         if pomodoro {
+            // TODO: Replace this with .minute?
             stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60), to: startTime) ?? Date.now
-            pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(pomodoroEndTasks), userInfo: nil, repeats: false)
+            pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroTimesUpAlert), userInfo: nil, repeats: false)
             RunLoop.main.add(pomodoroEndTimer, forMode: .common)
             registerLocal(notificationType: "pomodoro")
             EarliestPomodoroTime.shared.setTimer()
@@ -132,13 +143,20 @@ class StopWatchHelper {
     
     func updatePomodoroTimer() {
         invalidatePomodoroTimer()
-        if pomodoro {
-            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60), to: startTime) ?? Date.now
-            pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(pomodoroEndTasks), userInfo: nil, repeats: false)
-            RunLoop.main.add(pomodoroEndTimer, forMode: .common)
-            registerLocal(notificationType: "pomodoro")
-            EarliestPomodoroTime.shared.setTimer()
-        }
+        initiatePomodoroTimer()
+    }
+    
+    func pomodoroBreak() {
+        pomodoroExtended = false
+        TimerHelper.shared.stop(stopTime: stopTime)
+    }
+    
+    func pomodoroMoreMinutes() {
+        pomodoroExtended = true
+        stopTime = Calendar.current.date(byAdding: .minute, value: pomodoroXMoreMinutes, to: .now) ?? Date.now
+        pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroTimesUpAlert), userInfo: nil, repeats: false)
+        RunLoop.main.add(pomodoroEndTimer, forMode: .common)
+        registerLocal(notificationType: "pomodoro")
     }
 
     func registerLocal(notificationType: String) {
@@ -189,8 +207,12 @@ class StopWatchHelper {
         UNUserNotificationCenter.current().add(request)
     }
     
-    @objc private func pomodoroEndTasks() {
-        TimerHelper.shared.stop(stopTime: stopTime)
+//    @objc private func pomodoroEndTasks() {
+//        TimerHelper.shared.stop(stopTime: stopTime)
+//    }
+    
+    @objc private func showPomodoroTimesUpAlert() {
+        showingPomodoroEndedAlert = true
     }
     
 #if os(macOS)

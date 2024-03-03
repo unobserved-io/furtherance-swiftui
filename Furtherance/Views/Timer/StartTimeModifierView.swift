@@ -30,7 +30,7 @@ struct StartTimeModifierView: View {
                 displayedComponents: [.hourAndMinute]
             )
             .labelsHidden()
-            .disabled(storeModel.purchasedIds.isEmpty)
+            .disabled(StopWatchHelper.shared.pomodoroExtended || storeModel.purchasedIds.isEmpty)
             
             if storeModel.purchasedIds.isEmpty {
                 Text("Pro")
