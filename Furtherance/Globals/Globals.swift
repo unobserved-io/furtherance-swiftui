@@ -8,6 +8,9 @@
 import CoreData
 import SwiftUI
 
+let switchColorLightTheme: Color = .accent
+let switchColorDarkTheme: Color = .accent
+
 let localDateTimeFormatter: DateFormatter = {
     let formatter = DateFormatter()
     formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"

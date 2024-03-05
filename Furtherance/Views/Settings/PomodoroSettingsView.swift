@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct PomodoroSettingsView: View {
-    @ObservedObject var storeModel = StoreModel.shared
     @Environment(\.colorScheme) var colorScheme
+    
+    @ObservedObject var storeModel = StoreModel.shared
     
     @AppStorage("pomodoro") private var pomodoro = false
     @AppStorage("pomodoroTime") private var pomodoroTime = 25
@@ -32,6 +33,7 @@ struct PomodoroSettingsView: View {
                     Spacer()
                     Toggle("Countdown timer", isOn: $pomodoro)
                         .toggleStyle(.switch)
+                        .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
                         .disabled(stopWatchHelper.isRunning && !pomodoro)
                         .onChange(of: pomodoro) { _, newVal in
@@ -110,6 +112,7 @@ struct PomodoroSettingsView: View {
                     Spacer()
                     Toggle("Extended breaks", isOn: $pomodoroBigBreak)
                         .toggleStyle(.switch)
+                        .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
                         .disabled(!pomodoro)
                 }
@@ -157,6 +160,24 @@ struct PomodoroSettingsView: View {
                 .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
                 .cornerRadius(20)
 #endif
+                
+                if stopWatchHelper.pomodoroSessions > 0 {
+                    HStack {
+                        Text("You've done \(stopWatchHelper.pomodoroSessions) work sessions this round")
+                        Spacer()
+                        Button("Reset", role: .destructive) {
+                            stopWatchHelper.pomodoroSessions = 0
+                        }
+                        .disabled(stopWatchHelper.isRunning)
+                        .buttonStyle(.borderedProminent)
+                    }
+    #if os(macOS)
+                    .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                    .padding()
+                    .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                    .cornerRadius(20)
+    #endif
+                }
             }
         }
 #if os(macOS)

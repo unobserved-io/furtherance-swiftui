@@ -57,6 +57,7 @@ struct GeneralSettingsView: View {
                 Spacer()
                 Toggle("Show delete confirmation", isOn: $showDeleteConfirmation)
                     .toggleStyle(.switch)
+                    .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                     .labelsHidden()
             }
 #if os(macOS)
@@ -72,6 +73,7 @@ struct GeneralSettingsView: View {
                     Spacer()
                     Toggle("Show tags", isOn: $showTags)
                         .toggleStyle(.switch)
+                        .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
@@ -87,6 +89,7 @@ struct GeneralSettingsView: View {
                     Spacer()
                     Toggle("Show seconds", isOn: $showSeconds)
                         .toggleStyle(.switch)
+                        .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
@@ -102,6 +105,7 @@ struct GeneralSettingsView: View {
                     Spacer()
                     Toggle("Show daily time sum", isOn: $showDailySum)
                         .toggleStyle(.switch)
+                        .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }

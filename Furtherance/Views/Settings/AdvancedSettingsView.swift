@@ -76,6 +76,7 @@ struct AdvancedSettingsView: View {
                     Spacer()
                     Toggle("Today's total time ticks up with timer", isOn: $totalInclusive)
                         .toggleStyle(.switch)
+                        .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
@@ -91,6 +92,7 @@ struct AdvancedSettingsView: View {
                     Spacer()
                     Toggle("Limit days shown in task history", isOn: $limitHistory)
                         .toggleStyle(.switch)
+                        .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty)
                 }
