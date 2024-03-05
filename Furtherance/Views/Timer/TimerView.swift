@@ -28,6 +28,7 @@ struct TimerView: View {
     @AppStorage("historyListLimit") private var historyListLimit = 10
     @AppStorage("showDailySum") private var showDailySum = true
     @AppStorage("showSeconds") private var showSeconds = true
+    @AppStorage("pomodoroMoreTime") private var pomodoroMoreTime = 5
 
     @SectionedFetchRequest(
         sectionIdentifier: \.startDateRelative,
@@ -72,7 +73,9 @@ struct TimerView: View {
                         }
                     
                     Button {
-                        if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        if stopWatchHelper.pomodoroOnBreak {
+                            timerHelper.pomodoroStopAfterBreak()
+                        } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
                             showingTaskEmptyAlert.toggle()
                         } else {
                             startStopPress()
@@ -283,21 +286,8 @@ struct TimerView: View {
             } message: {
                 Text("The task name cannot be empty.")
             }
-            .alert(isPresented: stopWatchHelper.showingPomodoroEndedAlertBinding) {
-                Alert(
-                    title: Text("Time's up!"),
-                    message: Text("Are you ready to take a break?"),
-                    primaryButton: .default(Text("Break"), action: {
-                        stopWatchHelper.pomodoroBreak()
-                    }),
-                    // TODO: Replace X with number of chosen more minutes
-                    secondaryButton: .cancel(Text("X More Minutes"), action: {
-                        stopWatchHelper.pomodoroMoreMinutes()
-                    })
-                )
-            }
             #if os(macOS)
-            // Idle alert
+            // Idle alert TODO: Change to new alert style
             .alert(isPresented: stopWatchHelper.showingIdleAlertBinding) {
                 Alert(
                     title: Text("You have been idle for \(stopWatchHelper.idleLength)"),
@@ -323,6 +313,39 @@ struct TimerView: View {
             #endif
         }
         .environmentObject(clickedGroup)
+        .alert(
+            "Time's up!",
+            isPresented: stopWatchHelper.showingPomodoroEndedAlertBinding
+        ) {
+            Button {
+                stopWatchHelper.pomodoroMoreMinutes()
+            } label: {
+                Text("^[\(pomodoroMoreTime) More Minute](inflect: true)")
+            }
+            Button("Stop") {
+                timerHelper.stop(stopTime: stopWatchHelper.stopTime)
+            }
+            Button("Break") {
+                timerHelper.pomodoroStartIntermission()
+            }
+            .keyboardShortcut(.defaultAction)
+        } message: {
+            Text("Are you ready to take a break?")
+        }
+        .alert(
+            "Break's over!",
+            isPresented: stopWatchHelper.showingPomodoroIntermissionEndedAlertBinding
+        ) {
+            Button("Stop") {
+                timerHelper.pomodoroStopAfterBreak()
+            }
+            Button("Continue") {
+                timerHelper.pomodoroNextWorkSession()
+            }
+            .keyboardShortcut(.defaultAction)
+        } message: {
+            Text("Time to get back to work.")
+        }
     }
         
     private func startStopPress() {

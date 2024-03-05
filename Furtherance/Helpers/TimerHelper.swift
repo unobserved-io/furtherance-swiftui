@@ -90,6 +90,34 @@ final class TimerHelper {
         StopWatchHelper.shared.updatePomodoroTimer()
     }
     
+    func pomodoroStartIntermission() {
+        self.stopTime = StopWatchHelper.shared.stopTime
+        StopWatchHelper.shared.stop()
+        updateTaskAndTagsIfChanged()
+        saveTask()
+//        persistenceController.container.viewContext.refreshAllObjects()
+        refreshAfterMidnight()
+        resetPersistentTimer()
+        StopWatchHelper.shared.pomodoroStartIntermission()
+    }
+    
+    func pomodoroNextWorkSession() {
+        StopWatchHelper.shared.stop()
+        updateTaskAndTagsIfChanged()
+        refreshAfterMidnight()
+        resetPersistentTimer()
+        start()
+    }
+    
+    func pomodoroStopAfterBreak() {
+        /// Stop the timer after just on a Pomodoro break
+        StopWatchHelper.shared.stop()
+        updateTaskAndTagsIfChanged()
+        TaskTagsInput.shared.text = ""
+        refreshAfterMidnight()
+        resetPersistentTimer()
+    }
+    
     private func separateTags() {
         /// Separate task from tags and save each in the relative variable
         var splitTags = nameAndTags.trimmingCharacters(in: .whitespaces).split(separator: "#")

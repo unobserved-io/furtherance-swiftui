@@ -17,7 +17,9 @@ class StopWatchHelper {
     var startTime: Date = .now
     var showingIdleAlert: Bool = false
     var showingPomodoroEndedAlert: Bool = false
+    var showingPomodoroIntermissionEndedAlert: Bool = false
     var pomodoroExtended: Bool = false
+    var pomodoroOnBreak: Bool = false
     
     var showingIdleAlertBinding: Binding<Bool> {
         Binding(
@@ -30,6 +32,13 @@ class StopWatchHelper {
         Binding(
             get: { self.showingPomodoroEndedAlert },
             set: { self.showingPomodoroEndedAlert = $0 }
+        )
+    }
+    
+    var showingPomodoroIntermissionEndedAlertBinding: Binding<Bool> {
+        Binding(
+            get: { self.showingPomodoroIntermissionEndedAlert },
+            set: { self.showingPomodoroIntermissionEndedAlert = $0 }
         )
     }
     
@@ -56,7 +65,8 @@ class StopWatchHelper {
     @ObservationIgnored @AppStorage("pomodoro") private var pomodoro = false
     @ObservationIgnored @AppStorage("pomodoroTime") private var pomodoroTime = 25
     @ObservationIgnored @AppStorage("showIconBadge") private var showIconBadge = false
-    @ObservationIgnored @AppStorage("pomodoroXMoreMinutes") private var pomodoroXMoreMinutes = 5
+    @ObservationIgnored @AppStorage("pomodoroMoreTime") private var pomodoroMoreTime = 5
+    @ObservationIgnored @AppStorage("pomodoroIntermissionTime") private var pomodoroIntermissionTime = 5
     
 #if os(macOS)
     let usbInfoRaw: io_service_t = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOHIDSystem"))
@@ -138,6 +148,7 @@ class StopWatchHelper {
         pomodoroEndTimer.invalidate()
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
         stopTime = .distantFuture
+        pomodoroOnBreak = false
         EarliestPomodoroTime.shared.invalidateTimer()
     }
     
@@ -146,17 +157,35 @@ class StopWatchHelper {
         initiatePomodoroTimer()
     }
     
-    func pomodoroBreak() {
-        pomodoroExtended = false
-        TimerHelper.shared.stop(stopTime: stopTime)
-    }
-    
     func pomodoroMoreMinutes() {
         pomodoroExtended = true
-        stopTime = Calendar.current.date(byAdding: .minute, value: pomodoroXMoreMinutes, to: .now) ?? Date.now
+        stopTime = Calendar.current.date(byAdding: .minute, value: pomodoroMoreTime, to: .now) ?? Date.now
         pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroTimesUpAlert), userInfo: nil, repeats: false)
         RunLoop.main.add(pomodoroEndTimer, forMode: .common)
         registerLocal(notificationType: "pomodoro")
+    }
+    
+    func pomodoroStartIntermission() {
+        pomodoroExtended = false
+        pomodoroOnBreak = true
+        isRunning = true
+        startTime = .now
+        
+        stopTime = Calendar.current.date(byAdding: .minute, value: pomodoroIntermissionTime, to: .now) ?? Date.now
+        pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroIntermissionEndedAlert), userInfo: nil, repeats: false)
+        RunLoop.main.add(pomodoroEndTimer, forMode: .common)
+        registerLocal(notificationType: "pomodoroIntermissionEnded")
+        EarliestPomodoroTime.shared.setTimer()
+    }
+    
+    @objc
+    func showPomodoroIntermissionEndedAlert() {
+        showingPomodoroIntermissionEndedAlert = true
+    }
+    
+    @objc
+    private func showPomodoroTimesUpAlert() {
+        showingPomodoroEndedAlert = true
     }
 
     func registerLocal(notificationType: String) {
@@ -168,6 +197,8 @@ class StopWatchHelper {
                     self.scheduleLocalIdleNotification()
                 } else if notificationType == "pomodoro" {
                     self.scheduleLocalPomodoroNotification()
+                } else if notificationType == "pomodoroIntermissionEnded" {
+                    self.scheduleLocalPomodoroIntermissionEndedNotification()
                 }
             } else if let error = error {
                 print(error.localizedDescription)
@@ -191,6 +222,22 @@ class StopWatchHelper {
         UNUserNotificationCenter.current().add(request)
     }
     
+    func scheduleLocalPomodoroIntermissionEndedNotification() {
+        /// Set up notifications for Pomodoro Intermission Ended timer
+        let content = UNMutableNotificationContent()
+        content.title = "Break's over!"
+        content.body = "Time to get back to work."
+        content.categoryIdentifier = "pomodoroIntermissionEnded"
+        content.sound = UNNotificationSound.default
+        content.relevanceScore = 1.0
+        content.interruptionLevel = UNNotificationInterruptionLevel.active
+        
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: Double(pomodoroIntermissionTime * 60), repeats: false)
+
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        UNUserNotificationCenter.current().add(request)
+    }
+    
     func scheduleLocalIdleNotification() {
         /// Setup notifications for when user comes back from being idle
         let content = UNMutableNotificationContent()
@@ -205,14 +252,6 @@ class StopWatchHelper {
 
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
-    }
-    
-//    @objc private func pomodoroEndTasks() {
-//        TimerHelper.shared.stop(stopTime: stopTime)
-//    }
-    
-    @objc private func showPomodoroTimesUpAlert() {
-        showingPomodoroEndedAlert = true
     }
     
 #if os(macOS)

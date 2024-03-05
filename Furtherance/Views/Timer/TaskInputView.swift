@@ -11,9 +11,11 @@ struct TaskInputView: View {
     @StateObject var taskTagsInput = TaskTagsInput.shared
     
     let timerHelper = TimerHelper.shared
+    @State private var stopWatchHelper = StopWatchHelper.shared
     
     var body: some View {
         TextField("Task Name #tag #another tag", text: $taskTagsInput.text)
+            .disabled(stopWatchHelper.pomodoroOnBreak)
         #if os(iOS)
         .disableAutocorrection(true)
         .frame(height: 40)
