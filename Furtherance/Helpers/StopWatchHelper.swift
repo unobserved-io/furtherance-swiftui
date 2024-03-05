@@ -20,6 +20,7 @@ class StopWatchHelper {
     var showingPomodoroIntermissionEndedAlert: Bool = false
     var pomodoroExtended: Bool = false
     var pomodoroOnBreak: Bool = false
+    var pomodoroSessions: Int = 0
     
     var showingIdleAlertBinding: Binding<Bool> {
         Binding(
@@ -67,6 +68,9 @@ class StopWatchHelper {
     @ObservationIgnored @AppStorage("showIconBadge") private var showIconBadge = false
     @ObservationIgnored @AppStorage("pomodoroMoreTime") private var pomodoroMoreTime = 5
     @ObservationIgnored @AppStorage("pomodoroIntermissionTime") private var pomodoroIntermissionTime = 5
+    @ObservationIgnored @AppStorage("pomodoroBigBreak") private var pomodoroBigBreak = false
+    @ObservationIgnored @AppStorage("pomodoroBigBreakInterval") private var pomodoroBigBreakInterval = 4
+    @ObservationIgnored @AppStorage("pomodoroBigBreakLength") private var pomodoroBigBreakLength = 25
     
 #if os(macOS)
     let usbInfoRaw: io_service_t = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOHIDSystem"))
@@ -135,6 +139,7 @@ class StopWatchHelper {
     
     func initiatePomodoroTimer() {
         if pomodoro {
+            pomodoroSessions += 1
             // TODO: Replace this with .minute?
             stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60), to: startTime) ?? Date.now
             pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroTimesUpAlert), userInfo: nil, repeats: false)
@@ -171,7 +176,14 @@ class StopWatchHelper {
         isRunning = true
         startTime = .now
         
-        stopTime = Calendar.current.date(byAdding: .minute, value: pomodoroIntermissionTime, to: .now) ?? Date.now
+        let intermissionTime: Int = {
+            if self.pomodoroBigBreak && self.pomodoroSessions % self.pomodoroBigBreakInterval == 0 {
+                return self.pomodoroBigBreakLength
+            } else {
+                return self.pomodoroIntermissionTime
+            }
+        }()
+        stopTime = Calendar.current.date(byAdding: .minute, value: intermissionTime, to: .now) ?? Date.now
         pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroIntermissionEndedAlert), userInfo: nil, repeats: false)
         RunLoop.main.add(pomodoroEndTimer, forMode: .common)
         registerLocal(notificationType: "pomodoroIntermissionEnded")

@@ -95,7 +95,6 @@ final class TimerHelper {
         StopWatchHelper.shared.stop()
         updateTaskAndTagsIfChanged()
         saveTask()
-//        persistenceController.container.viewContext.refreshAllObjects()
         refreshAfterMidnight()
         resetPersistentTimer()
         StopWatchHelper.shared.pomodoroStartIntermission()

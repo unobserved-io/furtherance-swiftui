@@ -29,6 +29,8 @@ struct TimerView: View {
     @AppStorage("showDailySum") private var showDailySum = true
     @AppStorage("showSeconds") private var showSeconds = true
     @AppStorage("pomodoroMoreTime") private var pomodoroMoreTime = 5
+    @AppStorage("pomodoroBigBreak") private var pomodoroBigBreak = false
+    @AppStorage("pomodoroBigBreakInterval") private var pomodoroBigBreakInterval = 4
 
     @SectionedFetchRequest(
         sectionIdentifier: \.startDateRelative,
@@ -325,7 +327,7 @@ struct TimerView: View {
             Button("Stop") {
                 timerHelper.stop(stopTime: stopWatchHelper.stopTime)
             }
-            Button("Break") {
+            Button(pomodoroBigBreak && stopWatchHelper.pomodoroSessions % pomodoroBigBreakInterval == 0 ? "Long Break" : "Break") {
                 timerHelper.pomodoroStartIntermission()
             }
             .keyboardShortcut(.defaultAction)
