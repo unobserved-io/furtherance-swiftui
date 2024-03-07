@@ -33,7 +33,7 @@ struct StartTimeModifierView: View {
             .disabled(StopWatchHelper.shared.pomodoroExtended || storeModel.purchasedIds.isEmpty)
             
             if storeModel.purchasedIds.isEmpty {
-                Text("Pro")
+                Text("PRO")
                     .padding(.vertical, 3.0)
                     .padding(.horizontal, 8.0)
                     .foregroundStyle(.background)
