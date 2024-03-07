@@ -26,6 +26,7 @@ struct TimeDisplayView: View {
             .allowsTightening(false)
             .frame(maxHeight: 90)
             .padding(.horizontal)
+            .foregroundStyle(stopWatchHelper.pomodoroOnBreak ? .red : .primary)
         } else {
             Text(pomodoro ? (DateComponentsFormatter().string(from: Double(pomodoroTime * 60)) ?? "0:00") : "0:00")
                 .font(Font.monospacedDigit(.system(size: 80.0))())
@@ -34,6 +35,7 @@ struct TimeDisplayView: View {
                 .allowsTightening(false)
                 .frame(maxHeight: 90)
                 .padding(.horizontal)
+                .foregroundStyle(.primary)
         }
     }
 }
