@@ -106,10 +106,11 @@ struct PomodoroSettingsView: View {
                 Text("Pomodoro Timer")
             } footer: {
                 Text("All numbers represent minutes")
-            }
 #if os(macOS)
-            .padding(.bottom, 10)
+                    .padding(.bottom, 10)
+                    .font(.footnote)
 #endif
+            }
             
             Section(header: TextWithBadge("Extended Break")) {
                 HStack {
@@ -187,7 +188,7 @@ struct PomodoroSettingsView: View {
         }
 #if os(macOS)
         .padding(20)
-        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 600 : 550)
+        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 550 : 500)
 #endif
     }
 }
