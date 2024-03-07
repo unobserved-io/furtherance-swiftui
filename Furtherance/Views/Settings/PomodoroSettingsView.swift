@@ -58,7 +58,7 @@ struct PomodoroSettingsView: View {
                     Stepper("\(pomodoroTime)", value: $pomodoroTime, in: (stopWatchHelper.isRunning ? earliestPomodoroTime.minLength : 1) ... 1440)
                         .labelsHidden()
                         .disabled(!pomodoro)
-                        .onChange(of: pomodoroTime) { _, newVal in
+                        .onChange(of: pomodoroTime) { _, _ in
                             if stopWatchHelper.isRunning {
                                 stopWatchHelper.updatePomodoroTimer()
                             }
@@ -177,12 +177,12 @@ struct PomodoroSettingsView: View {
                         .disabled(stopWatchHelper.isRunning || storeModel.purchasedIds.isEmpty)
                         .buttonStyle(.borderedProminent)
                     }
-    #if os(macOS)
+#if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
                     .padding()
                     .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
                     .cornerRadius(20)
-    #endif
+#endif
                 }
             }
         }

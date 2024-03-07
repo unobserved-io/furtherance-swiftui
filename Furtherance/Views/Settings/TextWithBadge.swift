@@ -9,13 +9,13 @@ import SwiftUI
 
 struct TextWithBadge: View {
     var content: String
-    
+
     @ObservedObject var storeModel = StoreModel.shared
-    
+
     init(_ content: String) {
         self.content = content
     }
-    
+
     var body: some View {
         HStack {
             Text(content)
@@ -27,7 +27,6 @@ struct TextWithBadge: View {
                     .background(RoundedRectangle(cornerRadius: 20.0).fill(.accent))
             }
         }
-        
     }
 }
 

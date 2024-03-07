@@ -13,13 +13,13 @@ import UniformTypeIdentifiers
 @main
 struct FurtheranceApp: App {
     let persistenceController = PersistenceController.shared
-    
+
     #if os(macOS)
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     #endif
     @AppStorage("launchCount") private var launchCount = 0
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
-    
+
     @ObservedObject var storeModel = StoreModel.shared
 
     @State private var navigator = Navigator.shared

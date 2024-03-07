@@ -125,7 +125,7 @@ class StopWatchHelper {
         isRunning = true
         
         if pomodoro {
-            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60), to: startTime) ?? Date.now
+            stopTime = Calendar.current.date(byAdding: .second, value: pomodoroTime * 60, to: startTime) ?? Date.now
             if Date.now < stopTime {
                 let pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroTimesUpAlert), userInfo: nil, repeats: false)
                 RunLoop.main.add(pomodoroEndTimer, forMode: .common)
@@ -141,7 +141,7 @@ class StopWatchHelper {
         if pomodoro {
             pomodoroSessions += 1
             // TODO: Replace this with .minute?
-            stopTime = Calendar.current.date(byAdding: .second, value: (pomodoroTime * 60), to: startTime) ?? Date.now
+            stopTime = Calendar.current.date(byAdding: .second, value: pomodoroTime * 60, to: startTime) ?? Date.now
             pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroTimesUpAlert), userInfo: nil, repeats: false)
             RunLoop.main.add(pomodoroEndTimer, forMode: .common)
             registerLocal(notificationType: "pomodoro")
@@ -177,7 +177,7 @@ class StopWatchHelper {
         startTime = .now
         
         let intermissionTime: Int = {
-            if self.pomodoroBigBreak && self.pomodoroSessions % self.pomodoroBigBreakInterval == 0 {
+            if self.pomodoroBigBreak, self.pomodoroSessions % self.pomodoroBigBreakInterval == 0 {
                 return self.pomodoroBigBreakLength
             } else {
                 return self.pomodoroIntermissionTime

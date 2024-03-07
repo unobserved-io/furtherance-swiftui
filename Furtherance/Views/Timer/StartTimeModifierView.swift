@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StartTimeModifierView: View {
     @ObservedObject var storeModel = StoreModel.shared
-    
+
     @AppStorage("pomodoro") private var pomodoro = false
 
     @State private var earliestPomodoroTime = EarliestPomodoroTime.shared
@@ -31,7 +31,7 @@ struct StartTimeModifierView: View {
             )
             .labelsHidden()
             .disabled(StopWatchHelper.shared.pomodoroExtended || storeModel.purchasedIds.isEmpty)
-            
+
             if storeModel.purchasedIds.isEmpty {
                 Text("PRO")
                     .padding(.vertical, 3.0)
