@@ -29,11 +29,11 @@ struct AdvancedSettingsView: View {
             BuyProView()
 
 #if os(macOS)
-            Section(header: storeModel.purchasedIds.isEmpty ? Text("Idle (Pro)").bold() : Text("Idle").bold()) {
+            Section(header: TextWithBadge("Idle")) {
                 HStack {
-                    Text("Detect when user is idle")
+                    Text("Idle Detection")
                     Spacer()
-                    Toggle("Detect when user is idle", isOn: $idleDetect)
+                    Toggle("Idle Detection", isOn: $idleDetect)
                         .toggleStyle(.switch)
                         .labelsHidden()
                         .disabled(storeModel.purchasedIds.isEmpty)
@@ -55,7 +55,7 @@ struct AdvancedSettingsView: View {
                 .cornerRadius(20)
 
                 HStack {
-                    Text("Minutes before user is idle:")
+                    Text("Minutes Until Idle:")
                     Spacer()
                     Text("\(idleLimit)")
                         .bold()
@@ -70,11 +70,17 @@ struct AdvancedSettingsView: View {
             }
 #endif
 
-            Section(header: Text("Task History").bold()) {
+            Section(header: TextWithBadge("Task History")) {
                 HStack {
-                    storeModel.purchasedIds.isEmpty ? Text("Today's total time ticks up with timer (Pro)") : Text("Today's total time ticks up with timer")
+                    VStack(alignment: .leading) {
+                        Text("Dynamic Total")
+                        Text("Today's total time ticks up with timer")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                    }
                     Spacer()
-                    Toggle("Today's total time ticks up with timer", isOn: $totalInclusive)
+                    Toggle("Dynamic Total", isOn: $totalInclusive)
                         .toggleStyle(.switch)
                         .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
@@ -88,9 +94,9 @@ struct AdvancedSettingsView: View {
 #endif
 
                 HStack {
-                    storeModel.purchasedIds.isEmpty ? Text("Limit days shown in task history (Pro)") : Text("Limit days shown in task history")
+                    Text("Limit History")
                     Spacer()
-                    Toggle("Limit days shown in task history", isOn: $limitHistory)
+                    Toggle("Limit History", isOn: $limitHistory)
                         .toggleStyle(.switch)
                         .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
@@ -104,7 +110,7 @@ struct AdvancedSettingsView: View {
 #endif
 
                 HStack {
-                    Text("Only show X number of days in task history (Pro):")
+                    Text("Days To Show")
                     Spacer()
                     Text("\(historyListLimit)")
                         .bold()
@@ -122,7 +128,7 @@ struct AdvancedSettingsView: View {
             
 #if os(iOS)
             Section {
-                Button("Delete entire task history", role: .destructive) {
+                Button("Delete All History", role: .destructive) {
                     if showDeleteConfirmation {
                         showDeleteDialog = true
                     } else {

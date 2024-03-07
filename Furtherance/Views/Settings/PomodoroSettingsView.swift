@@ -29,9 +29,9 @@ struct PomodoroSettingsView: View {
             
             Section {
                 HStack {
-                    Text("Countdown timer")
+                    Text("Countdown Timer")
                     Spacer()
-                    Toggle("Countdown timer", isOn: $pomodoro)
+                    Toggle("Countdown Timer", isOn: $pomodoro)
                         .toggleStyle(.switch)
                         .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
@@ -51,7 +51,7 @@ struct PomodoroSettingsView: View {
 #endif
                 
                 HStack {
-                    Text("Timer length")
+                    Text("Timer Length")
                     Spacer()
                     Text("\(pomodoroTime)")
                         .bold()
@@ -72,7 +72,7 @@ struct PomodoroSettingsView: View {
 #endif
                 
                 HStack {
-                    Text("Break time")
+                    Text("Break Time")
                     Spacer()
                     Text("\(pomodoroIntermissionTime)")
                         .bold()
@@ -88,7 +88,7 @@ struct PomodoroSettingsView: View {
 #endif
                 
                 HStack {
-                    Text("Snooze by")
+                    Text("Snooze By")
                     Spacer()
                     Text("\(pomodoroMoreTime)")
                         .bold()
@@ -102,19 +102,21 @@ struct PomodoroSettingsView: View {
                 .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
                 .cornerRadius(20)
 #endif
+            } header: {
+                Text("Pomodoro Timer")
             } footer: {
                 Text("All numbers represent minutes")
             }
             
-            Section {
+            Section(header: TextWithBadge("Extended Break")) {
                 HStack {
-                    Text("Extended breaks")
+                    Text("Extended Breaks")
                     Spacer()
-                    Toggle("Extended breaks", isOn: $pomodoroBigBreak)
+                    Toggle("Extended Breaks", isOn: $pomodoroBigBreak)
                         .toggleStyle(.switch)
                         .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
-                        .disabled(!pomodoro)
+                        .disabled(!pomodoro || storeModel.purchasedIds.isEmpty)
                 }
 #if os(macOS)
                 .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -125,7 +127,7 @@ struct PomodoroSettingsView: View {
                 
                 HStack {
                     VStack(alignment: .leading) {
-                        Text("Extended break interval")
+                        Text("Extended Break Interval")
                         Text("Long break after X work sessions")
                             .font(.footnote)
                             .foregroundStyle(.secondary)
@@ -136,7 +138,7 @@ struct PomodoroSettingsView: View {
                         .bold()
                     Stepper("\(pomodoroBigBreakInterval)", value: $pomodoroBigBreakInterval, in: 1 ... 50)
                         .labelsHidden()
-                        .disabled(!pomodoro || !pomodoroBigBreak)
+                        .disabled(!pomodoro || !pomodoroBigBreak || storeModel.purchasedIds.isEmpty)
                 }
 #if os(macOS)
                 .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -146,13 +148,13 @@ struct PomodoroSettingsView: View {
 #endif
                 
                 HStack {
-                    Text("Extended break length")
+                    Text("Extended Break Length")
                     Spacer()
                     Text("\(pomodoroBigBreakLength)")
                         .bold()
                     Stepper("\(pomodoroBigBreakLength)", value: $pomodoroBigBreakLength, in: 1 ... 180)
                         .labelsHidden()
-                        .disabled(!pomodoro || !pomodoroBigBreak)
+                        .disabled(!pomodoro || !pomodoroBigBreak || storeModel.purchasedIds.isEmpty)
                 }
 #if os(macOS)
                 .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -168,7 +170,7 @@ struct PomodoroSettingsView: View {
                         Button("Reset", role: .destructive) {
                             stopWatchHelper.pomodoroSessions = 0
                         }
-                        .disabled(stopWatchHelper.isRunning)
+                        .disabled(stopWatchHelper.isRunning || storeModel.purchasedIds.isEmpty)
                         .buttonStyle(.borderedProminent)
                     }
     #if os(macOS)

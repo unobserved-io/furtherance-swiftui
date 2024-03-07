@@ -22,56 +22,58 @@ struct GeneralSettingsView: View {
     var body: some View {
         Form {
             BuyProView()
-
+            
+            Section("Interface ") {
 #if os(macOS)
-            HStack {
-                VStack(alignment: .leading) {
-                    storeModel.purchasedIds.isEmpty ? Text("Show icon badge when timer is running (Pro)") : Text("Show icon badge when timer is running")
-                }
-                Spacer()
-                Toggle("Show icon badge when timer is running", isOn: $showIconBadge)
-                    .toggleStyle(.switch)
-                    .labelsHidden()
-                    .disabled(storeModel.purchasedIds.isEmpty)
-            }
-            .onChange(of: showIconBadge) { _, newVal in
-                if newVal {
-                    if !stopWatchHelper.oneSecondTimer.isValid {
-                        stopWatchHelper.setOneSecondTimer()
-                    }
-                } else {
-                    NSApp.dockTile.badgeLabel = nil
-                    if !idleDetect {
-                        stopWatchHelper.oneSecondTimer.invalidate()
-                    }
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-            .padding()
-            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-            .cornerRadius(20)
-#endif
-
-            HStack {
-                Text("Show delete confirmation")
-                Spacer()
-                Toggle("Show delete confirmation", isOn: $showDeleteConfirmation)
-                    .toggleStyle(.switch)
-                    .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
-                    .labelsHidden()
-            }
-#if os(macOS)
-            .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
-            .padding()
-            .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
-            .cornerRadius(20)
-#endif
-
-            Section(header: Text("Task History").bold()) {
                 HStack {
-                    storeModel.purchasedIds.isEmpty ? Text("Show tags (Pro)") : Text("Show tags")
+                    VStack(alignment: .leading) {
+                        TextWithBadge("Show Icon Badge")
+                    }
                     Spacer()
-                    Toggle("Show tags", isOn: $showTags)
+                    Toggle("Show Icon Badge", isOn: $showIconBadge)
+                        .toggleStyle(.switch)
+                        .labelsHidden()
+                        .disabled(storeModel.purchasedIds.isEmpty)
+                }
+                .onChange(of: showIconBadge) { _, newVal in
+                    if newVal {
+                        if !stopWatchHelper.oneSecondTimer.isValid {
+                            stopWatchHelper.setOneSecondTimer()
+                        }
+                    } else {
+                        NSApp.dockTile.badgeLabel = nil
+                        if !idleDetect {
+                            stopWatchHelper.oneSecondTimer.invalidate()
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+#endif
+                
+                HStack {
+                    Text("Show Delete Confirmation")
+                    Spacer()
+                    Toggle("Show Delete Confirmation", isOn: $showDeleteConfirmation)
+                        .toggleStyle(.switch)
+                        .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
+                        .labelsHidden()
+                }
+#if os(macOS)
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+#endif
+            }
+
+            Section(header: TextWithBadge("Task History")) {
+                HStack {
+                    Text("Show Tags")
+                    Spacer()
+                    Toggle("Show Tags", isOn: $showTags)
                         .toggleStyle(.switch)
                         .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
@@ -85,9 +87,9 @@ struct GeneralSettingsView: View {
 #endif
 
                 HStack {
-                    storeModel.purchasedIds.isEmpty ? Text("Show seconds (Pro)") : Text("Show seconds")
+                    Text("Show Seconds")
                     Spacer()
-                    Toggle("Show seconds", isOn: $showSeconds)
+                    Toggle("Show Seconds", isOn: $showSeconds)
                         .toggleStyle(.switch)
                         .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
@@ -101,9 +103,9 @@ struct GeneralSettingsView: View {
 #endif
 
                 HStack {
-                    storeModel.purchasedIds.isEmpty ? Text("Show daily time sum (Pro)") : Text("Show daily time sum")
+                    Text("Show Daily Time Sum")
                     Spacer()
-                    Toggle("Show daily time sum", isOn: $showDailySum)
+                    Toggle("Show Daily Time Sum", isOn: $showDailySum)
                         .toggleStyle(.switch)
                         .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
