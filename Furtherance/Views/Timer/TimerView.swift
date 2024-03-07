@@ -322,8 +322,8 @@ struct TimerView: View {
             Button {
                 stopWatchHelper.pomodoroMoreMinutes()
             } label: {
-                Text("^[\(pomodoroMoreTime) More Minute](inflect: true)")
-            }
+                Text("^[\(pomodoroMoreTime) More Minute](inflect: true)\(storeModel.purchasedIds.isEmpty ? " (Pro)" : "")")
+            }.disabled(storeModel.purchasedIds.isEmpty)
             Button("Stop") {
                 timerHelper.stop(stopTime: stopWatchHelper.stopTime)
             }

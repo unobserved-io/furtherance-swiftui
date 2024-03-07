@@ -88,13 +88,13 @@ struct PomodoroSettingsView: View {
 #endif
                 
                 HStack {
-                    Text("Snooze By")
+                    TextWithBadge("Snooze By")
                     Spacer()
                     Text("\(pomodoroMoreTime)")
                         .bold()
                     Stepper("\(pomodoroMoreTime)", value: $pomodoroMoreTime, in: 1 ... 180)
                         .labelsHidden()
-                        .disabled(!pomodoro)
+                        .disabled(!pomodoro || storeModel.purchasedIds.isEmpty)
                 }
 #if os(macOS)
                 .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
