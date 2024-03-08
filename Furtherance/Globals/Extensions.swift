@@ -54,3 +54,28 @@ extension PresentationDetent {
     static let taskBar = Self.fraction(0.4)
     static let groupNameBar = Self.fraction(0.25)
 }
+
+extension FurTask {
+    /// Return the string representation of the relative date for the supported range (year, month, and day)
+    /// The ranges include today, yesterday, the formatted date, and unknown
+    @objc
+    var startDateRelative: String {
+        var result = ""
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "MMM dd, yyyy"
+        
+        if startTime != nil {
+            // Order matters here to avoid overlapping
+            if Calendar.current.isDateInToday(startTime!) {
+                result = "today"
+            } else if Calendar.current.isDateInYesterday(startTime!) {
+                result = "yesterday"
+            } else {
+                result = dateFormatter.string(from: startTime!)
+            }
+        } else {
+            result = "unknown"
+        }
+        return result
+    }
+}
