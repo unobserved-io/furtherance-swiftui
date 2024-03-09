@@ -176,6 +176,9 @@ class StopWatchHelper {
         isRunning = true
         startTime = .now
         
+        // One second timer for icon badge updating
+        setOneSecondTimer()
+        
         let intermissionTime: Int = {
             if self.pomodoroBigBreak, self.pomodoroSessions % self.pomodoroBigBreakInterval == 0 {
                 return self.pomodoroBigBreakLength
@@ -333,11 +336,11 @@ class StopWatchHelper {
         if idleDetect || showIconBadge {
             DispatchQueue.main.async {
                 self.oneSecondTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-                    if self.idleDetect {
+                    if self.idleDetect && !self.pomodoroOnBreak {
                         self.checkUserIdle()
                     }
                     
-                    if self.showIconBadge {
+                    if self.showIconBadge && !self.showingPomodoroEndedAlert {
                         if self.pomodoro {
                             NSApp.dockTile.badgeLabel = self.dockBadgeFormatter.string(from: abs(Date.now.timeIntervalSince(self.stopTime)))
                         } else {
