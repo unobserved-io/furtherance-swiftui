@@ -159,20 +159,10 @@ struct FurtheranceApp: App {
             CommandGroup(replacing: CommandGroupPlacement.windowArrangement) {}
             CommandGroup(replacing: CommandGroupPlacement.singleWindowList) {}
             CommandGroup(before: CommandGroupPlacement.newItem) {
-                Button("Reports") {
-                    if storeModel.purchasedIds.isEmpty {
-                        showProAlert.toggle()
-                    } else {
-                        navigator.openView(.reports)
-                    }
-                }
-                .badge(storeModel.purchasedIds.isEmpty ? "Pro" : nil)
-                .keyboardShortcut("R", modifiers: EventModifiers.command)
-            }
-            CommandGroup(before: CommandGroupPlacement.newItem) {
                 Button("Add Task") {
                     addTaskSheet.toggle()
                 }
+                .keyboardShortcut("N", modifiers: EventModifiers.command)
             }
             #endif
         }
