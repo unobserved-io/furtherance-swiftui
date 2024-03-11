@@ -131,7 +131,6 @@
 		9C0967A92B9B66A600780F96 /* History */ = {
 			isa = PBXGroup;
 			children = (
-				9C0967AA2B9B66BA00780F96 /* MacHistoryList.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -148,6 +147,7 @@
 			isa = PBXGroup;
 			children = (
 				9C18F3B82B9B344C00201168 /* MacContentView.swift */,
+				9C0967AA2B9B66BA00780F96 /* MacHistoryList.swift */,
 			);
 			path = macOS;
 			sourceTree = "<group>";

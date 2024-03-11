@@ -34,7 +34,6 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      debugAsWhichUser = "root"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       customWorkingDirectory = "/Users/ricky/Documents/Software Dev/Swift/TestWorkingDir"
@@ -62,6 +61,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
+<<<<<<< HEAD
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "RUN_FROM_XCODE"
@@ -72,6 +72,8 @@
       <StoreKitConfigurationFileReference
          identifier = "../../Furtherance/Store/Furtherance.storekit">
       </StoreKitConfigurationFileReference>
+=======
+>>>>>>> dc87eba (Open task edit in inspector)
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

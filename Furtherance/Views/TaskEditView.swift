@@ -175,8 +175,8 @@ struct TaskEditView: View {
         }
         .padding()
         .onAppear {
-            selectedStart = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: clickedTask.task!.startTime!)) ?? clickedTask.task!.startTime!
-            selectedStop = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: clickedTask.task!.stopTime!)) ?? clickedTask.task!.stopTime!
+            selectedStart = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: clickedTask.task?.startTime ?? .now)) ?? clickedTask.task!.startTime!
+            selectedStop = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: clickedTask.task?.stopTime ?? .now)) ?? clickedTask.task!.stopTime!
             titleField = clickedTask.task?.name ?? ""
             tagsField = clickedTask.task?.tags ?? ""
         }

@@ -7,11 +7,22 @@
 
 import SwiftUI
 
+enum EditInInspector {
+    case group
+    case single
+}
+
 struct MacContentView: View {
     @Binding var tasksCount: Int
     @Binding var showExportCSV: Bool
     
     @ObservedObject var storeModel = StoreModel.shared
+    
+    @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
+    @StateObject var clickedTask = ClickedTask(task: nil)
+    
+    @State(initialValue: false) var showInspector: Bool
+    @State(initialValue: .single) var typeToEdit: EditInInspector
 
     var body: some View {
         NavigationSplitView {
@@ -30,7 +41,20 @@ struct MacContentView: View {
                 }
 
                 NavigationLink {
-                    MacHistoryList()
+                    MacHistoryList(showInspector: $showInspector, typeToEdit: $typeToEdit)
+                        .environmentObject(clickedGroup)
+                        .environmentObject(clickedTask)
+                        .inspector(isPresented: $showInspector) {
+                            if typeToEdit == .group {
+                                GroupView()
+                                    .environmentObject(clickedGroup)
+                                    .padding()
+                            } else {
+                                TaskEditView()
+                                    .environmentObject(clickedTask)
+                                    .padding()
+                            }
+                        }
                 } label: {
                     Text("History")
                 }

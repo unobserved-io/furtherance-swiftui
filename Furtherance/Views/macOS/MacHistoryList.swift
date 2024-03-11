@@ -8,6 +8,12 @@
 import SwiftUI
 
 struct MacHistoryList: View {
+    @EnvironmentObject var clickedGroup: ClickedGroup
+    @EnvironmentObject var clickedTask: ClickedTask
+    
+    @Binding var showInspector: Bool
+    @Binding var typeToEdit: EditInInspector
+    
     @AppStorage("limitHistory") private var limitHistory = true
     @AppStorage("historyListLimit") private var historyListLimit = 10
     @AppStorage("showDailySum") private var showDailySum = true
@@ -64,13 +70,14 @@ struct MacHistoryList: View {
                     .padding(.bottom, 5)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        // TODO: Clicking a task/group should open a right sidebar where they can be edited
                         if taskGroup.tasks.count > 1 {
-//                            clickedGroup.taskGroup = taskGroup
-//                            navigator.openView(.group)
+                            clickedGroup.taskGroup = taskGroup
+                            typeToEdit = .group
+                            showInspector.toggle()
                         } else {
-//                            clickedTask.task = taskGroup.tasks.first!
-//                            showTaskEditSheet.toggle()
+                            clickedTask.task = taskGroup.tasks.first!
+                            typeToEdit = .single
+                            showInspector.toggle()
                         }
                     }
                     .disabled(stopWatchHelper.isRunning)
@@ -139,5 +146,5 @@ struct MacHistoryList: View {
 }
 
 #Preview {
-    MacHistoryList()
+    MacHistoryList(showInspector: .constant(false), typeToEdit: .constant(EditInInspector.single))
 }
