@@ -10,11 +10,14 @@ import SwiftUI
 struct MacContentView: View {
     @Binding var tasksCount: Int
     @Binding var showExportCSV: Bool
+    
+    @ObservedObject var storeModel = StoreModel.shared
 
     var body: some View {
         NavigationSplitView {
             List {
                 NavigationLink {
+                    // TODO: Pro is required to create more than one bookmark
                     Text("Bookmarks")
                 } label: {
                     Text("Bookmarks")
@@ -37,6 +40,7 @@ struct MacContentView: View {
                 } label: {
                     Text("Reports")
                 }
+                .badge(storeModel.purchasedIds.isEmpty ? "PRO" : nil)
 
                 NavigationLink {
                     Text("Settings")
