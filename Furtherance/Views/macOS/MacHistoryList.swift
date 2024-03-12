@@ -50,6 +50,13 @@ struct MacHistoryList: View {
                 }
             }
             .padding()
+            .overlay {
+                ContentUnavailableView {
+                    Label("No History", systemImage: "fossil.shell")
+                } description: {
+                    Text("Completed tasks will appear here.")
+                }
+            }
         }
         .toolbar {
             ToolbarItem {
