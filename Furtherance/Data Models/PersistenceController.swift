@@ -35,13 +35,25 @@ struct PersistenceController {
         }
         
         // CloudKit history and update handling
+        if ProcessInfo.processInfo.environment["RUN_FROM_XCODE"] == "true" {
+            print("DEBUGGING!")
+            let localStorePath = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent("development.store").path()
+            let localStoreLocation = URL(filePath: localStorePath)
+            let localStoreDescription =
+                NSPersistentStoreDescription(url: localStoreLocation)
+            localStoreDescription.configuration = "Development"
+            container.persistentStoreDescriptions = [
+                localStoreDescription
+            ]
+        }
+        
         guard let description = container.persistentStoreDescriptions.first else {
             fatalError("Failed to initialize persistent container")
         }
         description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
         container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         container.viewContext.automaticallyMergesChangesFromParent = true
-        
+
         container.loadPersistentStores(completionHandler: { _, error in
             if let error = error as NSError? {
                 print("Unresolved data error \(error), \(error.userInfo)")
