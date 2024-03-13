@@ -578,7 +578,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.5;
-				PRODUCT_BUNDLE_IDENTIFIER = com.lakoliu.furtherance;
+				PRODUCT_BUNDLE_IDENTIFIER = com.lakoliu.furtherance.devel;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
