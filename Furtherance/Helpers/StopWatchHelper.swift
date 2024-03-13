@@ -201,7 +201,7 @@ class StopWatchHelper {
         
         // One second timer for icon badge updating
         #if os(macOS)
-        setOneSecondTimer()
+            setOneSecondTimer()
         #endif
         
         intermissionTime = {
