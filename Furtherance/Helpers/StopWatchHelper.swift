@@ -177,7 +177,9 @@ class StopWatchHelper {
         startTime = .now
         
         // One second timer for icon badge updating
-        setOneSecondTimer()
+        #if os(macOS)
+            setOneSecondTimer()
+        #endif
         
         let intermissionTime: Int = {
             if self.pomodoroBigBreak, self.pomodoroSessions % self.pomodoroBigBreakInterval == 0 {
