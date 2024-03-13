@@ -128,13 +128,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		9C0967A92B9B66A600780F96 /* History */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = History;
-			sourceTree = "<group>";
-		};
 		9C108A432A5ADF3A00BD60D3 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -289,7 +282,6 @@
 		9CA84E2E29A79ECC00A28FDA /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				9C0967A92B9B66A600780F96 /* History */,
 				9C18F3B72B9B342C00201168 /* macOS */,
 				9C94FF3A2B6EC5D7007EC064 /* Timer */,
 				9C4683E62A502E38006D1B7A /* Settings */,
