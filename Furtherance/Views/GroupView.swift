@@ -59,84 +59,94 @@ struct GroupView: View {
     }
 
     var body: some View {
-        VStack {
-            ScrollView {
-                HStack {
-                    VStack {
-                        Text(clickedGroup.taskGroup?.name ?? "Unknown")
-                            .font(.system(size: 30, weight: .bold))
-                            .padding(.bottom, 3)
-                        if (clickedGroup.taskGroup?.tags.isEmpty) ?? true {
-                            Text("Add tags...")
-                                .font(.system(size: 20))
-                                .italic()
-                        } else {
-                            Text(clickedGroup.taskGroup?.tags ?? "Unknown")
-                                .font(.system(size: 20))
-                        }
-                    }
-                    Spacer()
-                        .frame(width: 30)
-                    Image(systemName: "pencil")
-                        .font(.system(size: 20, weight: .bold))
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            overallEditSheet.toggle()
-                        }
-#if os(macOS)
-                        .onHover { inside in
-                            if inside {
-                                NSCursor.pointingHand.push()
-                            } else {
-                                NSCursor.pop()
-                            }
-                        }
-#endif
-                }
-                Spacer()
-                    .frame(height: 40)
-                LazyVGrid(columns: columns, spacing: 20) {
-                    Text("Start")
-                        .font(.system(size: 15, weight: .bold))
-                    Text("Stop")
-                        .font(.system(size: 15, weight: .bold))
-                    Text("Total")
-                        .font(.system(size: 15, weight: .bold))
-                    Spacer()
-                    ForEach(clickedGroup.taskGroup?.tasks ?? [], id: \.self) { task in
-                        Text(showSeconds
-                            ? dateFormatterWithSeconds.string(from: task.startTime ?? Date.now)
-                            : dateFormatterWithoutSeconds.string(from: task.startTime ?? Date.now)
-                        )
-                        .font(Font.monospacedDigit(.system(size: 15))())
-                        Text(showSeconds
-                            ? dateFormatterWithSeconds.string(from: task.stopTime ?? Date.now)
-                            : dateFormatterWithoutSeconds.string(from: task.stopTime ?? Date.now)
-                        )
-                        .font(Font.monospacedDigit(.system(size: 15))())
-                        Text(showSeconds
-                            ? totalFormatterWithSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
-                            : totalFormatterWithoutSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
-                        )
-                        .font(Font.monospacedDigit(.system(size: 15))())
-                        .bold()
-                        Image(systemName: "pencil")
-                            .bold()
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                clickedTask.task = task
-                                clickedID = clickedTask.task?.id ?? UUID()
-                                showTaskEditSheet.toggle()
-                            }
-#if os(macOS)
-                            .onHover { inside in
-                                if inside {
-                                    NSCursor.pointingHand.push()
+        NavigationStack {
+            if clickedGroup.taskGroup == nil {
+                ContentUnavailableView(
+                    "No Task",
+                    systemImage: "cursorarrow.click.badge.clock",
+                    description: Text("Select a task to edit it.")
+                )
+            } else {
+                VStack {
+                    ScrollView {
+                        HStack {
+                            VStack {
+                                Text(clickedGroup.taskGroup?.name ?? "Unknown")
+                                    .font(.system(size: 30, weight: .bold))
+                                    .padding(.bottom, 3)
+                                if (clickedGroup.taskGroup?.tags.isEmpty) ?? true {
+                                    Text("Add tags...")
+                                        .font(.system(size: 20))
+                                        .italic()
                                 } else {
-                                    NSCursor.pop()
+                                    Text(clickedGroup.taskGroup?.tags ?? "Unknown")
+                                        .font(.system(size: 20))
                                 }
                             }
-#endif
+                            Spacer()
+                                .frame(width: 30)
+                            Image(systemName: "pencil")
+                                .font(.system(size: 20, weight: .bold))
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    overallEditSheet.toggle()
+                                }
+        #if os(macOS)
+                                .onHover { inside in
+                                    if inside {
+                                        NSCursor.pointingHand.push()
+                                    } else {
+                                        NSCursor.pop()
+                                    }
+                                }
+        #endif
+                        }
+                        Spacer()
+                            .frame(height: 40)
+                        LazyVGrid(columns: columns, spacing: 20) {
+                            Text("Start")
+                                .font(.system(size: 15, weight: .bold))
+                            Text("Stop")
+                                .font(.system(size: 15, weight: .bold))
+                            Text("Total")
+                                .font(.system(size: 15, weight: .bold))
+                            Spacer()
+                            ForEach(clickedGroup.taskGroup?.tasks ?? [], id: \.self) { task in
+                                Text(showSeconds
+                                    ? dateFormatterWithSeconds.string(from: task.startTime ?? Date.now)
+                                    : dateFormatterWithoutSeconds.string(from: task.startTime ?? Date.now)
+                                )
+                                .font(Font.monospacedDigit(.system(size: 15))())
+                                Text(showSeconds
+                                    ? dateFormatterWithSeconds.string(from: task.stopTime ?? Date.now)
+                                    : dateFormatterWithoutSeconds.string(from: task.stopTime ?? Date.now)
+                                )
+                                .font(Font.monospacedDigit(.system(size: 15))())
+                                Text(showSeconds
+                                    ? totalFormatterWithSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
+                                    : totalFormatterWithoutSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
+                                )
+                                .font(Font.monospacedDigit(.system(size: 15))())
+                                .bold()
+                                Image(systemName: "pencil")
+                                    .bold()
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        clickedTask.task = task
+                                        clickedID = clickedTask.task?.id ?? UUID()
+                                        showTaskEditSheet.toggle()
+                                    }
+        #if os(macOS)
+                                    .onHover { inside in
+                                        if inside {
+                                            NSCursor.pointingHand.push()
+                                        } else {
+                                            NSCursor.pop()
+                                        }
+                                    }
+        #endif
+                            }
+                        }
                     }
                 }
             }
@@ -196,6 +206,9 @@ struct GroupView: View {
         .confirmationDialog("Delete all?", isPresented: $showDeleteDialog) {
             Button("Delete", role: .destructive) {
                 deleteAllTasksInGroup()
+                showInspector = false
+                clickedGroup.taskGroup = nil
+                clickedTask.task = nil
             }
             Button("Cancel", role: .cancel) {}
         } message: {

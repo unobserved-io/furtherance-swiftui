@@ -34,113 +34,123 @@ struct TaskEditView: View {
     }
     
     var body: some View {
-        VStack(spacing: 10) {
-            TextField(clickedTask.task?.name ?? "Unknown", text: Binding(
-                get: { titleField },
-                set: { newValue in
-                    titleField = newValue.trimmingCharacters(in: ["#"])
-                }
-            ))
-#if os(macOS)
-            .frame(minWidth: 200)
-#else
-            .frame(minHeight: 30)
-            .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
-            .overlay(
-                RoundedRectangle(cornerRadius: 3)
-                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
-            )
-#endif
-            TextField((clickedTask.task?.tags?.isEmpty) ?? true ? "#tags" : clickedTask.task!.tags!, text: $tagsField)
-#if os(macOS)
-                .frame(minWidth: 200)
-#else
-                .frame(minHeight: 30)
-                .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 3)
-                        .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+        NavigationStack {
+            if clickedTask.task == nil {
+                ContentUnavailableView(
+                    "No Task",
+                    systemImage: "cursorarrow.click.badge.clock",
+                    description: Text("Select a task to edit it.")
                 )
-#endif
-            DatePicker(
-                selection: $selectedStart,
-                in: getStartRange(),
-                displayedComponents: [.date, .hourAndMinute],
-                label: { Text("Start") }
-            )
-            DatePicker(
-                selection: $selectedStop,
-                in: getStopRange(),
-                displayedComponents: [.date, .hourAndMinute],
-                label: { Text("Stop") }
-            )
-            errorMessage.isEmpty ? nil : Text(errorMessage)
-                .foregroundColor(.red)
-                .multilineTextAlignment(.leading)
-                .frame(height: 50)
-            Spacer()
-                .frame(height: 15)
-            HStack(spacing: 20) {
-                Button("Save") {
-                    let newTask: FurTask = clickedTask.task!
-                    
-                    errorMessage = ""
-                    var error = [String]()
-                    var updated = false
-                    if !titleField.trimmingCharacters(in: .whitespaces).isEmpty, titleField != clickedTask.task!.name {
-                        if titleField.contains("#") {
-                            error.append("Title cannot contain a '#'. Those are reserved for tags.")
-                        } else {
-                            newTask.name = titleField
-                            updated = true
+            } else {
+                VStack(spacing: 10) {
+                    TextField(clickedTask.task?.name ?? "Unknown", text: Binding(
+                        get: { titleField },
+                        set: { newValue in
+                            titleField = newValue.trimmingCharacters(in: ["#"])
                         }
-                    } // else not changed (don't update)
-                    
-                    if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty, tagsField != clickedTask.task!.tags {
-                        if !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
-                            error.append("Tags must start with a '#'.")
-                        } else {
-                            newTask.tags = separateTags(rawString: tagsField)
-                            updated = true
-                        }
-                    } // else not changed (don't update)
-                    
-                    if selectedStart != Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: newTask.startTime!)) ?? newTask.startTime {
-                        newTask.startTime = selectedStart
-                        updated = true
-                    } // else not changed (don't update)\
-                    
-                    if selectedStop != Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: newTask.stopTime!)) ?? newTask.stopTime {
-                        newTask.stopTime = selectedStop
-                        updated = true
-                    } // else not changed (don't update)
-                    
-                    // Update DB or show error
-                    if error.isEmpty {
-                        if updated {
-                            do {
-                                try viewContext.save()
-                            } catch {
-                                print("Error updating task \(error)")
+                    ))
+        #if os(macOS)
+                    .frame(minWidth: 200)
+        #else
+                    .frame(minHeight: 30)
+                    .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 3)
+                            .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+                    )
+        #endif
+                    TextField((clickedTask.task?.tags?.isEmpty) ?? true ? "#tags" : clickedTask.task!.tags!, text: $tagsField)
+        #if os(macOS)
+                        .frame(minWidth: 200)
+        #else
+                        .frame(minHeight: 30)
+                        .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 3)
+                                .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+                        )
+        #endif
+                    DatePicker(
+                        selection: $selectedStart,
+                        in: getStartRange(),
+                        displayedComponents: [.date, .hourAndMinute],
+                        label: { Text("Start") }
+                    )
+                    DatePicker(
+                        selection: $selectedStop,
+                        in: getStopRange(),
+                        displayedComponents: [.date, .hourAndMinute],
+                        label: { Text("Stop") }
+                    )
+                    errorMessage.isEmpty ? nil : Text(errorMessage)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.leading)
+                        .frame(height: 50)
+                    Spacer()
+                        .frame(height: 15)
+                    HStack(spacing: 20) {
+                        Button("Save") {
+                            let newTask: FurTask = clickedTask.task!
+                            
+                            errorMessage = ""
+                            var error = [String]()
+                            var updated = false
+                            if !titleField.trimmingCharacters(in: .whitespaces).isEmpty, titleField != clickedTask.task!.name {
+                                if titleField.contains("#") {
+                                    error.append("Title cannot contain a '#'. Those are reserved for tags.")
+                                } else {
+                                    newTask.name = titleField
+                                    updated = true
+                                }
+                            } // else not changed (don't update)
+                            
+                            if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty, tagsField != clickedTask.task!.tags {
+                                if !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
+                                    error.append("Tags must start with a '#'.")
+                                } else {
+                                    newTask.tags = separateTags(rawString: tagsField)
+                                    updated = true
+                                }
+                            } // else not changed (don't update)
+                            
+                            if selectedStart != Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: newTask.startTime!)) ?? newTask.startTime {
+                                newTask.startTime = selectedStart
+                                updated = true
+                            } // else not changed (don't update)\
+                            
+                            if selectedStop != Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: newTask.stopTime!)) ?? newTask.stopTime {
+                                newTask.stopTime = selectedStop
+                                updated = true
+                            } // else not changed (don't update)
+                            
+                            // Update DB or show error
+                            if error.isEmpty {
+                                if updated {
+                                    do {
+                                        try viewContext.save()
+                                    } catch {
+                                        print("Error updating task \(error)")
+                                    }
+                                }
+                                dismiss()
+                            } else {
+                                if error.count > 1 {
+                                    errorMessage = "\(error[0])\n\(error[1])"
+                                } else {
+                                    errorMessage = error[0]
+                                }
                             }
                         }
-                        dismiss()
-                    } else {
-                        if error.count > 1 {
-                            errorMessage = "\(error[0])\n\(error[1])"
-                        } else {
-                            errorMessage = error[0]
-                        }
+                        .keyboardShortcut(.defaultAction)
+        #if os(iOS)
+                            .buttonStyle(.borderedProminent)
+                            .tint(.accentColor)
+        #endif
                     }
                 }
-                .keyboardShortcut(.defaultAction)
-#if os(iOS)
-                    .buttonStyle(.borderedProminent)
-                    .tint(.accentColor)
-#endif
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .padding()
         .confirmationDialog("Delete task?", isPresented: $showDeleteDialog) {
             Button("Delete", role: .destructive) {

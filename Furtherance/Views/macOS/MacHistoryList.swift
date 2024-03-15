@@ -93,11 +93,11 @@ struct MacHistoryList: View {
                         if taskGroup.tasks.count > 1 {
                             clickedGroup.taskGroup = taskGroup
                             typeToEdit = .group
-                            showInspector.toggle()
+                            showInspector = true
                         } else {
                             clickedTask.task = taskGroup.tasks.first!
                             typeToEdit = .single
-                            showInspector.toggle()
+                            showInspector = true
                         }
                     }
                     .disabled(stopWatchHelper.isRunning)
