@@ -94,17 +94,7 @@ struct TaskEditView: View {
             Spacer()
                 .frame(height: 15)
             HStack(spacing: 20) {
-                Button(action: {
-                    dismiss()
-                    // TODO: this crashes with inspector
-                }) {
-                    Text("Cancel")
-                }
-                .keyboardShortcut(.cancelAction)
-#if os(iOS)
-                    .buttonStyle(.bordered)
-#endif
-                Button(action: {
+                Button {
                     let newTask: FurTask = clickedTask.task!
                     
                     errorMessage = ""
@@ -155,7 +145,7 @@ struct TaskEditView: View {
                             errorMessage = error[0]
                         }
                     }
-                }) {
+                } label: {
                     Text("Save")
                 }
                 .keyboardShortcut(.defaultAction)
