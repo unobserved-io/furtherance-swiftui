@@ -31,30 +31,33 @@ struct MacHistoryList: View {
     @State private var addTaskSheet = false
     
     var body: some View {
-        ScrollView {
-            Form {
-                if limitHistory {
-                    if tasksByDay.count > historyListLimit {
-                        ForEach(0 ..< historyListLimit, id: \.self) { index in
-                            showHistoryList(tasksByDay[index])
-                        }
-                    } else {
-                        ForEach(0 ..< tasksByDay.count, id: \.self) { index in
-                            showHistoryList(tasksByDay[index])
+        NavigationStack {
+            if tasksByDay.isEmpty {
+                ContentUnavailableView(
+                    "No History",
+                    systemImage: "fossil.shell",
+                    description: Text("Completed tasks will appear here.")
+                )
+            } else {
+                ScrollView {
+                    Form {
+                        if limitHistory {
+                            if tasksByDay.count > historyListLimit {
+                                ForEach(0 ..< historyListLimit, id: \.self) { index in
+                                    showHistoryList(tasksByDay[index])
+                                }
+                            } else {
+                                ForEach(0 ..< tasksByDay.count, id: \.self) { index in
+                                    showHistoryList(tasksByDay[index])
+                                }
+                            }
+                        } else {
+                            ForEach(tasksByDay) { section in
+                                showHistoryList(section)
+                            }
                         }
                     }
-                } else {
-                    ForEach(tasksByDay) { section in
-                        showHistoryList(section)
-                    }
-                }
-            }
-            .padding()
-            .overlay {
-                ContentUnavailableView {
-                    Label("No History", systemImage: "fossil.shell")
-                } description: {
-                    Text("Completed tasks will appear here.")
+                    .padding()
                 }
             }
         }
