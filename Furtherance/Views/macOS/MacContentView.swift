@@ -50,7 +50,7 @@ struct MacContentView: View {
                                     .environmentObject(clickedGroup)
                                     .padding()
                             } else {
-                                TaskEditView()
+                                TaskEditView(showInspector: $showInspector)
                                     .environmentObject(clickedTask)
                                     .padding()
                             }

@@ -11,10 +11,15 @@ struct TaskEditView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var clickedTask: ClickedTask
     @Environment(\.dismiss) var dismiss
+    
+    @Binding var showInspector: Bool
+    
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
+    
     @State private var titleField = ""
     @State private var tagsField = ""
     @State private var showDeleteDialog = false
+    
     @State var selectedStart = Date(timeIntervalSinceReferenceDate: 0)
     @State var selectedStop = Date()
     @State var errorMessage = ""
@@ -24,16 +29,8 @@ struct TaskEditView: View {
         GridItem(.fixed(70)),
     ]
     
-    func getStartRange() -> ClosedRange<Date> {
-        let min = Date(timeIntervalSinceReferenceDate: 0)
-        let max = selectedStop
-        return min...max
-    }
-    
-    func getStopRange() -> ClosedRange<Date> {
-        let min = selectedStart
-        let max = Date.now
-        return min...max
+    init(showInspector: Binding<Bool> = .constant(false)) {
+        _showInspector = showInspector
     }
     
     var body: some View {
@@ -182,10 +179,23 @@ struct TaskEditView: View {
         }
     }
     
+    private func getStartRange() -> ClosedRange<Date> {
+        let min = Date(timeIntervalSinceReferenceDate: 0)
+        let max = selectedStop
+        return min...max
+    }
+    
+    private func getStopRange() -> ClosedRange<Date> {
+        let min = selectedStart
+        let max = Date.now
+        return min...max
+    }
+    
     private func deleteTask() {
         viewContext.delete(clickedTask.task!)
         do {
             try viewContext.save()
+            showInspector = false
         } catch {
             print("Error deleting task \(error)")
         }
@@ -195,6 +205,6 @@ struct TaskEditView: View {
 
 struct TaskEditView_Previews: PreviewProvider {
     static var previews: some View {
-        TaskEditView()
+        TaskEditView(showInspector: .constant(false))
     }
 }
