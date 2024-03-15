@@ -164,13 +164,14 @@ struct TaskEditView: View {
 #endif
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .padding()
         .confirmationDialog("Delete task?", isPresented: $showDeleteDialog) {
             Button("Delete", role: .destructive) {
                 deleteTask()
             }
             Button("Cancel", role: .cancel) {}
         }
-        .padding()
         .onAppear {
             selectedStart = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: clickedTask.task?.startTime ?? .now)) ?? clickedTask.task!.startTime!
             selectedStop = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: clickedTask.task?.stopTime ?? .now)) ?? clickedTask.task!.stopTime!
