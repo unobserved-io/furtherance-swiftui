@@ -35,19 +35,6 @@ struct TaskEditView: View {
     
     var body: some View {
         VStack(spacing: 10) {
-            HStack {
-                Spacer()
-                Button(action: {
-                    if showDeleteConfirmation {
-                        showDeleteDialog.toggle()
-                    } else {
-                        deleteTask()
-                    }
-                }) {
-                    Image(systemName: "trash.fill")
-                        .imageScale(.large)
-                }
-            }
             TextField(clickedTask.task?.name ?? "Unknown", text: Binding(
                 get: { titleField },
                 set: { newValue in
@@ -94,7 +81,7 @@ struct TaskEditView: View {
             Spacer()
                 .frame(height: 15)
             HStack(spacing: 20) {
-                Button {
+                Button("Save") {
                     let newTask: FurTask = clickedTask.task!
                     
                     errorMessage = ""
@@ -145,8 +132,6 @@ struct TaskEditView: View {
                             errorMessage = error[0]
                         }
                     }
-                } label: {
-                    Text("Save")
                 }
                 .keyboardShortcut(.defaultAction)
 #if os(iOS)
@@ -162,6 +147,34 @@ struct TaskEditView: View {
                 deleteTask()
             }
             Button("Cancel", role: .cancel) {}
+        }
+        .toolbar {
+            if showInspector {
+                ToolbarItem {
+                    Spacer()
+                }
+                
+                ToolbarItem {
+                    Button {
+                        if showDeleteConfirmation {
+                            showDeleteDialog.toggle()
+                        } else {
+                            deleteTask()
+                        }
+                    } label: {
+                        Image(systemName: "trash.fill")
+                            .imageScale(.large)
+                    }
+                }
+                
+                ToolbarItem {
+                    Button {
+                        showInspector = false
+                    } label: {
+                        Image(systemName: "sidebar.trailing")
+                    }
+                }
+            }
         }
         .onAppear {
             selectedStart = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: clickedTask.task?.startTime ?? .now)) ?? clickedTask.task!.startTime!
@@ -184,14 +197,15 @@ struct TaskEditView: View {
     }
     
     private func deleteTask() {
-        viewContext.delete(clickedTask.task!)
-        do {
-            try viewContext.save()
-            showInspector = false
-        } catch {
-            print("Error deleting task \(error)")
+        if clickedTask.task != nil {
+            viewContext.delete(clickedTask.task!)
+            do {
+                try viewContext.save()
+                showInspector = false
+            } catch {
+                print("Error deleting task \(error)")
+            }
         }
-        dismiss()
     }
 }
 
