@@ -44,17 +44,6 @@ struct MacContentView: View {
                     MacHistoryList(showInspector: $showInspector, typeToEdit: $typeToEdit)
                         .environmentObject(clickedGroup)
                         .environmentObject(clickedTask)
-                        .inspector(isPresented: $showInspector) {
-                            if typeToEdit == .group {
-                                GroupView()
-                                    .environmentObject(clickedGroup)
-                                    .padding()
-                            } else {
-                                TaskEditView(showInspector: $showInspector)
-                                    .environmentObject(clickedTask)
-                                    .padding()
-                            }
-                        }
                 } label: {
                     Text("History")
                 }
@@ -75,6 +64,17 @@ struct MacContentView: View {
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
         } detail: {
             Text("Select an item")
+        }
+        .inspector(isPresented: $showInspector) {
+            if typeToEdit == .group {
+                GroupView(showInspector: $showInspector)
+                    .environmentObject(clickedGroup)
+                    .padding()
+            } else {
+                TaskEditView(showInspector: $showInspector)
+                    .environmentObject(clickedTask)
+                    .padding()
+            }
         }
     }
 }

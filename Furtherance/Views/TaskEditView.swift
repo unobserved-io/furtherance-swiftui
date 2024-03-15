@@ -96,6 +96,7 @@ struct TaskEditView: View {
             HStack(spacing: 20) {
                 Button(action: {
                     dismiss()
+                    // TODO: this crashes with inspector
                 }) {
                     Text("Cancel")
                 }

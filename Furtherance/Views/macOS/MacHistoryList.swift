@@ -67,6 +67,16 @@ struct MacHistoryList: View {
                     Label("Add Item", systemImage: "plus")
                 }
             }
+            
+            if !showInspector {
+                ToolbarItem {
+                    Button {
+                        showInspector = true
+                    } label: {
+                        Image(systemName: "sidebar.trailing")
+                    }
+                }
+            }
         }
         .sheet(isPresented: $addTaskSheet) {
             AddTaskView()
