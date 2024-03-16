@@ -69,7 +69,6 @@ struct MacContentView: View {
             if typeToEdit == .group {
                 GroupView(showInspector: $showInspector)
                     .environmentObject(clickedGroup)
-                    .padding()
             } else {
                 TaskEditView(showInspector: $showInspector)
                     .environmentObject(clickedTask)

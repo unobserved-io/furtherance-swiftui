@@ -11,49 +11,53 @@ struct GroupView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var clickedGroup: ClickedGroup
     @Environment(\.presentationMode) var presentationMode
-    
+
     @Binding var showInspector: Bool
-    
+
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
     @AppStorage("showSeconds") private var showSeconds = true
-    
+
     @StateObject var clickedTask = ClickedTask(task: nil)
-    
+
     @State private var clickedID = UUID()
     @State private var showTaskEditSheet = false
     @State private var overallEditSheet = false
     @State private var groupAddSheet = false
     @State private var showDeleteDialog = false
-    
+
     private let totalFormatterWithSeconds: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute, .second]
         formatter.zeroFormattingBehavior = .pad
         return formatter
     }()
+
     private let totalFormatterWithoutSeconds: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute]
         formatter.zeroFormattingBehavior = .pad
         return formatter
     }()
+
     private let dateFormatterWithSeconds: DateFormatter = {
         let dateformat = DateFormatter()
         dateformat.dateFormat = "HH:mm:ss"
         return dateformat
     }()
+
     private let dateFormatterWithoutSeconds: DateFormatter = {
         let dateformat = DateFormatter()
         dateformat.dateFormat = "HH:mm"
         return dateformat
     }()
+
     private let columns: [GridItem] = [
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible(maximum: 50))
     ]
-    
+
     init(showInspector: Binding<Bool> = .constant(false)) {
         _showInspector = showInspector
     }
@@ -67,91 +71,77 @@ struct GroupView: View {
                     description: Text("Select a task to edit it.")
                 )
             } else {
-                VStack {
-                    ScrollView {
+                HStack {
+                    VStack {
+                        Text(clickedGroup.taskGroup?.name ?? "Unknown")
+                            .font(.system(size: 30, weight: .bold))
+                            .padding(.bottom, 3)
+                        if (clickedGroup.taskGroup?.tags.isEmpty) ?? true {
+                            Text("Add tags...")
+                                .font(.system(size: 20))
+                                .italic()
+                        } else {
+                            Text(clickedGroup.taskGroup?.tags ?? "Unknown")
+                                .font(.system(size: 20))
+                        }
+                    }
+                    Spacer()
+                        .frame(width: 30)
+                    Image(systemName: "pencil")
+                        .font(.system(size: 20, weight: .bold))
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            overallEditSheet.toggle()
+                        }
+#if os(macOS)
+                        .onHover { inside in
+                            if inside {
+                                NSCursor.pointingHand.push()
+                            } else {
+                                NSCursor.pop()
+                            }
+                        }
+#endif
+                }
+                Form {
+                    ForEach(clickedGroup.taskGroup?.tasks ?? [], id: \.self) { task in
+                        let startString = dateFormatterWithoutSeconds.string(from: task.startTime ?? Date.now)
+                        let stopString = dateFormatterWithoutSeconds.string(from: task.stopTime ?? Date.now)
+                        let totalString = showSeconds
+                            ? totalFormatterWithSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
+                            : totalFormatterWithoutSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
+
                         HStack {
-                            VStack {
-                                Text(clickedGroup.taskGroup?.name ?? "Unknown")
-                                    .font(.system(size: 30, weight: .bold))
-                                    .padding(.bottom, 3)
-                                if (clickedGroup.taskGroup?.tags.isEmpty) ?? true {
-                                    Text("Add tags...")
-                                        .font(.system(size: 20))
-                                        .italic()
-                                } else {
-                                    Text(clickedGroup.taskGroup?.tags ?? "Unknown")
-                                        .font(.system(size: 20))
-                                }
-                            }
-                            Spacer()
-                                .frame(width: 30)
-                            Image(systemName: "pencil")
-                                .font(.system(size: 20, weight: .bold))
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    overallEditSheet.toggle()
-                                }
-        #if os(macOS)
-                                .onHover { inside in
-                                    if inside {
-                                        NSCursor.pointingHand.push()
-                                    } else {
-                                        NSCursor.pop()
-                                    }
-                                }
-        #endif
-                        }
-                        Spacer()
-                            .frame(height: 40)
-                        LazyVGrid(columns: columns, spacing: 20) {
-                            Text("Start")
-                                .font(.system(size: 15, weight: .bold))
-                            Text("Stop")
-                                .font(.system(size: 15, weight: .bold))
-                            Text("Total")
-                                .font(.system(size: 15, weight: .bold))
-                            Spacer()
-                            ForEach(clickedGroup.taskGroup?.tasks ?? [], id: \.self) { task in
-                                Text(showSeconds
-                                    ? dateFormatterWithSeconds.string(from: task.startTime ?? Date.now)
-                                    : dateFormatterWithoutSeconds.string(from: task.startTime ?? Date.now)
-                                )
-                                .font(Font.monospacedDigit(.system(size: 15))())
-                                Text(showSeconds
-                                    ? dateFormatterWithSeconds.string(from: task.stopTime ?? Date.now)
-                                    : dateFormatterWithoutSeconds.string(from: task.stopTime ?? Date.now)
-                                )
-                                .font(Font.monospacedDigit(.system(size: 15))())
-                                Text(showSeconds
-                                    ? totalFormatterWithSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
-                                    : totalFormatterWithoutSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
-                                )
-                                .font(Font.monospacedDigit(.system(size: 15))())
-                                .bold()
-                                Image(systemName: "pencil")
+                            VStack(alignment: .leading) {
+                                Text("\(startString) to \(stopString)")
+                                    .monospacedDigit()
                                     .bold()
-                                    .contentShape(Rectangle())
-                                    .onTapGesture {
-                                        clickedTask.task = task
-                                        clickedID = clickedTask.task?.id ?? UUID()
-                                        showTaskEditSheet.toggle()
-                                    }
-        #if os(macOS)
-                                    .onHover { inside in
-                                        if inside {
-                                            NSCursor.pointingHand.push()
-                                        } else {
-                                            NSCursor.pop()
-                                        }
-                                    }
-        #endif
+
+                                Text("Total: \(totalString)")
+                                    .monospacedDigit()
+                                    .font(.caption)
+                            }
+                            Spacer()
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            clickedTask.task = task
+                            clickedID = clickedTask.task?.id ?? UUID()
+                            showTaskEditSheet.toggle()
+                        }
+#if os(macOS)
+                        .onHover { inside in
+                            if inside {
+                                NSCursor.pointingHand.push()
+                            } else {
+                                NSCursor.pop()
                             }
                         }
+#endif
                     }
                 }
             }
         }
-        .padding()
         .toolbar {
             if showInspector {
                 ToolbarItem {
