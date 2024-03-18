@@ -29,6 +29,7 @@ struct TimerView: View {
     @AppStorage("showDailySum") private var showDailySum = true
     @AppStorage("showSeconds") private var showSeconds = true
     @AppStorage("pomodoroMoreTime") private var pomodoroMoreTime = 5
+    @AppStorage("pomodoroIntermissionTime") private var pomodoroIntermissionTime = 5
     @AppStorage("pomodoroBigBreak") private var pomodoroBigBreak = false
     @AppStorage("pomodoroBigBreakInterval") private var pomodoroBigBreakInterval = 4
 
@@ -548,7 +549,19 @@ struct TimerView: View {
                     timerHelper.taskTags = persistentTimer.first?.taskTags ?? ""
                     timerHelper.nameAndTags = persistentTimer.first?.nameAndTags ?? ""
                     TaskTagsInput.shared.text = timerHelper.nameAndTags
-                    stopWatchHelper.resume()
+                    
+                    if persistentTimer.first?.isIntermission ?? false {
+                        let intermissionTime = persistentTimer.first?.intermissionTime ?? pomodoroIntermissionTime
+                        let stopTime = Calendar.current.date(byAdding: .second, value: intermissionTime, to: persistentTimer.first?.startTime ?? .now) ?? Date.now
+                        if Date.now < stopTime {
+                            stopWatchHelper.intermissionTime = intermissionTime
+                            stopWatchHelper.resumeIntermission()
+                        } else {
+                            stopWatchHelper.showPomodoroIntermissionEndedAlert()
+                        }
+                    } else {
+                        stopWatchHelper.resume()
+                    }
                 }
             }
         #endif

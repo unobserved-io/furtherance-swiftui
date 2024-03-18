@@ -36,7 +36,7 @@ struct PersistenceController {
         
         // CloudKit history and update handling
         if ProcessInfo.processInfo.environment["RUN_FROM_XCODE"] == "true" {
-            print("DEBUGGING!")
+            print("DEVELOPMENT MODE")
             let localStorePath = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent("development.store").path()
             let localStoreLocation = URL(filePath: localStorePath)
             let localStoreDescription =

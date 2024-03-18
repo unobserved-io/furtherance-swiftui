@@ -11,6 +11,8 @@ import SwiftData
 @Model
 public class PersistentTimer {
     @Attribute(.allowsCloudEncryption) var isRunning: Bool?
+    @Attribute(.allowsCloudEncryption) var isIntermission: Bool?
+    @Attribute(.allowsCloudEncryption) var intermissionTime: Int?
     @Attribute(.allowsCloudEncryption) var startTime: Date?
     @Attribute(.allowsCloudEncryption) var taskName: String?
     @Attribute(.allowsCloudEncryption) var taskTags: String?
@@ -18,6 +20,8 @@ public class PersistentTimer {
 
     init() {
         self.isRunning = false
+        self.isIntermission = false
+        self.intermissionTime = 5
         self.startTime = nil
         self.taskName = nil
         self.taskTags = nil

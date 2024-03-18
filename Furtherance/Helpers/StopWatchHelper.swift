@@ -52,6 +52,7 @@ class StopWatchHelper {
     @ObservationIgnored var idleLength: String = ""
     @ObservationIgnored var timeAtSleep: Date = .now
     @ObservationIgnored var idleAtSleep: Int = 0
+    @ObservationIgnored var intermissionTime: Int = 0
     @ObservationIgnored var dockBadgeFormatter = {
         let formatter = DateComponentsFormatter()
         formatter.maximumUnitCount = 2
@@ -131,9 +132,21 @@ class StopWatchHelper {
                 RunLoop.main.add(pomodoroEndTimer, forMode: .common)
                 registerLocal(notificationType: "pomodoro")
             } else {
-                TimerHelper.shared.stop(stopTime: stopTime)
+                showPomodoroTimesUpAlert()
             }
         }
+    }
+    
+    func resumeIntermission() {
+        pomodoroExtended = false
+        pomodoroOnBreak = true
+        isRunning = true
+        
+        stopTime = Calendar.current.date(byAdding: .minute, value: intermissionTime, to: startTime) ?? Date.now
+        pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroIntermissionEndedAlert), userInfo: nil, repeats: false)
+        RunLoop.main.add(pomodoroEndTimer, forMode: .common)
+        registerLocal(notificationType: "pomodoroIntermissionEnded")
+        EarliestPomodoroTime.shared.setTimer()
     }
 #endif
     
@@ -181,7 +194,7 @@ class StopWatchHelper {
             setOneSecondTimer()
         #endif
         
-        let intermissionTime: Int = {
+        intermissionTime = {
             if self.pomodoroBigBreak, self.pomodoroSessions % self.pomodoroBigBreakInterval == 0 {
                 return self.pomodoroBigBreakLength
             } else {
