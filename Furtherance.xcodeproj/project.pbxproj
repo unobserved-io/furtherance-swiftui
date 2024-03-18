@@ -15,6 +15,7 @@
 		9C18F3B92B9B344C00201168 /* MacContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C18F3B82B9B344C00201168 /* MacContentView.swift */; };
 		9C27D34629A8B2630012C274 /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C27D34529A8B2630012C274 /* GroupView.swift */; };
 		9C27D34829A8B5460012C274 /* ClickedGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C27D34729A8B5460012C274 /* ClickedGroup.swift */; };
+		9C2CD6E22BA85E4600965528 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2CD6E12BA85E4600965528 /* Enums.swift */; };
 		9C3B41372A54966E002F3F5B /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C3B41362A54966E002F3F5B /* Storyboard.storyboard */; platformFilter = ios; };
 		9C3BD94629BE7A2900637D36 /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3BD94529BE7A2900637D36 /* Globals.swift */; };
 		9C3BD94829BE808A00637D36 /* ReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3BD94729BE808A00637D36 /* ReportsView.swift */; };
@@ -67,6 +68,7 @@
 		9C18F3B82B9B344C00201168 /* MacContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacContentView.swift; sourceTree = "<group>"; };
 		9C27D34529A8B2630012C274 /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
 		9C27D34729A8B5460012C274 /* ClickedGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickedGroup.swift; sourceTree = "<group>"; };
+		9C2CD6E12BA85E4600965528 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		9C3B41362A54966E002F3F5B /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		9C3BD94529BE7A2900637D36 /* Globals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
 		9C3BD94729BE808A00637D36 /* ReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsView.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 			children = (
 				9C3BD94529BE7A2900637D36 /* Globals.swift */,
 				9C4074C82A31E26A00C989CF /* Extensions.swift */,
+				9C2CD6E12BA85E4600965528 /* Enums.swift */,
 			);
 			path = Globals;
 			sourceTree = "<group>";
@@ -423,6 +426,7 @@
 				9C108A452A5ADF4A00BD60D3 /* IOSReportsView.swift in Sources */,
 				9CA84E3029A79EE600A28FDA /* TaskRow.swift in Sources */,
 				9C18F3B92B9B344C00201168 /* MacContentView.swift in Sources */,
+				9C2CD6E22BA85E4600965528 /* Enums.swift in Sources */,
 				9C4074C92A31E26A00C989CF /* Extensions.swift in Sources */,
 				9CFD857B2B4CA63500A8C5D8 /* DockTileContents.swift in Sources */,
 				9CE227322A3C3DD50008032D /* CSVFile.swift in Sources */,
