@@ -7,6 +7,9 @@
 
 import CoreData
 import SwiftUI
+import OSLog
+
+let logger = Logger()
 
 let switchColorLightTheme: Color = .accent
 let switchColorDarkTheme: Color = .accent
