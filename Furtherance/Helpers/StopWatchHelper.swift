@@ -72,6 +72,8 @@ class StopWatchHelper {
     @ObservationIgnored @AppStorage("pomodoroBigBreak") private var pomodoroBigBreak = false
     @ObservationIgnored @AppStorage("pomodoroBigBreakInterval") private var pomodoroBigBreakInterval = 4
     @ObservationIgnored @AppStorage("pomodoroBigBreakLength") private var pomodoroBigBreakLength = 25
+    @ObservationIgnored @AppStorage("ptIsExtended") private var ptIsExtended: Bool = false
+    @ObservationIgnored @AppStorage("ptStopTime") private var ptStopTime: TimeInterval = Date.now.timeIntervalSinceReferenceDate
     
 #if os(macOS)
     let usbInfoRaw: io_service_t = IOServiceGetMatchingService(kIOMainPortDefault, IOServiceMatching("IOHIDSystem"))
@@ -128,9 +130,8 @@ class StopWatchHelper {
         if pomodoro {
             stopTime = Calendar.current.date(byAdding: .second, value: pomodoroTime * 60, to: startTime) ?? Date.now
             if Date.now < stopTime {
-                let pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroTimesUpAlert), userInfo: nil, repeats: false)
+                pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroTimesUpAlert), userInfo: nil, repeats: false)
                 RunLoop.main.add(pomodoroEndTimer, forMode: .common)
-                registerLocal(notificationType: "pomodoro")
             } else {
                 showPomodoroTimesUpAlert()
             }
@@ -145,8 +146,15 @@ class StopWatchHelper {
         stopTime = Calendar.current.date(byAdding: .minute, value: intermissionTime, to: startTime) ?? Date.now
         pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroIntermissionEndedAlert), userInfo: nil, repeats: false)
         RunLoop.main.add(pomodoroEndTimer, forMode: .common)
-        registerLocal(notificationType: "pomodoroIntermissionEnded")
         EarliestPomodoroTime.shared.setTimer()
+    }
+    
+    func resumeExtended() {
+        pomodoroExtended = true
+        isRunning = true
+        stopTime = Date(timeIntervalSinceReferenceDate: ptStopTime)
+        pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroTimesUpAlert), userInfo: nil, repeats: false)
+        RunLoop.main.add(pomodoroEndTimer, forMode: .common)
     }
 #endif
     
@@ -177,22 +185,24 @@ class StopWatchHelper {
     
     func pomodoroMoreMinutes() {
         pomodoroExtended = true
+        ptIsExtended = true
         stopTime = Calendar.current.date(byAdding: .minute, value: pomodoroMoreTime, to: .now) ?? Date.now
+        ptStopTime = stopTime.timeIntervalSinceReferenceDate
         pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroTimesUpAlert), userInfo: nil, repeats: false)
         RunLoop.main.add(pomodoroEndTimer, forMode: .common)
         registerLocal(notificationType: "pomodoro")
     }
-    
+        
     func pomodoroStartIntermission() {
         pomodoroExtended = false
         pomodoroOnBreak = true
         isRunning = true
         startTime = .now
         
-        // One second timer for icon badge updating
-        #if os(macOS)
-            setOneSecondTimer()
-        #endif
+// One second timer for icon badge updating
+#if os(macOS)
+        setOneSecondTimer()
+#endif
         
         intermissionTime = {
             if self.pomodoroBigBreak, self.pomodoroSessions % self.pomodoroBigBreakInterval == 0 {
@@ -214,7 +224,7 @@ class StopWatchHelper {
     }
     
     @objc
-    private func showPomodoroTimesUpAlert() {
+    func showPomodoroTimesUpAlert() {
         showingPomodoroEndedAlert = true
     }
 
@@ -351,11 +361,11 @@ class StopWatchHelper {
         if idleDetect || showIconBadge {
             DispatchQueue.main.async {
                 self.oneSecondTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-                    if self.idleDetect && !self.pomodoroOnBreak {
+                    if self.idleDetect, !self.pomodoroOnBreak {
                         self.checkUserIdle()
                     }
                     
-                    if self.showIconBadge && !self.showingPomodoroEndedAlert {
+                    if self.showIconBadge, !self.showingPomodoroEndedAlert {
                         if self.pomodoro {
                             NSApp.dockTile.badgeLabel = self.dockBadgeFormatter.string(from: abs(Date.now.timeIntervalSince(self.stopTime)))
                         } else {

@@ -6,17 +6,24 @@
 //
 
 import Foundation
-import SwiftData
 import SwiftUI
 
 final class TimerHelper {
     static let shared = TimerHelper()
     
     @AppStorage("pomodoroIntermissionTime") private var pomodoroIntermissionTime = 5
+    @AppStorage("ptIsRunning") private var ptIsRunning: Bool = false
+    @AppStorage("ptIsIntermission") private var ptIsIntermission: Bool = false
+    @AppStorage("ptIsExtended") private var ptIsExtended: Bool = false
+    @AppStorage("ptLastIntermissionTime") private var ptIntermissionTime: Int = 5
+    @AppStorage("ptStartTime") private var ptStartTime: TimeInterval = Date.now.timeIntervalSinceReferenceDate
+    @AppStorage("ptStopTime") private var ptStopTime: TimeInterval = Date.now.timeIntervalSinceReferenceDate
+    @AppStorage("ptTaskName") private var ptTaskName: String = ""
+    @AppStorage("ptTaskTags") private var ptTaskTags: String = ""
+    @AppStorage("ptNameAndTags") private var ptNameAndTags: String = ""
     
     let persistenceController = PersistenceController.shared
     let stopWatchHelper = StopWatchHelper.shared
-    let modelContext = ModelContext(PersistentTimer.container)
     
     var startTime: Date = .now
     var stopTime: Date = .now
@@ -56,19 +63,15 @@ final class TimerHelper {
     
     func updatePersistentTimerTaskName() {
         #if os(iOS)
-        if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
-            persistentTimer.first?.taskName = taskName
-            persistentTimer.first?.taskTags = taskTags
-            persistentTimer.first?.nameAndTags = nameAndTags
-        }
+            ptTaskName = taskName
+            ptTaskTags = taskTags
+            ptNameAndTags = nameAndTags
         #endif
     }
     
     func updatePersistentTimerStartTime() {
         #if os(iOS)
-        if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
-            persistentTimer.first?.startTime = startTime
-        }
+            ptStartTime = startTime.timeIntervalSinceReferenceDate
         #endif
     }
     
@@ -165,53 +168,33 @@ final class TimerHelper {
     private func initiatePersistentTimer() {
         /// Initiate/store persistent timer values
         #if os(iOS)
-        if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
-            if persistentTimer.first == nil {
-                let newPersistentTimer = PersistentTimer()
-                newPersistentTimer.isRunning = true
-                newPersistentTimer.taskName = taskName
-                newPersistentTimer.taskTags = taskTags
-                newPersistentTimer.nameAndTags = nameAndTags
+            ptIsRunning = true
+            ptTaskName = taskName
+            ptTaskTags = taskTags
+            ptNameAndTags = nameAndTags
 
-                if stopWatchHelper.pomodoroOnBreak {
-                    newPersistentTimer.isIntermission = true
-                    newPersistentTimer.intermissionTime = stopWatchHelper.intermissionTime
-                    newPersistentTimer.startTime = stopWatchHelper.startTime
-                } else {
-                    newPersistentTimer.isIntermission = false
-                    newPersistentTimer.startTime = startTime
-                }
-
-                modelContext.insert(newPersistentTimer)
+            if stopWatchHelper.pomodoroOnBreak {
+                ptIsIntermission = true
+                ptIntermissionTime = stopWatchHelper.intermissionTime
+                ptStartTime = stopWatchHelper.startTime.timeIntervalSinceReferenceDate
             } else {
-                persistentTimer.first?.isRunning = true
-                persistentTimer.first?.taskName = taskName
-                persistentTimer.first?.taskTags = taskTags
-                persistentTimer.first?.nameAndTags = nameAndTags
-                if stopWatchHelper.pomodoroOnBreak {
-                    persistentTimer.first?.isIntermission = true
-                    persistentTimer.first?.intermissionTime = stopWatchHelper.intermissionTime
-                    persistentTimer.first?.startTime = stopWatchHelper.startTime
-                } else {
-                    persistentTimer.first?.isIntermission = false
-                    persistentTimer.first?.startTime = startTime
-                }
+                ptIsIntermission = false
+                ptStartTime = startTime.timeIntervalSinceReferenceDate
             }
-        }
         #endif
     }
     
     private func resetPersistentTimer() {
         #if os(iOS)
-        if let persistentTimer = try? modelContext.fetch(FetchDescriptor<PersistentTimer>()) {
-            persistentTimer.first?.isRunning = false
-            persistentTimer.first?.isIntermission = false
-            persistentTimer.first?.intermissionTime = pomodoroIntermissionTime
-            persistentTimer.first?.startTime = nil
-            persistentTimer.first?.taskName = nil
-            persistentTimer.first?.taskTags = nil
-            persistentTimer.first?.nameAndTags = nil
-        }
+            ptIsRunning = false
+            ptIsIntermission = false
+            ptIsExtended = false
+            ptIntermissionTime = 5
+            ptStartTime = Date.now.timeIntervalSinceReferenceDate
+            ptStopTime = Date.now.timeIntervalSinceReferenceDate
+            ptTaskName = ""
+            ptTaskTags = ""
+            ptNameAndTags = ""
         #endif
     }
 }

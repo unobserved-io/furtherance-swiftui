@@ -6,7 +6,6 @@
 //
 
 import CoreData
-import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -122,9 +121,6 @@ struct FurtheranceApp: App {
                     Text("The CSV you chose is not a valid Furtherance CSV.")
                 }
         }
-        .modelContainer(for: [
-            PersistentTimer.self
-        ])
         .commands {
             CommandMenu("Database") {
                 Button("Export as CSV") {

@@ -6,7 +6,6 @@
 //
 
 import CoreData
-import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -15,23 +14,34 @@ struct TimerView: View {
     @Binding var showExportCSV: Bool
     
     @Environment(\.managedObjectContext) private var viewContext
-    @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
     
     @Bindable var navigator = Navigator.shared
     
     @ObservedObject var storeModel = StoreModel.shared
     @State private var stopWatchHelper = StopWatchHelper.shared
-    @AppStorage("launchCount") private var launchCount = 0
-    @AppStorage("totalInclusive") private var totalInclusive = false
-    @AppStorage("limitHistory") private var limitHistory = true
-    @AppStorage("historyListLimit") private var historyListLimit = 10
-    @AppStorage("showDailySum") private var showDailySum = true
-    @AppStorage("showSeconds") private var showSeconds = true
-    @AppStorage("pomodoroMoreTime") private var pomodoroMoreTime = 5
-    @AppStorage("pomodoroIntermissionTime") private var pomodoroIntermissionTime = 5
-    @AppStorage("pomodoroBigBreak") private var pomodoroBigBreak = false
-    @AppStorage("pomodoroBigBreakInterval") private var pomodoroBigBreakInterval = 4
+    
+    @AppStorage("pomodoro") private var pomodoro = false
+    @AppStorage("launchCount") private var launchCount: Int = 0
+    @AppStorage("totalInclusive") private var totalInclusive: Bool = false
+    @AppStorage("limitHistory") private var limitHistory: Bool = true
+    @AppStorage("historyListLimit") private var historyListLimit: Int = 10
+    @AppStorage("showDailySum") private var showDailySum: Bool = true
+    @AppStorage("showSeconds") private var showSeconds: Bool = true
+    @AppStorage("pomodoroMoreTime") private var pomodoroMoreTime: Int = 5
+    @AppStorage("pomodoroIntermissionTime") private var pomodoroIntermissionTime: Int = 5
+    @AppStorage("pomodoroBigBreak") private var pomodoroBigBreak: Bool = false
+    @AppStorage("pomodoroBigBreakInterval") private var pomodoroBigBreakInterval: Int = 4
+    
+    @AppStorage("ptIsRunning") private var ptIsRunning: Bool = false
+    @AppStorage("ptIsIntermission") private var ptIsIntermission: Bool = false
+    @AppStorage("ptIsExtended") private var ptIsExtended: Bool = false
+    @AppStorage("ptLastIntermissionTime") private var ptIntermissionTime: Int = 5
+    @AppStorage("ptStartTime") private var ptStartTime: TimeInterval = Date.now.timeIntervalSinceReferenceDate
+    @AppStorage("ptStopTime") private var ptStopTime: TimeInterval = Date.now.timeIntervalSinceReferenceDate
+    @AppStorage("ptTaskName") private var ptTaskName: String = ""
+    @AppStorage("ptTaskTags") private var ptTaskTags: String = ""
+    @AppStorage("ptNameAndTags") private var ptNameAndTags: String = ""
 
     @SectionedFetchRequest(
         sectionIdentifier: \.startDateRelative,
@@ -39,7 +49,6 @@ struct TimerView: View {
         animation: .default
     )
     var tasksByDay: SectionedFetchResults<String, FurTask>
-    @Query private var persistentTimer: [PersistentTimer]
     
     @StateObject var autosave = Autosave()
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
@@ -95,7 +104,7 @@ struct TimerView: View {
                 }
                 .padding(.horizontal)
                 
-                if stopWatchHelper.isRunning {
+                if stopWatchHelper.isRunning && !stopWatchHelper.pomodoroOnBreak {
                     StartTimeModifierView()
                 }
                 
@@ -189,7 +198,7 @@ struct TimerView: View {
                     }
                     fileURL.stopAccessingSecurityScopedResource()
                 } catch {
-                    print("Failed to import data: \(error.localizedDescription)")
+                    logger.log("Failed to import data: \(error.localizedDescription)")
                 }
             }
             .alert("Invalid CSV", isPresented: $showInvalidCSVAlert) {
@@ -245,7 +254,6 @@ struct TimerView: View {
                 tasksCount = tasksByDay.count
                 
                 #if os(iOS)
-                    deleteExtraPersistentTimers()
                     resumeOngoingTimer()
                 #endif
                 
@@ -540,38 +548,49 @@ struct TimerView: View {
     
     private func resumeOngoingTimer() {
         /// Continue running timer if it was running when the app was closed and it is less than 48 hours old
-        #if os(iOS)
-            if persistentTimer.first != nil {
-                if persistentTimer.first?.isRunning ?? false {
-                    stopWatchHelper.startTime = persistentTimer.first?.startTime ?? .now
-                    timerHelper.startTime = persistentTimer.first?.startTime ?? .now
-                    timerHelper.taskName = persistentTimer.first?.taskName ?? ""
-                    timerHelper.taskTags = persistentTimer.first?.taskTags ?? ""
-                    timerHelper.nameAndTags = persistentTimer.first?.nameAndTags ?? ""
-                    TaskTagsInput.shared.text = timerHelper.nameAndTags
-                    
-                    if persistentTimer.first?.isIntermission ?? false {
-                        let intermissionTime = persistentTimer.first?.intermissionTime ?? pomodoroIntermissionTime
-                        let stopTime = Calendar.current.date(byAdding: .second, value: intermissionTime, to: persistentTimer.first?.startTime ?? .now) ?? Date.now
-                        if Date.now < stopTime {
-                            stopWatchHelper.intermissionTime = intermissionTime
-                            stopWatchHelper.resumeIntermission()
-                        } else {
-                            stopWatchHelper.showPomodoroIntermissionEndedAlert()
-                        }
-                    } else {
-                        stopWatchHelper.resume()
+        if !stopWatchHelper.isRunning && ptIsRunning {
+            let ptStartDate = Date(timeIntervalSinceReferenceDate: ptStartTime)
+                
+            stopWatchHelper.startTime = ptStartDate
+            timerHelper.startTime = ptStartDate
+            timerHelper.taskName = ptTaskName
+            timerHelper.taskTags = ptTaskTags
+            timerHelper.nameAndTags = ptNameAndTags
+            TaskTagsInput.shared.text = ptNameAndTags
+
+            if ptIsIntermission {
+                let stopTime = Calendar.current.date(byAdding: .minute, value: ptIntermissionTime, to: ptStartDate) ?? Date.now
+                if Date.now < stopTime {
+                    stopWatchHelper.intermissionTime = ptIntermissionTime
+                    stopWatchHelper.resumeIntermission()
+                } else {
+                    stopWatchHelper.showPomodoroIntermissionEndedAlert()
+                }
+            } else if ptIsExtended {
+                let ptStopTimeDate = Date(timeIntervalSinceReferenceDate: ptStopTime)
+                if Date.now < ptStopTimeDate {
+                    stopWatchHelper.resumeExtended()
+                } else {
+                    stopWatchHelper.stopTime = ptStopTimeDate
+                    stopWatchHelper.showPomodoroTimesUpAlert()
+                }
+            } else {
+                stopWatchHelper.resume()
+            }
+        } else if stopWatchHelper.isRunning && ptIsRunning {
+            if pomodoro {
+                if ptIsIntermission {
+                    let ptStartDate = Date(timeIntervalSinceReferenceDate: ptStartTime)
+                    let stopTime = Calendar.current.date(byAdding: .minute, value: ptIntermissionTime, to: ptStartDate) ?? Date.now
+                    if Date.now > stopTime {
+                        stopWatchHelper.showPomodoroIntermissionEndedAlert()
                     }
+                } else if ptIsExtended {
+                    stopWatchHelper.resumeExtended()
+                } else {
+                    stopWatchHelper.resume()
                 }
             }
-        #endif
-    }
-    
-    private func deleteExtraPersistentTimers() {
-        /// Make sure there is no more than 1 PersistentTimer, otherwise delete the extras
-        /// This is just a fail-safe and should never run
-        while persistentTimer.count > 1 {
-            modelContext.delete(persistentTimer.last!)
         }
     }
 }

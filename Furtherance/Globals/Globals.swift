@@ -9,7 +9,7 @@ import CoreData
 import SwiftUI
 import OSLog
 
-let logger = Logger()
+let logger = Logger(subsystem: "io.unobserved.debugger", category: "Furtherance")
 
 let switchColorLightTheme: Color = .accent
 let switchColorDarkTheme: Color = .accent

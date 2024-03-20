@@ -6,7 +6,6 @@
 //
 
 import AppIntents
-import SwiftData
 import SwiftUI
 
 struct StartFurtheranceTimerIntent: AppIntent {
