@@ -262,6 +262,9 @@ struct TimerView: View {
                 #endif
             }
             .onReceive(willBecomeActive) { _ in
+                #if os(iOS)
+                    resumeOngoingTimer()
+                #endif
                 if !tasksByDay.isEmpty {
                     if !Calendar.current.isDateInToday(tasksByDay[0][0].stopTime ?? Date.now) {
                         viewContext.refreshAllObjects()
