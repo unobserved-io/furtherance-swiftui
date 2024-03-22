@@ -39,7 +39,7 @@ struct FurtheranceApp: App {
 
     var body: some Scene {
         WindowGroup {
-            TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
+            mainContentView
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
                 .onAppear {
                     #if os(macOS)
@@ -176,15 +176,20 @@ struct FurtheranceApp: App {
             }
             #endif
         }
-        #if os(macOS)
-        .defaultSize(width: 370, height: 600)
-        #endif
 
         #if os(macOS)
         Settings {
             SettingsView()
         }
         .defaultSize(width: 400, height: 450)
+        #endif
+    }
+    
+    private var mainContentView: some View {
+        #if os(macOS)
+            MacContentView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
+        #else
+            TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
         #endif
     }
 }

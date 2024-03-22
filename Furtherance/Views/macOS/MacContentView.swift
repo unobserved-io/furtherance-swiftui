@@ -8,11 +8,49 @@
 import SwiftUI
 
 struct MacContentView: View {
+    @Binding var tasksCount: Int
+    @Binding var showExportCSV: Bool
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        NavigationSplitView {
+            List {
+                NavigationLink {
+                    Text("Bookmarks")
+                } label: {
+                    Text("Bookmarks")
+                }
+
+                NavigationLink {
+                    TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
+                } label: {
+                    Text("Timer")
+                }
+
+                NavigationLink {
+                    MacHistoryList()
+                } label: {
+                    Text("History")
+                }
+
+                NavigationLink {
+                    Text("Reports")
+                } label: {
+                    Text("Reports")
+                }
+
+                NavigationLink {
+                    Text("Settings")
+                } label: {
+                    Text("Settings")
+                }
+            }
+            .navigationSplitViewColumnWidth(min: 180, ideal: 200)
+        } detail: {
+            Text("Select an item")
+        }
     }
 }
 
 #Preview {
-    MacContentView()
+    MacContentView(tasksCount: .constant(5), showExportCSV: .constant(false))
 }

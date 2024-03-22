@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -108,122 +109,146 @@ struct TimerView: View {
                     StartTimeModifierView()
                 }
                 
-                tasksByDay.isEmpty ? nil : showTaskHistoryListBasedOnDevice()
+                #if os(iOS)
+                    if !tasksByDay.isEmpty {
+                        List {
+                            if limitHistory {
+                                if tasksByDay.count > historyListLimit {
+                                    ForEach(0 ..< historyListLimit, id: \.self) { index in
+                                        showHistoryList(tasksByDay[index])
+                                    }
+                                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
+                                } else {
+                                    ForEach(0 ..< tasksByDay.count, id: \.self) { index in
+                                        showHistoryList(tasksByDay[index])
+                                    }
+                                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
+                                }
+                            } else {
+                                ForEach(tasksByDay) { section in
+                                    showHistoryList(section)
+                                }
+                                .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
+                            }
+                        }
+                        .scrollContentBackground(.hidden)
+                    }
+                #endif
             }
             #if os(iOS)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Menu {
-                        Section {
-                            Button {
-                                navigator.openView(.settings)
-                            } label: {
-                                Label("Settings", systemImage: "gearshape")
-                            }
-                            
-                            Button {
-                                if storeModel.purchasedIds.isEmpty {
-                                    showProAlert.toggle()
-                                } else {
-                                    navigator.openView(.reports)
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        Menu {
+                            Section {
+                                Button {
+                                    navigator.openView(.settings)
+                                } label: {
+                                    Label("Settings", systemImage: "gearshape")
                                 }
-                            } label: {
-                                Label("Reports", systemImage: "list.bullet.clipboard")
-                            }
-                            
-                            Button {
-                                showAddTaskSheet.toggle()
-                            } label: {
-                                Label("Add Task", systemImage: "plus")
-                            }
-                        }
-                        
-                        Section {
-                            Button {
-                                if storeModel.purchasedIds.isEmpty {
-                                    showProAlert.toggle()
-                                } else {
-                                    showExportCSV.toggle()
-                                }
-                            } label: {
-                                Label("Export as CSV", systemImage: "square.and.arrow.up")
-                            }
-                            .disabled(tasksCount == 0)
-                            Button {
-                                if storeModel.purchasedIds.isEmpty {
-                                    showProAlert.toggle()
-                                } else {
-                                    showImportCSV.toggle()
-                                }
-                            } label: {
-                                Label("Import CSV", systemImage: "square.and.arrow.down")
-                            }
-                        }
-                    } label: {
-                        Image(systemName: "line.3.horizontal")
-                            .foregroundColor(Color.primary)
-                    }
-                }
-            }
-            .fileImporter(isPresented: $showImportCSV, allowedContentTypes: [UTType.commaSeparatedText]) { result in
-                do {
-                    let fileURL = try result.get()
-                    if fileURL.startAccessingSecurityScopedResource() {
-                        let data = try String(contentsOf: fileURL)
-                        // Split string into rows
-                        var rows = data.components(separatedBy: "\n")
-                        // Remove headers
-                        if rows[0] == "Name,Tags,Start Time,Stop Time,Total Seconds" {
-                            rows.removeFirst()
-
-                            // Split rows into columns
-                            var furTasks = [FurTask]()
-                            for row in rows {
-                                let columns = row.components(separatedBy: ",")
                                 
-                                if columns.count == 5 {
-                                    let task = FurTask(context: viewContext)
-                                    task.id = UUID()
-                                    task.name = columns[0]
-                                    task.tags = columns[1]
-                                    task.startTime = localDateTimeFormatter.date(from: columns[2])
-                                    task.stopTime = localDateTimeFormatter.date(from: columns[3])
-                                    furTasks.append(task)
+                                Button {
+                                    if storeModel.purchasedIds.isEmpty {
+                                        showProAlert.toggle()
+                                    } else {
+                                        navigator.openView(.reports)
+                                    }
+                                } label: {
+                                    Label("Reports", systemImage: "list.bullet.clipboard")
+                                }
+                                
+                                Button {
+                                    showAddTaskSheet.toggle()
+                                } label: {
+                                    Label("Add Task", systemImage: "plus")
                                 }
                             }
-                            try? viewContext.save()
-                        } else {
-                            showInvalidCSVAlert.toggle()
+                            
+                            Section {
+                                Button {
+                                    if storeModel.purchasedIds.isEmpty {
+                                        showProAlert.toggle()
+                                    } else {
+                                        showExportCSV.toggle()
+                                    }
+                                } label: {
+                                    Label("Export as CSV", systemImage: "square.and.arrow.up")
+                                }
+                                .disabled(tasksCount == 0)
+                                Button {
+                                    if storeModel.purchasedIds.isEmpty {
+                                        showProAlert.toggle()
+                                    } else {
+                                        showImportCSV.toggle()
+                                    }
+                                } label: {
+                                    Label("Import CSV", systemImage: "square.and.arrow.down")
+                                }
+                            }
+                        } label: {
+                            Image(systemName: "line.3.horizontal")
+                                .foregroundColor(Color.primary)
                         }
                     }
-                    fileURL.stopAccessingSecurityScopedResource()
-                } catch {
-                    logger.log("Failed to import data: \(error.localizedDescription)")
                 }
-            }
-            .alert("Invalid CSV", isPresented: $showInvalidCSVAlert) {
-                Button("OK") {}
-            } message: {
-                Text("The CSV you chose is not a valid Furtherance CSV.")
-            }
-            .alert("Upgrade to Pro", isPresented: $showProAlert) {
-                Button("Cancel") {}
-                if let product = storeModel.products.first {
-                    Button(action: {
-                        Task {
-                            if storeModel.purchasedIds.isEmpty {
-                                try await storeModel.purchase()
+                .fileImporter(isPresented: $showImportCSV, allowedContentTypes: [UTType.commaSeparatedText]) { result in
+                    do {
+                        let fileURL = try result.get()
+                        if fileURL.startAccessingSecurityScopedResource() {
+                            let data = try String(contentsOf: fileURL)
+                            // Split string into rows
+                            var rows = data.components(separatedBy: "\n")
+                            // Remove headers
+                            if rows[0] == "Name,Tags,Start Time,Stop Time,Total Seconds" {
+                                rows.removeFirst()
+
+                                // Split rows into columns
+                                var furTasks = [FurTask]()
+                                for row in rows {
+                                    let columns = row.components(separatedBy: ",")
+                                    
+                                    if columns.count == 5 {
+                                        let task = FurTask(context: viewContext)
+                                        task.id = UUID()
+                                        task.name = columns[0]
+                                        task.tags = columns[1]
+                                        task.startTime = localDateTimeFormatter.date(from: columns[2])
+                                        task.stopTime = localDateTimeFormatter.date(from: columns[3])
+                                        furTasks.append(task)
+                                    }
+                                }
+                                try? viewContext.save()
+                            } else {
+                                showInvalidCSVAlert.toggle()
                             }
                         }
-                    }) {
-                        Text("Buy Pro \(product.displayPrice)")
+                        fileURL.stopAccessingSecurityScopedResource()
+                    } catch {
+                        print("Failed to import data: \(error.localizedDescription)")
                     }
-                    .keyboardShortcut(.defaultAction)
                 }
-            } message: {
-                Text("That feature is only available in Furtherance Pro.")
-            }
-            .navigationBarTitleDisplayMode(.inline)
+                .alert("Invalid CSV", isPresented: $showInvalidCSVAlert) {
+                    Button("OK") {}
+                } message: {
+                    Text("The CSV you chose is not a valid Furtherance CSV.")
+                }
+                .alert("Upgrade to Pro", isPresented: $showProAlert) {
+                    Button("Cancel") {}
+                    if let product = storeModel.products.first {
+                        Button(action: {
+                            Task {
+                                if storeModel.purchasedIds.isEmpty {
+                                    try await storeModel.purchase()
+                                }
+                            }
+                        }) {
+                            Text("Buy Pro \(product.displayPrice)")
+                        }
+                        .keyboardShortcut(.defaultAction)
+                    }
+                } message: {
+                    Text("That feature is only available in Furtherance Pro.")
+                }
+                .navigationBarTitleDisplayMode(.inline)
             #endif
             // Update tasks count every time tasks is changed
             .onChange(of: tasksByDay.count) {
@@ -500,53 +525,6 @@ struct TimerView: View {
                     .disabled(stopWatchHelper.isRunning)
             }
         }
-    }
-    
-    private func showTaskHistoryListBasedOnDevice() -> some View {
-        #if os(macOS)
-            return ScrollView {
-                Form {
-                    if limitHistory {
-                        if tasksByDay.count > historyListLimit {
-                            ForEach(0 ..< historyListLimit, id: \.self) { index in
-                                showHistoryList(tasksByDay[index])
-                            }
-                        } else {
-                            ForEach(0 ..< tasksByDay.count, id: \.self) { index in
-                                showHistoryList(tasksByDay[index])
-                            }
-                        }
-                    } else {
-                        ForEach(tasksByDay) { section in
-                            showHistoryList(section)
-                        }
-                    }
-                }
-                .padding(.horizontal)
-            }
-        #else
-            return List {
-                if limitHistory {
-                    if tasksByDay.count > historyListLimit {
-                        ForEach(0 ..< historyListLimit, id: \.self) { index in
-                            showHistoryList(tasksByDay[index])
-                        }
-                        .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
-                    } else {
-                        ForEach(0 ..< tasksByDay.count, id: \.self) { index in
-                            showHistoryList(tasksByDay[index])
-                        }
-                        .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
-                    }
-                } else {
-                    ForEach(tasksByDay) { section in
-                        showHistoryList(section)
-                    }
-                    .listRowBackground(colorScheme == .light ? Color.gray.opacity(0.10) : nil)
-                }
-            }
-            .scrollContentBackground(.hidden)
-        #endif
     }
     
     private func resumeOngoingTimer() {

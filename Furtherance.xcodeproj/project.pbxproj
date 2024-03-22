@@ -8,8 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		9C0657312B4C32C300745C90 /* StopWatchHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C0657302B4C32C300745C90 /* StopWatchHelper.swift */; };
+		9C0967AB2B9B66BA00780F96 /* MacHistoryList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C0967AA2B9B66BA00780F96 /* MacHistoryList.swift */; };
+		9C0967AD2B9B672A00780F96 /* MacTimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C0967AC2B9B672A00780F96 /* MacTimerView.swift */; };
 		9C1026672A361B5000FB95D8 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1026662A361B5000FB95D8 /* AddTaskView.swift */; };
 		9C108A452A5ADF4A00BD60D3 /* IOSReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C108A442A5ADF4A00BD60D3 /* IOSReportsView.swift */; platformFilter = ios; };
+		9C18F3B92B9B344C00201168 /* MacContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C18F3B82B9B344C00201168 /* MacContentView.swift */; };
 		9C27D34629A8B2630012C274 /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C27D34529A8B2630012C274 /* GroupView.swift */; };
 		9C27D34829A8B5460012C274 /* ClickedGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C27D34729A8B5460012C274 /* ClickedGroup.swift */; };
 		9C3B41372A54966E002F3F5B /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C3B41362A54966E002F3F5B /* Storyboard.storyboard */; platformFilter = ios; };
@@ -57,8 +60,11 @@
 
 /* Begin PBXFileReference section */
 		9C0657302B4C32C300745C90 /* StopWatchHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopWatchHelper.swift; sourceTree = "<group>"; };
+		9C0967AA2B9B66BA00780F96 /* MacHistoryList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacHistoryList.swift; sourceTree = "<group>"; };
+		9C0967AC2B9B672A00780F96 /* MacTimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacTimerView.swift; sourceTree = "<group>"; };
 		9C1026662A361B5000FB95D8 /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
 		9C108A442A5ADF4A00BD60D3 /* IOSReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSReportsView.swift; sourceTree = "<group>"; };
+		9C18F3B82B9B344C00201168 /* MacContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacContentView.swift; sourceTree = "<group>"; };
 		9C27D34529A8B2630012C274 /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
 		9C27D34729A8B5460012C274 /* ClickedGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickedGroup.swift; sourceTree = "<group>"; };
 		9C3B41362A54966E002F3F5B /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
@@ -122,12 +128,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9C0967A92B9B66A600780F96 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				9C0967AA2B9B66BA00780F96 /* MacHistoryList.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
 		9C108A432A5ADF3A00BD60D3 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				9C108A442A5ADF4A00BD60D3 /* IOSReportsView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		9C18F3B72B9B342C00201168 /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				9C18F3B82B9B344C00201168 /* MacContentView.swift */,
+			);
+			path = macOS;
 			sourceTree = "<group>";
 		};
 		9C3BD94429BE7A1A00637D36 /* Globals */ = {
@@ -187,6 +209,7 @@
 				9CDA71812B4E694A00758CE2 /* TimeDisplayView.swift */,
 				9C94FF3B2B6EC5F7007EC064 /* TaskInputView.swift */,
 				9C94FF3D2B6EDDA9007EC064 /* StartTimeModifierView.swift */,
+				9C0967AC2B9B672A00780F96 /* MacTimerView.swift */,
 			);
 			path = Timer;
 			sourceTree = "<group>";
@@ -266,6 +289,8 @@
 		9CA84E2E29A79ECC00A28FDA /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				9C0967A92B9B66A600780F96 /* History */,
+				9C18F3B72B9B342C00201168 /* macOS */,
 				9C94FF3A2B6EC5D7007EC064 /* Timer */,
 				9C4683E62A502E38006D1B7A /* Settings */,
 				9C27D34529A8B2630012C274 /* GroupView.swift */,
@@ -378,6 +403,8 @@
 				9CF305172B642EE7007CDB5E /* Navigator.swift in Sources */,
 				9CBD0C832B696EB000BC43DD /* ShouldIAskAppEnum.swift in Sources */,
 				9C4683E82A502E56006D1B7A /* GeneralSettingsView.swift in Sources */,
+				9C0967AD2B9B672A00780F96 /* MacTimerView.swift in Sources */,
+				9C9974A92B5D540700852592 /* PersistentTimer.swift in Sources */,
 				9C7A69312B6D1DC40080E19F /* FurtheranceShortcuts.swift in Sources */,
 				9C4F06A229A928E8009D1AFE /* StoreModel.swift in Sources */,
 				9CDA71822B4E694A00758CE2 /* TimeDisplayView.swift in Sources */,
@@ -403,9 +430,11 @@
 				9CBD0C812B696E3500BC43DD /* StopFurtheranceTimerIntent.swift in Sources */,
 				9C108A452A5ADF4A00BD60D3 /* IOSReportsView.swift in Sources */,
 				9CA84E3029A79EE600A28FDA /* TaskRow.swift in Sources */,
+				9C18F3B92B9B344C00201168 /* MacContentView.swift in Sources */,
 				9C4074C92A31E26A00C989CF /* Extensions.swift in Sources */,
 				9CFD857B2B4CA63500A8C5D8 /* DockTileContents.swift in Sources */,
 				9CE227322A3C3DD50008032D /* CSVFile.swift in Sources */,
+				9C0967AB2B9B66BA00780F96 /* MacHistoryList.swift in Sources */,
 				9CA84E3429A7A4F500A28FDA /* FurTaskGroup.swift in Sources */,
 				9C4683EF2A503059006D1B7A /* BuyProView.swift in Sources */,
 				9C27D34629A8B2630012C274 /* GroupView.swift in Sources */,
