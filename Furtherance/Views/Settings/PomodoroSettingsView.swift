@@ -188,7 +188,7 @@ struct PomodoroSettingsView: View {
         }
 #if os(macOS)
         .padding(20)
-        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 550 : 500)
+        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 550 : stopWatchHelper.pomodoroSessions > 0 ? 550 : 500)
 #endif
     }
 }
