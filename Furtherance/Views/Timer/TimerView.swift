@@ -551,50 +551,52 @@ struct TimerView: View {
     
     private func resumeOngoingTimer() {
         /// Continue running timer if it was running when the app was closed and it is less than 48 hours old
-        if !stopWatchHelper.isRunning && ptIsRunning {
-            let ptStartDate = Date(timeIntervalSinceReferenceDate: ptStartTime)
-                
-            stopWatchHelper.startTime = ptStartDate
-            timerHelper.startTime = ptStartDate
-            timerHelper.taskName = ptTaskName
-            timerHelper.taskTags = ptTaskTags
-            timerHelper.nameAndTags = ptNameAndTags
-            TaskTagsInput.shared.text = ptNameAndTags
+        #if os(iOS)
+            if !stopWatchHelper.isRunning && ptIsRunning {
+                let ptStartDate = Date(timeIntervalSinceReferenceDate: ptStartTime)
+                    
+                stopWatchHelper.startTime = ptStartDate
+                timerHelper.startTime = ptStartDate
+                timerHelper.taskName = ptTaskName
+                timerHelper.taskTags = ptTaskTags
+                timerHelper.nameAndTags = ptNameAndTags
+                TaskTagsInput.shared.text = ptNameAndTags
 
-            if ptIsIntermission {
-                let stopTime = Calendar.current.date(byAdding: .minute, value: ptIntermissionTime, to: ptStartDate) ?? Date.now
-                if Date.now < stopTime {
-                    stopWatchHelper.intermissionTime = ptIntermissionTime
-                    stopWatchHelper.resumeIntermission()
-                } else {
-                    stopWatchHelper.showPomodoroIntermissionEndedAlert()
-                }
-            } else if ptIsExtended {
-                let ptStopTimeDate = Date(timeIntervalSinceReferenceDate: ptStopTime)
-                if Date.now < ptStopTimeDate {
-                    stopWatchHelper.resumeExtended()
-                } else {
-                    stopWatchHelper.stopTime = ptStopTimeDate
-                    stopWatchHelper.showPomodoroTimesUpAlert()
-                }
-            } else {
-                stopWatchHelper.resume()
-            }
-        } else if stopWatchHelper.isRunning && ptIsRunning {
-            if pomodoro {
                 if ptIsIntermission {
-                    let ptStartDate = Date(timeIntervalSinceReferenceDate: ptStartTime)
                     let stopTime = Calendar.current.date(byAdding: .minute, value: ptIntermissionTime, to: ptStartDate) ?? Date.now
-                    if Date.now > stopTime {
+                    if Date.now < stopTime {
+                        stopWatchHelper.intermissionTime = ptIntermissionTime
+                        stopWatchHelper.resumeIntermission()
+                    } else {
                         stopWatchHelper.showPomodoroIntermissionEndedAlert()
                     }
                 } else if ptIsExtended {
-                    stopWatchHelper.resumeExtended()
+                    let ptStopTimeDate = Date(timeIntervalSinceReferenceDate: ptStopTime)
+                    if Date.now < ptStopTimeDate {
+                        stopWatchHelper.resumeExtended()
+                    } else {
+                        stopWatchHelper.stopTime = ptStopTimeDate
+                        stopWatchHelper.showPomodoroTimesUpAlert()
+                    }
                 } else {
                     stopWatchHelper.resume()
                 }
+            } else if stopWatchHelper.isRunning && ptIsRunning {
+                if pomodoro {
+                    if ptIsIntermission {
+                        let ptStartDate = Date(timeIntervalSinceReferenceDate: ptStartTime)
+                        let stopTime = Calendar.current.date(byAdding: .minute, value: ptIntermissionTime, to: ptStartDate) ?? Date.now
+                        if Date.now > stopTime {
+                            stopWatchHelper.showPomodoroIntermissionEndedAlert()
+                        }
+                    } else if ptIsExtended {
+                        stopWatchHelper.resumeExtended()
+                    } else {
+                        stopWatchHelper.resume()
+                    }
+                }
             }
-        }
+        #endif
     }
 }
 
