@@ -14,7 +14,6 @@ It allows you to track time spent on different activities without worrying about
 ### Install
 
 <a href="https://apps.apple.com/app/furtherance/id1659277200"><img width='240' alt="Download Furtherance on the App Store" src="https://furtherance.app/images/app-store-black.svg"/></a>
-* Furtherance for Mac & iOS is available on the [App Store](https://apps.apple.com/app/furtherance/id1659277200).
 
 ### Build
 The easiest way to build Furtherance is with [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12). Just open the .xcodeproj file and click Run.
