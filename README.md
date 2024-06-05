@@ -2,6 +2,10 @@
 Furtherance is a time tracking app.
 It allows you to track time spent on different activities without worrying about your data being captured and sold.
 
+<p align="center">
+    <img width="500px" src="https://unobserved.io/assets/screenshots/furtherance-mac.png" alt="Furtherance screenshot"/>
+</p>
+
 ## Features
 * Tasks are stored using SwiftData (local or in the cloud if iCloud Drive is enabled)
 * Tasks are grouped by name and date.
