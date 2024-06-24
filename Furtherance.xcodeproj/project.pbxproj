@@ -37,6 +37,7 @@
 		9C98E11329A8C0790064F63F /* TaskEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11229A8C0790064F63F /* TaskEditView.swift */; };
 		9C98E11529A8F6B80064F63F /* GroupEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11429A8F6B80064F63F /* GroupEditView.swift */; };
 		9C98E11729A918BC0064F63F /* Autosave.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C98E11629A918BC0064F63F /* Autosave.swift */; };
+		9C9D5F082C296EDD0083EC1F /* FurtheranceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C9D5F072C296EDD0083EC1F /* FurtheranceTests.swift */; };
 		9C9DB0622A543F0600E0DC2B /* Assets-macOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9CA84E1429A7721300A28FDA /* Assets-macOS.xcassets */; platformFilters = (macos, ); };
 		9C9DB0652A54405A00E0DC2B /* Assets-iOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C9DB0642A54405A00E0DC2B /* Assets-iOS.xcassets */; platformFilter = ios; };
 		9C9F8EB32B99E7620064BF69 /* TextWithBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C9F8EB22B99E7620064BF69 /* TextWithBadge.swift */; };
@@ -58,6 +59,16 @@
 		9CF305172B642EE7007CDB5E /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CF305162B642EE7007CDB5E /* Navigator.swift */; };
 		9CFD857B2B4CA63500A8C5D8 /* DockTileContents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CFD857A2B4CA63500A8C5D8 /* DockTileContents.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		9C9D5F092C296EDD0083EC1F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9CA84E0529A7721200A28FDA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9CA84E0C29A7721200A28FDA;
+			remoteInfo = Furtherance;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		9C0657302B4C32C300745C90 /* StopWatchHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopWatchHelper.swift; sourceTree = "<group>"; };
@@ -91,6 +102,8 @@
 		9C98E11229A8C0790064F63F /* TaskEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditView.swift; sourceTree = "<group>"; };
 		9C98E11429A8F6B80064F63F /* GroupEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupEditView.swift; sourceTree = "<group>"; };
 		9C98E11629A918BC0064F63F /* Autosave.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autosave.swift; sourceTree = "<group>"; };
+		9C9D5F052C296EDD0083EC1F /* FurtheranceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FurtheranceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9C9D5F072C296EDD0083EC1F /* FurtheranceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurtheranceTests.swift; sourceTree = "<group>"; };
 		9C9DB0642A54405A00E0DC2B /* Assets-iOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-iOS.xcassets"; sourceTree = "<group>"; };
 		9C9F8EB22B99E7620064BF69 /* TextWithBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextWithBadge.swift; sourceTree = "<group>"; };
 		9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurtheranceApp.swift; sourceTree = "<group>"; };
@@ -118,6 +131,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		9C9D5F022C296EDD0083EC1F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9CA84E0A29A7721200A28FDA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -219,12 +239,22 @@
 			path = "Data Models";
 			sourceTree = "<group>";
 		};
+		9C9D5F062C296EDD0083EC1F /* FurtheranceTests */ = {
+			isa = PBXGroup;
+			children = (
+				9C9D5F072C296EDD0083EC1F /* FurtheranceTests.swift */,
+			);
+			path = FurtheranceTests;
+			sourceTree = "<group>";
+		};
 		9CA84E0429A7721200A28FDA = {
 			isa = PBXGroup;
 			children = (
 				9CA84E0F29A7721200A28FDA /* Furtherance */,
+				9C9D5F062C296EDD0083EC1F /* FurtheranceTests */,
 				9CAB8E3029C1331C00610E6E /* Frameworks */,
 				9CFD85792B4C9D8800A8C5D8 /* Furtherance.app */,
+				9C9D5F052C296EDD0083EC1F /* FurtheranceTests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -322,6 +352,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		9C9D5F042C296EDD0083EC1F /* FurtheranceTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9C9D5F0D2C296EDD0083EC1F /* Build configuration list for PBXNativeTarget "FurtheranceTests" */;
+			buildPhases = (
+				9C9D5F012C296EDD0083EC1F /* Sources */,
+				9C9D5F022C296EDD0083EC1F /* Frameworks */,
+				9C9D5F032C296EDD0083EC1F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9C9D5F0A2C296EDD0083EC1F /* PBXTargetDependency */,
+			);
+			name = FurtheranceTests;
+			productName = FurtheranceTests;
+			productReference = 9C9D5F052C296EDD0083EC1F /* FurtheranceTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		9CA84E0C29A7721200A28FDA /* Furtherance */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9CA84E2129A7721300A28FDA /* Build configuration list for PBXNativeTarget "Furtherance" */;
@@ -348,9 +396,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1420;
+				LastSwiftUpdateCheck = 1540;
 				LastUpgradeCheck = 1510;
 				TargetAttributes = {
+					9C9D5F042C296EDD0083EC1F = {
+						CreatedOnToolsVersion = 15.4;
+						TestTargetID = 9CA84E0C29A7721200A28FDA;
+					};
 					9CA84E0C29A7721200A28FDA = {
 						CreatedOnToolsVersion = 14.2;
 					};
@@ -372,11 +424,19 @@
 			projectRoot = "";
 			targets = (
 				9CA84E0C29A7721200A28FDA /* Furtherance */,
+				9C9D5F042C296EDD0083EC1F /* FurtheranceTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		9C9D5F032C296EDD0083EC1F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9CA84E0B29A7721200A28FDA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -390,6 +450,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		9C9D5F012C296EDD0083EC1F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9C9D5F082C296EDD0083EC1F /* FurtheranceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		9CA84E0929A7721200A28FDA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -399,7 +467,6 @@
 				9CBD0C832B696EB000BC43DD /* ShouldIAskAppEnum.swift in Sources */,
 				9C4683E82A502E56006D1B7A /* GeneralSettingsView.swift in Sources */,
 				9C0967AD2B9B672A00780F96 /* MacTimerView.swift in Sources */,
-				9C9974A92B5D540700852592 /* PersistentTimer.swift in Sources */,
 				9C7A69312B6D1DC40080E19F /* FurtheranceShortcuts.swift in Sources */,
 				9C4F06A229A928E8009D1AFE /* StoreModel.swift in Sources */,
 				9CDA71822B4E694A00758CE2 /* TimeDisplayView.swift in Sources */,
@@ -445,7 +512,61 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		9C9D5F0A2C296EDD0083EC1F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9CA84E0C29A7721200A28FDA /* Furtherance */;
+			targetProxy = 9C9D5F092C296EDD0083EC1F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		9C9D5F0B2C296EDD0083EC1F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z5MKQX2NCZ;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.unobserved.FurtheranceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Furtherance.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Furtherance";
+			};
+			name = Debug;
+		};
+		9C9D5F0C2C296EDD0083EC1F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z5MKQX2NCZ;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.unobserved.FurtheranceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Furtherance.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Furtherance";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		9CA84E1F29A7721300A28FDA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -658,6 +779,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		9C9D5F0D2C296EDD0083EC1F /* Build configuration list for PBXNativeTarget "FurtheranceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9C9D5F0B2C296EDD0083EC1F /* Debug */,
+				9C9D5F0C2C296EDD0083EC1F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		9CA84E0829A7721200A28FDA /* Build configuration list for PBXProject "Furtherance" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
