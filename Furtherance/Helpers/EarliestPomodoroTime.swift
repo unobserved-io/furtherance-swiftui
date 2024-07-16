@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@Observable
+@Observable @MainActor
 class EarliestPomodoroTime {
     static var shared = EarliestPomodoroTime()
     
@@ -35,6 +35,8 @@ class EarliestPomodoroTime {
     }
     
     deinit {
-        invalidateTimer()
+        DispatchQueue.main.async {
+            self.invalidateTimer()
+        }
     }
 }

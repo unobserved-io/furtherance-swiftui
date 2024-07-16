@@ -8,7 +8,7 @@
 import Foundation
 
 class TaskTagsInput: ObservableObject {
-    static let shared = TaskTagsInput()
+    @MainActor static let shared = TaskTagsInput()
     @Published var text = ""
     @Published var debouncedText = ""
     

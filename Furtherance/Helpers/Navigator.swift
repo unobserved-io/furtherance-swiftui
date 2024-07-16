@@ -16,7 +16,7 @@ enum ViewPath {
 
 @Observable
 class Navigator {
-    static let shared = Navigator()
+    @MainActor static let shared = Navigator()
     
     var path: [ViewPath] = []
     var showTaskBeginsWithHashtagAlert: Bool = false

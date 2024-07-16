@@ -8,7 +8,7 @@
 import SwiftUI
 import UserNotifications
 
-@Observable
+@Observable @MainActor
 class StopWatchHelper {
     static let shared = StopWatchHelper()
     

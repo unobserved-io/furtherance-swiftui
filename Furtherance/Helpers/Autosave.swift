@@ -9,6 +9,7 @@ import CoreData
 import Foundation
 import SwiftUI
 
+@MainActor
 class Autosave: ObservableObject {
     // TEST PATH: /Users/ricky/Library/Containers/com.lakoliu.Furtherance/Data/Library/Application Support/autosave.txt
     private let autosaveUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("autosave.txt")
