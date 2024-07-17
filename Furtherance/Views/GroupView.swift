@@ -19,7 +19,6 @@ struct GroupView: View {
 
     @StateObject var clickedTask = ClickedTask(task: nil)
 
-    @State private var clickedID = UUID()
     @State private var showTaskEditSheet = false
     @State private var overallEditSheet = false
     @State private var groupAddSheet = false
@@ -111,6 +110,38 @@ struct GroupView: View {
                             ? totalFormatterWithSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
                             : totalFormatterWithoutSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
 
+                        // TODO: Make iOS use NavLink?
+#if os(macOS)
+                        NavigationLink {
+                            TaskEditView(showInspector: $showInspector).environmentObject(clickedTask)
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text("\(startString) to \(stopString)")
+                                        .monospacedDigit()
+                                        .bold()
+
+                                    Text("Total: \(totalString)")
+                                        .monospacedDigit()
+                                        .font(.caption)
+                                }
+                                Spacer()
+                            }
+                            .contentShape(Rectangle())
+
+                        }
+                        .simultaneousGesture(TapGesture().onEnded {
+                            clickedTask.task = task
+                        })
+
+                        .onHover { inside in
+                            if inside {
+                                NSCursor.pointingHand.push()
+                            } else {
+                                NSCursor.pop()
+                            }
+                        }
+#elseif os(iOS)
                         HStack {
                             VStack(alignment: .leading) {
                                 Text("\(startString) to \(stopString)")
@@ -126,16 +157,7 @@ struct GroupView: View {
                         .contentShape(Rectangle())
                         .onTapGesture {
                             clickedTask.task = task
-                            clickedID = clickedTask.task?.id ?? UUID()
                             showTaskEditSheet.toggle()
-                        }
-#if os(macOS)
-                        .onHover { inside in
-                            if inside {
-                                NSCursor.pointingHand.push()
-                            } else {
-                                NSCursor.pop()
-                            }
                         }
 #endif
                     }
@@ -174,12 +196,12 @@ struct GroupView: View {
                 }
             }
         }
+#if os(iOS)
         .sheet(isPresented: $showTaskEditSheet, onDismiss: refreshGroup) {
             TaskEditView().environmentObject(clickedTask)
-#if os(iOS)
                 .presentationDetents([.taskBar])
-#endif
         }
+#endif
         .sheet(isPresented: $overallEditSheet, onDismiss: refreshGroup) {
             GroupEditView()
 #if os(iOS)

@@ -104,8 +104,9 @@ struct TaskEditView: View {
                     HStack(spacing: 20) {
                         Button {
                             resetChanges()
+                            showInspector = false
                         } label: {
-                            Text("Undo Changes") // TODO: Maybe this should just say Undo Changes
+                            Text("Cancel")
                         }
 
                         .keyboardShortcut(.cancelAction)
