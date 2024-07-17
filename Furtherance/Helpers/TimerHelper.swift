@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import RegexBuilder
 
 @MainActor
 final class TimerHelper {
@@ -21,6 +22,7 @@ final class TimerHelper {
     @AppStorage("ptStopTime") private var ptStopTime: TimeInterval = Date.now.timeIntervalSinceReferenceDate
     @AppStorage("ptTaskName") private var ptTaskName: String = ""
     @AppStorage("ptTaskTags") private var ptTaskTags: String = ""
+    @AppStorage("ptTaskProject") private var ptTaskProject: String = ""
     @AppStorage("ptNameAndTags") private var ptNameAndTags: String = ""
     
     let persistenceController = PersistenceController.shared
@@ -30,13 +32,16 @@ final class TimerHelper {
     var stopTime: Date = .now
     var taskName: String = ""
     var taskTags: String = ""
+    var taskProject: String = ""
+    var taskRate: Double = 0.0
     var nameAndTags: String = ""
     
     func start() {
         /// Start the timer and perform relative actions
         if !stopWatchHelper.isRunning {
             if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#"
+               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#",
+               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "@"
             {
                 let trimmedStartTime = Date.now.trimMilliseconds
                 stopWatchHelper.start(at: trimmedStartTime)
@@ -46,6 +51,8 @@ final class TimerHelper {
                 initiatePersistentTimer()
             } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "#" {
                 Navigator.shared.showTaskBeginsWithHashtagAlert = true
+            } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "@" {
+                Navigator.shared.showTaskBeginsWithAtSymbolAlert = true
             }
         }
     }
@@ -85,6 +92,8 @@ final class TimerHelper {
                 separateTags()
             } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "#" {
                 Navigator.shared.showTaskBeginsWithHashtagAlert = true
+            } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "@" {
+                Navigator.shared.showTaskBeginsWithAtSymbolAlert = true
             }
         }
     }
@@ -128,6 +137,18 @@ final class TimerHelper {
     
     private func separateTags() {
         /// Separate task from tags and save each in the relative variable
+        let regex = Regex {
+            "@"
+            Capture {
+                OneOrMore(CharacterClass.anyOf("#").inverted)
+            }
+        }
+        if let match = nameAndTags.firstMatch(of: regex) {
+            let (wholeMatch, project) = match.output
+            taskProject = project.trimmingCharacters(in: .whitespaces)
+            nameAndTags = nameAndTags.replacingOccurrences(of: wholeMatch, with: "")
+        }
+
         var splitTags = nameAndTags.trimmingCharacters(in: .whitespaces).split(separator: "#")
         // Get and remove task name from tags list
         taskName = splitTags[0].trimmingCharacters(in: .whitespaces)
@@ -154,6 +175,7 @@ final class TimerHelper {
         task.startTime = startTime
         task.stopTime = stopTime
         task.tags = taskTags
+        task.project = taskProject
         try? persistenceController.container.viewContext.save()
     }
     
@@ -172,6 +194,7 @@ final class TimerHelper {
             ptIsRunning = true
             ptTaskName = taskName
             ptTaskTags = taskTags
+            ptTaskProject = taskProject
             ptNameAndTags = nameAndTags
 
             if stopWatchHelper.pomodoroOnBreak {
@@ -195,6 +218,7 @@ final class TimerHelper {
             ptStopTime = Date.now.timeIntervalSinceReferenceDate
             ptTaskName = ""
             ptTaskTags = ""
+            ptTaskProject = ""
             ptNameAndTags = ""
         #endif
     }

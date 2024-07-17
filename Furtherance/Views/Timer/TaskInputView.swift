@@ -14,7 +14,7 @@ struct TaskInputView: View {
     @State private var stopWatchHelper = StopWatchHelper.shared
     
     var body: some View {
-        TextField("Task Name #tag #another tag", text: $taskTagsInput.text)
+        TextField("Task Name @Project #tag #another tag", text: $taskTagsInput.text)
             .disabled(stopWatchHelper.pomodoroOnBreak)
         #if os(iOS)
         .disableAutocorrection(true)
@@ -31,7 +31,8 @@ struct TaskInputView: View {
             if StopWatchHelper.shared.isRunning {
                 if newVal != timerHelper.nameAndTags {
                     if !newVal.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-                       newVal.trimmingCharacters(in: .whitespaces).first != "#"
+                       newVal.trimmingCharacters(in: .whitespaces).first != "#",
+                       newVal.trimmingCharacters(in: .whitespaces).first != "@"
                     {
                         timerHelper.updateTaskAndTagsIfChanged()
                         #if os(iOS)

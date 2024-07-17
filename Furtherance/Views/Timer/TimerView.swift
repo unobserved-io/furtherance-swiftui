@@ -42,6 +42,7 @@ struct TimerView: View {
     @AppStorage("ptStopTime") private var ptStopTime: TimeInterval = Date.now.timeIntervalSinceReferenceDate
     @AppStorage("ptTaskName") private var ptTaskName: String = ""
     @AppStorage("ptTaskTags") private var ptTaskTags: String = ""
+    @AppStorage("ptTaskProject") private var ptTaskProject: String = ""
     @AppStorage("ptNameAndTags") private var ptNameAndTags: String = ""
 
     @SectionedFetchRequest(
@@ -320,6 +321,11 @@ struct TimerView: View {
             } message: {
                 Text("A task name must be provided before tags. The first character cannot be a '#'.")
             }
+            .alert("Improper Task Name", isPresented: $navigator.showTaskBeginsWithAtSymbolAlert) {
+                Button("OK") {}
+            } message: {
+                Text("A task name must be provided before the project. The first character cannot be a '@'.")
+            }
             .alert("Task Name Empty", isPresented: $showingTaskEmptyAlert) {
                 Button("OK") {}
             } message: {
@@ -537,6 +543,7 @@ struct TimerView: View {
                 timerHelper.startTime = ptStartDate
                 timerHelper.taskName = ptTaskName
                 timerHelper.taskTags = ptTaskTags
+                timerHelper.taskProject = ptTaskProject
                 timerHelper.nameAndTags = ptNameAndTags
                 TaskTagsInput.shared.text = ptNameAndTags
 

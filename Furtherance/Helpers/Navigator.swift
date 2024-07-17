@@ -20,6 +20,7 @@ class Navigator {
     
     var path: [ViewPath] = []
     var showTaskBeginsWithHashtagAlert: Bool = false
+    var showTaskBeginsWithAtSymbolAlert: Bool = false
     
     func openView(_ viewPath: ViewPath) {
         if viewPath == .home {
