@@ -13,6 +13,7 @@ struct TaskEditView: View {
     @Environment(\.dismiss) var dismiss
     
     @Binding var showInspector: Bool
+    @Binding var showGroupToolbar: Bool
     
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
     
@@ -30,8 +31,9 @@ struct TaskEditView: View {
         GridItem(.fixed(70)),
     ]
     
-    init(showInspector: Binding<Bool> = .constant(false)) {
+    init(showInspector: Binding<Bool> = .constant(false), showGroupToolbar: Binding<Bool> = .constant(true)) {
         _showInspector = showInspector
+        _showGroupToolbar = showGroupToolbar
     }
     
     var body: some View {
@@ -103,8 +105,14 @@ struct TaskEditView: View {
 
                     HStack(spacing: 20) {
                         Button {
-                            resetChanges()
-                            showInspector = false
+                            // True only if not coming from group
+                            if showGroupToolbar {
+                                resetChanges()
+                                showInspector = false
+                            } else {
+                                dismiss()
+                                showGroupToolbar = true
+                            }
                         } label: {
                             Text("Cancel")
                         }
@@ -164,7 +172,13 @@ struct TaskEditView: View {
                                 if updated {
                                     do {
                                         try viewContext.save()
-                                        showInspector = false
+                                        // True only if not coming from group
+                                        if showGroupToolbar {
+                                            showInspector = false
+                                        } else {
+                                            dismiss()
+                                            showGroupToolbar = true
+                                        }
                                     } catch {
                                         print("Error updating task \(error)")
                                     }

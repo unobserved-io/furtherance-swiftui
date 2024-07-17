@@ -23,6 +23,7 @@ struct GroupView: View {
     @State private var overallEditSheet = false
     @State private var groupAddSheet = false
     @State private var showDeleteDialog = false
+    @State private var showToolbar = true
 
     private let totalFormatterWithSeconds: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
@@ -102,6 +103,7 @@ struct GroupView: View {
                         }
 #endif
                 }
+
                 Form {
                     ForEach(clickedGroup.taskGroup?.tasks ?? [], id: \.self) { task in
                         let startString = dateFormatterWithoutSeconds.string(from: task.startTime ?? Date.now)
@@ -113,7 +115,10 @@ struct GroupView: View {
                         // TODO: Make iOS use NavLink?
 #if os(macOS)
                         NavigationLink {
-                            TaskEditView(showInspector: $showInspector).environmentObject(clickedTask)
+                            TaskEditView(
+                                showInspector: $showInspector,
+                                showGroupToolbar: $showToolbar
+                            ).environmentObject(clickedTask)
                         } label: {
                             HStack {
                                 VStack(alignment: .leading) {
@@ -132,8 +137,8 @@ struct GroupView: View {
                         }
                         .simultaneousGesture(TapGesture().onEnded {
                             clickedTask.task = task
+                            showToolbar = false
                         })
-
                         .onHover { inside in
                             if inside {
                                 NSCursor.pointingHand.push()
@@ -165,7 +170,7 @@ struct GroupView: View {
             }
         }
         .toolbar {
-            if showInspector {
+            if showToolbar && showInspector {
                 ToolbarItem {
                     Spacer()
                 }
