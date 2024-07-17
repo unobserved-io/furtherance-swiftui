@@ -41,7 +41,8 @@ final class TimerHelper {
         if !stopWatchHelper.isRunning {
             if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#",
-               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "@"
+               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "@",
+               TaskTagsInput.shared.text.count(where: { $0 == "@" }) < 2
             {
                 let trimmedStartTime = Date.now.trimMilliseconds
                 stopWatchHelper.start(at: trimmedStartTime)
@@ -53,6 +54,8 @@ final class TimerHelper {
                 Navigator.shared.showTaskBeginsWithHashtagAlert = true
             } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "@" {
                 Navigator.shared.showTaskBeginsWithAtSymbolAlert = true
+            } else if TaskTagsInput.shared.text.count(where: { $0 == "@" }) >= 2 {
+                Navigator.shared.showTaskContainsMoreThanOneAtSymbolAlert = true
             }
         }
     }
@@ -86,7 +89,9 @@ final class TimerHelper {
     func updateTaskAndTagsIfChanged() {
         if TaskTagsInput.shared.text != nameAndTags {
             if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#"
+               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#",
+               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "@",
+               TaskTagsInput.shared.text.count(where: { $0 == "@" }) < 2
             {
                 nameAndTags = TaskTagsInput.shared.text
                 separateTags()
@@ -94,6 +99,8 @@ final class TimerHelper {
                 Navigator.shared.showTaskBeginsWithHashtagAlert = true
             } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "@" {
                 Navigator.shared.showTaskBeginsWithAtSymbolAlert = true
+            } else if TaskTagsInput.shared.text.count(where: { $0 == "@" }) >= 2 {
+                Navigator.shared.showTaskContainsMoreThanOneAtSymbolAlert = true
             }
         }
     }

@@ -326,6 +326,11 @@ struct TimerView: View {
             } message: {
                 Text("A task name must be provided before the project. The first character cannot be a '@'.")
             }
+            .alert("Improper Task Name", isPresented: $navigator.showTaskContainsMoreThanOneAtSymbolAlert) {
+                Button("OK") {}
+            } message: {
+                Text("A task cannot contain more than one project (marked by '@').")
+            }
             .alert("Task Name Empty", isPresented: $showingTaskEmptyAlert) {
                 Button("OK") {}
             } message: {
