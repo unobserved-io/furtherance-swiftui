@@ -214,6 +214,17 @@ struct TaskEditView: View {
         }
         .toolbar {
             if showInspector {
+                if !showGroupToolbar {
+                    ToolbarItem {
+                        Button {
+                            dismiss()
+                            showGroupToolbar = true
+                        } label: {
+                            Image(systemName: "chevron.left")
+                        }
+                    }
+                }
+                
                 ToolbarItem {
                     Spacer()
                 }

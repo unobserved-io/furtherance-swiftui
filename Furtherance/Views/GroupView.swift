@@ -167,6 +167,7 @@ struct GroupView: View {
 #endif
                     }
                 }
+                .navigationBarBackButtonHidden()
             }
         }
         .toolbar {
