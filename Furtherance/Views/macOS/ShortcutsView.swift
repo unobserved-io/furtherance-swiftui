@@ -63,7 +63,7 @@ struct ShortcutsView: View {
         .frame(width: Self.itemSize.width, height: Self.itemSize.height, alignment: .topLeading)
         .multilineTextAlignment(.leading)
         .background(
-            Color.accentColor.gradient,
+            Color(hex: shortcut.colorHex)?.gradient ?? Color.accentColor.gradient,
             in: RoundedRectangle(cornerRadius: 15)
         )
         .overlay(alignment: .bottomTrailing) {

@@ -17,10 +17,11 @@ class Shortcut {
     @Attribute(.allowsCloudEncryption) var rate: Double = 0.0
     @Attribute(.allowsCloudEncryption) var colorHex: String = ""
 
-    init(name: String, tags: String, project: String, rate: Double) {
+    init(name: String, tags: String, project: String, color: String, rate: Double) {
         self.name = name
         self.tags = tags
         self.project = project
+        self.colorHex = color
         self.rate = rate
     }
 }

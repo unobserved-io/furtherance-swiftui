@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AddShortcutView: View {
+    private static let defaultColor: String = Color.accentColor.hex ?? "A97BEAFF"
     @Binding var showInspector: Bool
     
     @Environment(\.modelContext) private var modelContext
@@ -15,7 +16,8 @@ struct AddShortcutView: View {
     @State private var titleField: String = ""
     @State private var projectField: String = ""
     @State private var tagsField: String = ""
-    @State private var colorPicked: String = ""
+    // TODO: Change to a random color each time
+    @State private var pickedColor: String = Self.defaultColor
     @State private var errorMessage = ""
     
     var body: some View {
@@ -33,6 +35,14 @@ struct AddShortcutView: View {
             
             TextField("#tags", text: $tagsField)
 //                .frame(minWidth: 200)
+            
+            ColorPicker("Color", selection: Binding(
+                get: {
+                    Color(hex: pickedColor) ?? .accent
+                },
+                set: { newValue in
+                    pickedColor = newValue.hex ?? Self.defaultColor
+                }))
             
             HStack(spacing: 20) {
                 Button {
@@ -71,7 +81,7 @@ struct AddShortcutView: View {
                     // Save shortcut or show error
                     if error.isEmpty {
                         // TODO: Rate entry
-                        let newShortcut = Shortcut(name: titleField, tags: tagsField, project: projectField, rate: 0.0)
+                        let newShortcut = Shortcut(name: titleField, tags: tagsField, project: projectField, color: pickedColor, rate: 0.0)
                         modelContext.insert(newShortcut)
                         resetChanges()
                         showInspector = false
@@ -107,7 +117,7 @@ struct AddShortcutView: View {
         titleField = ""
         projectField = ""
         tagsField = ""
-        colorPicked = ""
+        pickedColor = Self.defaultColor
         errorMessage = ""
     }
 }
