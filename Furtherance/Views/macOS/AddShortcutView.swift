@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AddShortcutView: View {
     private static let defaultColor: String = Color.accentColor.hex ?? "A97BEAFF"
+    
     @Binding var showInspector: Bool
     
     @Environment(\.modelContext) private var modelContext

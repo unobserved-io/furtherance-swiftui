@@ -18,6 +18,8 @@
 		9C2CD6E22BA85E4600965528 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2CD6E12BA85E4600965528 /* Enums.swift */; };
 		9C3649D22C4A8D5F00ABD778 /* ColorHex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3649D12C4A8D5C00ABD778 /* ColorHex.swift */; };
 		9C3649D42C4AE1FE00ABD778 /* AddShortcutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3649D32C4AE1FE00ABD778 /* AddShortcutView.swift */; };
+		9C3649D62C4C21EA00ABD778 /* EditShortcutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3649D52C4C21E400ABD778 /* EditShortcutView.swift */; };
+		9C3649DA2C4C249100ABD778 /* ClickedShortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3649D92C4C248D00ABD778 /* ClickedShortcut.swift */; };
 		9C3B41372A54966E002F3F5B /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C3B41362A54966E002F3F5B /* Storyboard.storyboard */; platformFilter = ios; };
 		9C3BD94629BE7A2900637D36 /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3BD94529BE7A2900637D36 /* Globals.swift */; };
 		9C3BD94829BE808A00637D36 /* ReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3BD94729BE808A00637D36 /* ReportsView.swift */; };
@@ -75,6 +77,8 @@
 		9C2CD6E12BA85E4600965528 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		9C3649D12C4A8D5C00ABD778 /* ColorHex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorHex.swift; sourceTree = "<group>"; };
 		9C3649D32C4AE1FE00ABD778 /* AddShortcutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddShortcutView.swift; sourceTree = "<group>"; };
+		9C3649D52C4C21E400ABD778 /* EditShortcutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditShortcutView.swift; sourceTree = "<group>"; };
+		9C3649D92C4C248D00ABD778 /* ClickedShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickedShortcut.swift; sourceTree = "<group>"; };
 		9C3B41362A54966E002F3F5B /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		9C3BD94529BE7A2900637D36 /* Globals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
 		9C3BD94729BE808A00637D36 /* ReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsView.swift; sourceTree = "<group>"; };
@@ -149,6 +153,7 @@
 		9C18F3B72B9B342C00201168 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
+				9C3649D52C4C21E400ABD778 /* EditShortcutView.swift */,
 				9C18F3B82B9B344C00201168 /* MacContentView.swift */,
 				9C0967AA2B9B66BA00780F96 /* MacHistoryList.swift */,
 				9C632F2E2C48DE16004ADEA9 /* ShortcutsView.swift */,
@@ -270,6 +275,7 @@
 		9CA84E2529A7766000A28FDA /* Objects */ = {
 			isa = PBXGroup;
 			children = (
+				9C3649D92C4C248D00ABD778 /* ClickedShortcut.swift */,
 				9CA84E2629A7767500A28FDA /* TaskTagsInput.swift */,
 				9CA84E3329A7A4F500A28FDA /* FurTaskGroup.swift */,
 				9C27D34729A8B5460012C274 /* ClickedGroup.swift */,
@@ -410,6 +416,8 @@
 				9CF305172B642EE7007CDB5E /* Navigator.swift in Sources */,
 				9CBD0C832B696EB000BC43DD /* ShouldIAskAppEnum.swift in Sources */,
 				9C4683E82A502E56006D1B7A /* GeneralSettingsView.swift in Sources */,
+				9C3649DA2C4C249100ABD778 /* ClickedShortcut.swift in Sources */,
+				9C3649D62C4C21EA00ABD778 /* EditShortcutView.swift in Sources */,
 				9C0967AD2B9B672A00780F96 /* MacTimerView.swift in Sources */,
 				9C7A69312B6D1DC40080E19F /* FurtheranceShortcuts.swift in Sources */,
 				9C4F06A229A928E8009D1AFE /* StoreModel.swift in Sources */,

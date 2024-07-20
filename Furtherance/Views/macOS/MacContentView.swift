@@ -22,9 +22,10 @@ struct MacContentView: View {
 
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
+    @StateObject var clickedShortcut = ClickedShortcut(shortcut: nil)
 
     @State(initialValue: false) var showInspector: Bool
-    @State(initialValue: .editTask) var inspectorView: InspectorView
+    @State(initialValue: .editTask) var inspectorView: SelectedInspectorView
 
     @State private var navSelection: NavItems? = .timer
 
@@ -39,6 +40,7 @@ struct MacContentView: View {
             if let selectedItem = navSelection {
                 switch selectedItem {
                 case .shortcuts: ShortcutsView(showInspector: $showInspector, inspectorView: $inspectorView)
+                        .environmentObject(clickedShortcut)
                 case .timer: TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
                 case .history: MacHistoryList(showInspector: $showInspector, inspectorView: $inspectorView)
                     .environmentObject(clickedGroup)
@@ -60,6 +62,9 @@ struct MacContentView: View {
                     .padding()
             case .addShortcut:
                 AddShortcutView(showInspector: $showInspector)
+            case .editShortcut:
+                EditShortcutView(showInspector: $showInspector)
+                    .environmentObject(clickedShortcut)
             }
         }
     }

@@ -13,8 +13,10 @@ struct ShortcutsView: View {
     private static let itemSize = CGSize(width: 180, height: 210)
     
     @Binding var showInspector: Bool
-    @Binding var inspectorView: InspectorView
-        
+    @Binding var inspectorView: SelectedInspectorView
+    
+    @EnvironmentObject var clickedShortcut: ClickedShortcut
+    
     @Query var shortcuts: [Shortcut]
     
     @State private var hovering: UUID? = nil
@@ -25,50 +27,38 @@ struct ShortcutsView: View {
     
     var body: some View {
         // TODO: Make vertical spacing in VGrid equivalent to horizontal spacing (dynamic)
-        LazyVGrid(columns: columns, spacing: Self.itemSpacing) {
-            ForEach(shortcuts) { shortcut in
-                shortcutTile(for: shortcut)
-                    .overlay(alignment: .bottomLeading) {
-                        if hovering == shortcut.id {
-                            Button {
-                                // TODO: Edit shortcut view
-                            } label: {
-                                Image(systemName: "pencil")
-                                    .font(.system(size: 20))
-                                    .bold()
-                            }
-                            .buttonStyle(.borderless)
-                            .padding(8)
-                        } else {
-                            EmptyView()
+        ScrollView {
+            LazyVGrid(columns: columns, spacing: Self.itemSpacing) {
+                ForEach(shortcuts) { shortcut in
+                    shortcutTile(for: shortcut)
+                        .contextMenu {
+                            Button{
+                                clickedShortcut.shortcut = shortcut
+                                inspectorView = .editShortcut
+                                showInspector = true
+                            } label: { Text("Edit") }
+                            Button{} label: { Text("Delete") }
                         }
-                    }
-                    .onHover { inside in
-                        if inside {
-                            hovering = shortcut.id
-                        } else {
-                            hovering = nil
-                        }
-                    }
+                }
             }
-        }
-        .padding(.vertical, Self.itemSpacing)
-        .toolbar {
-            if !showInspector {
-                ToolbarItem {
-                    Button {
-                        inspectorView = .addShortcut
-                        showInspector = true
-                    } label: {
-                        Label("Add shortcut", systemImage: "plus")
+            .padding(.vertical, Self.itemSpacing)
+            .toolbar {
+                if !showInspector {
+                    ToolbarItem {
+                        Button {
+                            inspectorView = .addShortcut
+                            showInspector = true
+                        } label: {
+                            Label("Add shortcut", systemImage: "plus")
+                        }
                     }
                 }
             }
+            .onDisappear {
+                showInspector = false
+            }
+            Spacer()
         }
-        .onDisappear {
-            showInspector = false
-        }
-        Spacer()
     }
     
     private func shortcutTile(for shortcut: Shortcut) -> some View {

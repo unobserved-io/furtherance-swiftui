@@ -12,7 +12,7 @@ struct MacHistoryList: View {
     @EnvironmentObject var clickedTask: ClickedTask
     
     @Binding var showInspector: Bool
-    @Binding var inspectorView: InspectorView
+    @Binding var inspectorView: SelectedInspectorView
     
     @AppStorage("limitHistory") private var limitHistory = true
     @AppStorage("historyListLimit") private var historyListLimit = 10
@@ -169,5 +169,5 @@ struct MacHistoryList: View {
 }
 
 #Preview {
-    MacHistoryList(showInspector: .constant(false), inspectorView: .constant(InspectorView.editTask))
+    MacHistoryList(showInspector: .constant(false), inspectorView: .constant(SelectedInspectorView.editTask))
 }
