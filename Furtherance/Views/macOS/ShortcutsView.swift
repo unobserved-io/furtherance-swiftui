@@ -17,6 +17,8 @@ struct ShortcutsView: View {
         
     @Query var shortcuts: [Shortcut]
     
+    @State private var hovering: UUID? = nil
+    
     private let columns = [
         GridItem(.adaptive(minimum: itemSize.width, maximum: itemSize.height), spacing: itemSpacing)
     ]
@@ -26,6 +28,28 @@ struct ShortcutsView: View {
         LazyVGrid(columns: columns, spacing: Self.itemSpacing) {
             ForEach(shortcuts) { shortcut in
                 shortcutTile(for: shortcut)
+                    .overlay(alignment: .bottomLeading) {
+                        if hovering == shortcut.id {
+                            Button {
+                                // TODO: Edit shortcut view
+                            } label: {
+                                Image(systemName: "pencil")
+                                    .font(.system(size: 20))
+                                    .bold()
+                            }
+                            .buttonStyle(.borderless)
+                            .padding(8)
+                        } else {
+                            EmptyView()
+                        }
+                    }
+                    .onHover { inside in
+                        if inside {
+                            hovering = shortcut.id
+                        } else {
+                            hovering = nil
+                        }
+                    }
             }
         }
         .padding(.vertical, Self.itemSpacing)
