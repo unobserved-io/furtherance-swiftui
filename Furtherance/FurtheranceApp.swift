@@ -121,6 +121,9 @@ struct FurtheranceApp: App {
                     Text("The CSV you chose is not a valid Furtherance CSV.")
                 }
         }
+        .modelContainer(for: [
+            Shortcut.self,
+        ])
         .commands {
             CommandMenu("Database") {
                 Button("Export as CSV") {
@@ -174,12 +177,12 @@ struct FurtheranceApp: App {
         .defaultSize(width: 400, height: 450)
         #endif
     }
-    
+
     private var mainContentView: some View {
         #if os(macOS)
-            MacContentView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
+        MacContentView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
         #else
-            TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
+        TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
         #endif
     }
 }

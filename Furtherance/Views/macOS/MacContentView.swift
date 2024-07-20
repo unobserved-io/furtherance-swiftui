@@ -12,7 +12,7 @@ struct MacContentView: View {
     @Binding var showExportCSV: Bool
 
     enum NavItems: String, Hashable, CaseIterable {
-        case bookmarks
+        case shortcuts
         case timer
         case history
         case report
@@ -24,7 +24,7 @@ struct MacContentView: View {
     @StateObject var clickedTask = ClickedTask(task: nil)
 
     @State(initialValue: false) var showInspector: Bool
-    @State(initialValue: .single) var typeToEdit: EditInInspector
+    @State(initialValue: .editTask) var inspectorView: InspectorView
 
     @State private var navSelection: NavItems? = .timer
 
@@ -38,9 +38,9 @@ struct MacContentView: View {
         } detail: {
             if let selectedItem = navSelection {
                 switch selectedItem {
-                case .bookmarks: Text("Bookmarks")
+                case .shortcuts: ShortcutsView(showInspector: $showInspector, inspectorView: $inspectorView)
                 case .timer: TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
-                case .history: MacHistoryList(showInspector: $showInspector, typeToEdit: $typeToEdit)
+                case .history: MacHistoryList(showInspector: $showInspector, inspectorView: $inspectorView)
                     .environmentObject(clickedGroup)
                     .environmentObject(clickedTask)
                 case .report: Text("Report")
@@ -50,13 +50,16 @@ struct MacContentView: View {
             }
         }
         .inspector(isPresented: $showInspector) {
-            if typeToEdit == .group {
+            switch inspectorView {
+            case .editTaskGroup:
                 GroupView(showInspector: $showInspector)
                     .environmentObject(clickedGroup)
-            } else {
+            case .editTask:
                 TaskEditView(showInspector: $showInspector)
                     .environmentObject(clickedTask)
                     .padding()
+            case .addShortcut:
+                AddShortcutView(showInspector: $showInspector)
             }
         }
     }

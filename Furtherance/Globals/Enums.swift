@@ -7,7 +7,8 @@
 
 import Foundation
 
-enum EditInInspector {
-    case group
-    case single
+enum InspectorView {
+    case editTaskGroup
+    case editTask
+    case addShortcut
 }

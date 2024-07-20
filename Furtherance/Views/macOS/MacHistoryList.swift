@@ -12,7 +12,7 @@ struct MacHistoryList: View {
     @EnvironmentObject var clickedTask: ClickedTask
     
     @Binding var showInspector: Bool
-    @Binding var typeToEdit: EditInInspector
+    @Binding var inspectorView: InspectorView
     
     @AppStorage("limitHistory") private var limitHistory = true
     @AppStorage("historyListLimit") private var historyListLimit = 10
@@ -61,6 +61,9 @@ struct MacHistoryList: View {
                 }
             }
         }
+        .onDisappear {
+            showInspector = false
+        }
         .toolbar {
             ToolbarItem {
                 Button { addTaskSheet.toggle() } label: {
@@ -92,11 +95,11 @@ struct MacHistoryList: View {
                     .onTapGesture {
                         if taskGroup.tasks.count > 1 {
                             clickedGroup.taskGroup = taskGroup
-                            typeToEdit = .group
+                            inspectorView = .editTaskGroup
                             showInspector = true
                         } else {
                             clickedTask.task = taskGroup.tasks.first!
-                            typeToEdit = .single
+                            inspectorView = .editTask
                             showInspector = true
                         }
                     }
@@ -166,5 +169,5 @@ struct MacHistoryList: View {
 }
 
 #Preview {
-    MacHistoryList(showInspector: .constant(false), typeToEdit: .constant(EditInInspector.single))
+    MacHistoryList(showInspector: .constant(false), inspectorView: .constant(InspectorView.editTask))
 }
