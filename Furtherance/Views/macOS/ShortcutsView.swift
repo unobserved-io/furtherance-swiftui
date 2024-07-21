@@ -14,6 +14,7 @@ struct ShortcutsView: View {
     
     @Binding var showInspector: Bool
     @Binding var inspectorView: SelectedInspectorView
+    @Binding var navSelection: NavItems?
     
     @Environment(\.self) var environment
     @Environment(\.modelContext) private var modelContext
@@ -24,9 +25,12 @@ struct ShortcutsView: View {
     @State private var hovering: UUID? = nil
     @State private var showDeleteAlert: Bool = false
     
+    @StateObject var taskTagsInput = TaskTagsInput.shared
+    
     private let columns = [
         GridItem(.adaptive(minimum: itemSize.width, maximum: itemSize.height), spacing: itemSpacing)
     ]
+    private let timerHelper = TimerHelper.shared
     
     var body: some View {
         // TODO: Make vertical spacing in VGrid equivalent to horizontal spacing (dynamic)
@@ -34,13 +38,6 @@ struct ShortcutsView: View {
             LazyVGrid(columns: columns, spacing: Self.itemSpacing) {
                 ForEach(shortcuts) { shortcut in
                     shortcutTile(for: shortcut)
-                        .onHover { inside in
-                            if inside {
-                                NSCursor.pointingHand.push()
-                            } else {
-                                NSCursor.pop()
-                            }
-                        }
                         .contextMenu {
                             Button("Edit") {
                                 clickedShortcut.shortcut = shortcut
@@ -111,6 +108,18 @@ struct ShortcutsView: View {
                     .monospacedDigit()
                     .padding(8)
             }
+        }
+        .onHover { inside in
+            if inside {
+                NSCursor.pointingHand.push()
+            } else {
+                NSCursor.pop()
+            }
+        }
+        .onTapGesture {
+            taskTagsInput.text = shortcut.name + " @" + shortcut.project + " " + shortcut.tags
+            timerHelper.start()
+            navSelection = .timer
         }
     }
     

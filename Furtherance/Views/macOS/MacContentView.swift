@@ -11,13 +11,6 @@ struct MacContentView: View {
     @Binding var tasksCount: Int
     @Binding var showExportCSV: Bool
 
-    enum NavItems: String, Hashable, CaseIterable {
-        case shortcuts
-        case timer
-        case history
-        case report
-    }
-
     @ObservedObject var storeModel = StoreModel.shared
 
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
@@ -29,6 +22,7 @@ struct MacContentView: View {
 
     @State private var navSelection: NavItems? = .timer
 
+    // TODO: Create one observable object for everything here that needs to be changed by multiple views
     var body: some View {
         NavigationSplitView {
             List(NavItems.allCases, id: \.self, selection: $navSelection) { navItem in
@@ -39,8 +33,12 @@ struct MacContentView: View {
         } detail: {
             if let selectedItem = navSelection {
                 switch selectedItem {
-                case .shortcuts: ShortcutsView(showInspector: $showInspector, inspectorView: $inspectorView)
-                        .environmentObject(clickedShortcut)
+                case .shortcuts: ShortcutsView(
+                        showInspector: $showInspector,
+                        inspectorView: $inspectorView,
+                        navSelection: $navSelection
+                    )
+                    .environmentObject(clickedShortcut)
                 case .timer: TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
                 case .history: MacHistoryList(showInspector: $showInspector, inspectorView: $inspectorView)
                     .environmentObject(clickedGroup)
