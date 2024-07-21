@@ -12,6 +12,7 @@ struct GroupEditView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) var dismiss
     @State private var titleField = ""
+    @State private var projectField = ""
     @State private var tagsField = ""
     @State private var errorMessage = ""
     private let buttonColumns: [GridItem] = [
@@ -37,6 +38,19 @@ struct GroupEditView: View {
                     .stroke(Color.gray.opacity(0.5), lineWidth: 2)
             )
 #endif
+            
+            TextField(clickedGroup.taskGroup!.project.isEmpty ? "Project" : clickedGroup.taskGroup!.project, text: $projectField)
+#if os(macOS)
+                .frame(minWidth: 200)
+#else
+            .frame(minHeight: 30)
+            .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+            )
+#endif
+            
             TextField(clickedGroup.taskGroup!.tags.isEmpty ? "#add #tags" : clickedGroup.taskGroup!.tags, text: $tagsField)
 #if os(macOS)
                 .frame(minWidth: 200)
@@ -48,12 +62,14 @@ struct GroupEditView: View {
                     .stroke(Color.gray.opacity(0.5), lineWidth: 2)
             )
 #endif
-            errorMessage.isEmpty ? nil : Text(errorMessage)
-                .foregroundColor(.red)
-                .multilineTextAlignment(.leading)
-                .frame(height: 50)
-            Spacer()
-                .frame(height: 15)
+            if !errorMessage.isEmpty {
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                    .lineLimit(nil)
+                    .fixedSize()
+                    .multilineTextAlignment(.leading)
+            }
+            
             HStack(spacing: 20) {
                 Button(action: {
                     dismiss()
@@ -68,19 +84,30 @@ struct GroupEditView: View {
                     errorMessage = ""
                     var error = [String]()
                     var updateName = false
+                    var updateProject = false
                     var updateTags = false
                     var newTags = ""
                     if !titleField.trimmingCharacters(in: .whitespaces).isEmpty, titleField != clickedGroup.taskGroup!.name {
-                        if titleField.contains("#") {
-                            error.append("Title cannot contain a '#'. Those are reserved for tags.")
+                        if titleField.contains("#") || titleField.contains("@") {
+                            error.append("Title cannot contain a '#' or '@'.")
                         } else {
                             updateName = true
+                        }
+                    } // else not changed (don't update)
+                    
+                    if projectField != clickedGroup.taskGroup!.project {
+                        if projectField.contains("#") || projectField.contains("@") {
+                            error.append("Project cannot contain a '#' or '@'.")
+                        } else {
+                            updateProject = true
                         }
                     } // else not changed (don't update)
                     
                     if tagsField != clickedGroup.taskGroup!.tags {
                         if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty, !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
                             error.append("Tags must start with a '#'.")
+                        } else if tagsField.contains("@") {
+                            error.append("Tags cannot contain an '@'.")
                         } else {
                             newTags = separateTags(rawString: tagsField)
                             updateTags = true
@@ -88,11 +115,11 @@ struct GroupEditView: View {
                     } // else not changed (don't update)
                     
                     if error.isEmpty {
-                        if updateName || updateTags {
+                        if updateName || updateProject || updateTags {
                             for task in clickedGroup.taskGroup?.tasks ?? [] {
-                                let newTask = task
-                                if updateName { newTask.name = titleField }
-                                if updateTags { newTask.tags = newTags }
+                                if updateName { task.name = titleField }
+                                if updateProject { task.project = projectField }
+                                if updateTags { task.tags = newTags }
                             }
                             
                             do {
@@ -101,6 +128,7 @@ struct GroupEditView: View {
                                 print("Error updating task group \(error)")
                             }
                             if updateName { clickedGroup.taskGroup?.name = titleField }
+                            if updateProject { clickedGroup.taskGroup?.project = projectField }
                             if updateTags { clickedGroup.taskGroup?.tags = newTags }
                         }
                         dismiss()
@@ -120,11 +148,15 @@ struct GroupEditView: View {
                 .tint(.accentColor)
 #endif
             }
+            .padding(.top, 15)
         }
         .padding()
         .onAppear {
-            titleField = clickedGroup.taskGroup!.name
-            tagsField = clickedGroup.taskGroup!.tags
+            if let taskGroup = clickedGroup.taskGroup {
+                titleField = taskGroup.name
+                projectField = taskGroup.project
+                tagsField = taskGroup.tags
+            }
         }
     }
 }

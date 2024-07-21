@@ -10,6 +10,7 @@ import SwiftUI
 
 class FurTaskGroup: Identifiable, ObservableObject {
     var name: String
+    var project: String
     var tags: String
     var tasks: [FurTask] = []
     var date: String
@@ -17,6 +18,7 @@ class FurTaskGroup: Identifiable, ObservableObject {
 
     init(task: FurTask) {
         name = task.name ?? "Unknown"
+        project = task.project ?? ""
         tags = task.tags ?? ""
         date = localDateFormatter.string(from: task.startTime ?? Date.now)
         tasks.append(task)

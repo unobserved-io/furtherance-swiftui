@@ -71,38 +71,26 @@ struct GroupView: View {
                     description: Text("Select a task to edit it.")
                 )
             } else {
-                HStack {
-                    VStack {
+                    VStack(spacing: 3) {
                         Text(clickedGroup.taskGroup?.name ?? "Unknown")
-                            .font(.system(size: 30, weight: .bold))
+                            .font(.title)
+                            .bold()
                             .padding(.bottom, 3)
-                        if (clickedGroup.taskGroup?.tags.isEmpty) ?? true {
-                            Text("Add tags...")
-                                .font(.system(size: 20))
-                                .italic()
-                        } else {
-                            Text(clickedGroup.taskGroup?.tags ?? "Unknown")
-                                .font(.system(size: 20))
-                        }
-                    }
-                    Spacer()
-                        .frame(width: 30)
-                    Image(systemName: "pencil")
-                        .font(.system(size: 20, weight: .bold))
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            overallEditSheet.toggle()
-                        }
-#if os(macOS)
-                        .onHover { inside in
-                            if inside {
-                                NSCursor.pointingHand.push()
-                            } else {
-                                NSCursor.pop()
+                        
+                        if let project = clickedGroup.taskGroup?.project {
+                            if !project.isEmpty {
+                                Text(project)
+                                    .font(.title2)
                             }
                         }
-#endif
-                }
+                        
+                        if let tags = clickedGroup.taskGroup?.tags {
+                            if !tags.isEmpty {
+                                Text(clickedGroup.taskGroup?.tags ?? "Unknown")
+                                    .font(.title3)
+                            }
+                        }
+                    }
 
                 Form {
                     ForEach(clickedGroup.taskGroup?.tasks ?? [], id: \.self) { task in
@@ -173,13 +161,22 @@ struct GroupView: View {
         .toolbar {
             if showToolbar && showInspector {
                 ToolbarItem {
+                    Button {
+                        overallEditSheet.toggle()
+                    } label: {
+                        Image(systemName: "pencil")
+                            .help("Edit group")
+                    }
+                }
+                ToolbarItem {
                     Spacer()
                 }
                 ToolbarItem {
                     Button {
                         groupAddSheet.toggle()
                     } label: {
-                        Label("Add Item", systemImage: "plus")
+                        Image(systemName: "plus")
+                            .help("Add task to group")
                     }
                 }
                 ToolbarItem {
@@ -191,6 +188,7 @@ struct GroupView: View {
                         }
                     } label: {
                         Image(systemName: "trash.fill")
+                            .help("Delete group")
                     }
                 }
                 ToolbarItem {
@@ -198,6 +196,7 @@ struct GroupView: View {
                         showInspector = false
                     } label: {
                         Image(systemName: "sidebar.trailing")
+                            .help("Hide inspector")
                     }
                 }
             }
