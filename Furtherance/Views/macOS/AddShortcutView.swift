@@ -45,12 +45,14 @@ struct AddShortcutView: View {
                     pickedColor = newValue.hex ?? Self.defaultColor
                 }))
             
+            errorMessage.isEmpty ? nil : Text(errorMessage)
+                .foregroundColor(.red)
+                .multilineTextAlignment(.leading)
+            
             HStack(spacing: 20) {
-                Button {
+                Button("Cancel") {
                     resetChanges()
                     showInspector = false
-                } label: {
-                    Text("Cancel")
                 }
 
                 .keyboardShortcut(.cancelAction)
