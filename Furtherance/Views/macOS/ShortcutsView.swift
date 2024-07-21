@@ -15,6 +15,7 @@ struct ShortcutsView: View {
     @Binding var showInspector: Bool
     @Binding var inspectorView: SelectedInspectorView
     
+    @Environment(\.self) var environment
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var clickedShortcut: ClickedShortcut
     
@@ -82,13 +83,17 @@ struct ShortcutsView: View {
     private func shortcutTile(for shortcut: Shortcut) -> some View {
         // TODO: Full task name on hover if it is cut off
         VStack(alignment: .leading, spacing: 10.0) {
+            let fontColor = calculateFontColor(bgColor: Color(hex: shortcut.colorHex))
             Text(shortcut.name)
+                .foregroundStyle(fontColor)
                 .font(.title)
                 .bold()
                 .lineLimit(2)
             Text("@\(shortcut.project)")
+                .foregroundStyle(fontColor)
                 .font(.title2)
             Text(shortcut.tags) // TODO: Print all with '#'
+                .foregroundStyle(fontColor)
         }
         .padding(.top, 15)
         .padding(.horizontal, 8)
@@ -107,6 +112,30 @@ struct ShortcutsView: View {
                     .padding(8)
             }
         }
+    }
+    
+    private func calculateFontColor(bgColor: Color?) -> Color {
+        if let bg = bgColor {
+            let components = bg.resolve(in: environment)
+            
+            return isLightColor(
+                red: components.red,
+                green: components.green,
+                blue: components.blue
+            )
+                ? .black : .white
+        } else {
+            return .primary
+        }
+    }
+    
+    private func isLightColor(red: Float, green: Float, blue: Float) -> Bool {
+        let lightRed = red > 0.65
+        let lightGreen = green > 0.65
+        let lightBlue = blue > 0.65
+        
+        let lightness = [lightRed, lightGreen, lightBlue].reduce(0) { $1 ? $0 + 1 : $0 }
+        return lightness >= 2
     }
 }
 
