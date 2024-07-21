@@ -33,6 +33,13 @@ struct ShortcutsView: View {
             LazyVGrid(columns: columns, spacing: Self.itemSpacing) {
                 ForEach(shortcuts) { shortcut in
                     shortcutTile(for: shortcut)
+                        .onHover { inside in
+                            if inside {
+                                NSCursor.pointingHand.push()
+                            } else {
+                                NSCursor.pop()
+                            }
+                        }
                         .contextMenu {
                             Button("Edit") {
                                 clickedShortcut.shortcut = shortcut
