@@ -15,11 +15,13 @@ struct ShortcutsView: View {
     @Binding var showInspector: Bool
     @Binding var inspectorView: SelectedInspectorView
     
+    @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var clickedShortcut: ClickedShortcut
     
     @Query var shortcuts: [Shortcut]
     
     @State private var hovering: UUID? = nil
+    @State private var showDeleteAlert: Bool = false
     
     private let columns = [
         GridItem(.adaptive(minimum: itemSize.width, maximum: itemSize.height), spacing: itemSpacing)
@@ -32,12 +34,21 @@ struct ShortcutsView: View {
                 ForEach(shortcuts) { shortcut in
                     shortcutTile(for: shortcut)
                         .contextMenu {
-                            Button{
+                            Button("Edit") {
                                 clickedShortcut.shortcut = shortcut
                                 inspectorView = .editShortcut
                                 showInspector = true
-                            } label: { Text("Edit") }
-                            Button{} label: { Text("Delete") }
+                            }
+                            
+                            Button("Delete") {
+                                showDeleteAlert.toggle()
+                            }
+                        }
+                        .alert("Delete?", isPresented: $showDeleteAlert) {
+                            // Cancel is automatically shown when a button is 'destructive' on Mac
+                            Button("Delete", role: .destructive) { modelContext.delete(shortcut) }
+                        } message: {
+                            Text("Are you certain you want to delete this shortcut?")
                         }
                 }
             }
