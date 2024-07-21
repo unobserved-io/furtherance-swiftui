@@ -38,17 +38,6 @@ struct ShortcutsView: View {
             LazyVGrid(columns: columns, spacing: Self.itemSpacing) {
                 ForEach(shortcuts) { shortcut in
                     shortcutTile(for: shortcut)
-                        .contextMenu {
-                            Button("Edit") {
-                                clickedShortcut.shortcut = shortcut
-                                inspectorView = .editShortcut
-                                showInspector = true
-                            }
-                            
-                            Button("Delete") {
-                                showDeleteAlert.toggle()
-                            }
-                        }
                         .alert("Delete?", isPresented: $showDeleteAlert) {
                             // Cancel is automatically shown when a button is 'destructive' on Mac
                             Button("Delete", role: .destructive) { modelContext.delete(shortcut) }
@@ -107,6 +96,17 @@ struct ShortcutsView: View {
                     .bold()
                     .monospacedDigit()
                     .padding(8)
+            }
+        }
+        .contextMenu {
+            Button("Edit") {
+                clickedShortcut.shortcut = shortcut
+                inspectorView = .editShortcut
+                showInspector = true
+            }
+            
+            Button("Delete") {
+                showDeleteAlert.toggle()
             }
         }
         .onHover { inside in
