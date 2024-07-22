@@ -228,7 +228,7 @@ struct GroupView: View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("This will delete all of the tasks listed here.")
+            Text("This will delete all of the tasks in this group.")
         }
     }
     

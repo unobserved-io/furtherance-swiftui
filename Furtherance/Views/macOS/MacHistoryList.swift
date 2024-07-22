@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MacHistoryList: View {
+    @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var clickedGroup: ClickedGroup
     @EnvironmentObject var clickedTask: ClickedTask
     
@@ -20,6 +21,12 @@ struct MacHistoryList: View {
     @AppStorage("showDailySum") private var showDailySum = true
     @AppStorage("totalInclusive") private var totalInclusive = false
     @AppStorage("showSeconds") private var showSeconds = true
+    @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
+    
+    @State private var showDeleteTaskDialog = false
+    @State private var showDeleteTaskGroupDialog = false
+    @State private var taskToDelete: FurTask? = nil
+    @State private var taskGroupToDelete: FurTaskGroup? = nil
     
     @SectionedFetchRequest(
         sectionIdentifier: \.startDateRelative,
@@ -61,6 +68,20 @@ struct MacHistoryList: View {
                     .padding()
                 }
             }
+        }
+        .confirmationDialog("Delete task?", isPresented: $showDeleteTaskDialog) {
+            Button("Delete", role: .destructive) {
+                deleteTask(taskToDelete)
+            }
+            Button("Cancel", role: .cancel) {}
+        }
+        .confirmationDialog("Delete all?", isPresented: $showDeleteTaskGroupDialog) {
+            Button("Delete", role: .destructive) {
+                deleteAllTasks(in: taskGroupToDelete)
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will delete all of the tasks in this group.")
         }
         .onAppear {
             inspectorView = .empty
@@ -106,6 +127,37 @@ struct MacHistoryList: View {
                             clickedTask.task = taskGroup.tasks.first!
                             inspectorView = .editTask
                             showInspector = true
+                        }
+                    }
+                    .contextMenu {
+                        Button("Edit") {
+                            if taskGroup.tasks.count > 1 {
+                                clickedGroup.taskGroup = taskGroup
+                                inspectorView = .editTaskGroup
+                                showInspector = true
+                            } else {
+                                clickedTask.task = taskGroup.tasks.first!
+                                inspectorView = .editTask
+                                showInspector = true
+                            }
+                        }
+                        
+                        Button("Delete") {
+                            if taskGroup.tasks.count > 1 {
+                                if showDeleteConfirmation {
+                                    taskGroupToDelete = taskGroup
+                                    showDeleteTaskGroupDialog.toggle()
+                                } else {
+                                    deleteAllTasks(in: taskGroup)
+                                }
+                            } else {
+                                if showDeleteConfirmation {
+                                    taskToDelete = taskGroup.tasks.first
+                                    showDeleteTaskDialog.toggle()
+                                } else {
+                                    deleteTask(taskGroup.tasks.first)
+                                }
+                            }
                         }
                     }
             }
@@ -168,6 +220,57 @@ struct MacHistoryList: View {
             return formatTimeShort(totalTime)
         } else {
             return formatTimeLongWithoutSeconds(totalTime)
+        }
+    }
+    
+    private func deleteTask(_ task: FurTask?) {
+        if let task = task {
+            if showInspector, inspectorView == .editTask, clickedTask.task == task {
+                showInspector = false
+                clickedTask.task = nil
+            }
+            viewContext.delete(task)
+            do {
+                taskToDelete = nil
+                try viewContext.save()
+            } catch {
+                print("Error deleting task: \(error)")
+            }
+        }
+    }
+    
+    private func deleteAllTasks(in taskGroup: FurTaskGroup?) {
+        if let taskGroup = taskGroup {
+            if let clickedTaskGroup = clickedGroup.taskGroup {
+                if showInspector,
+                   inspectorView == .editTaskGroup,
+                   areTaskGroupsEqual(group1: taskGroup, group2: clickedTaskGroup)
+                {
+                    showInspector = false
+                    clickedGroup.taskGroup = nil
+                }
+            }
+            for task in taskGroup.tasks {
+                viewContext.delete(task)
+            }
+            do {
+                taskGroupToDelete = nil
+                try viewContext.save()
+            } catch {
+                print("Error deleting task group: \(error)")
+            }
+        }
+    }
+    
+    private func areTaskGroupsEqual(group1: FurTaskGroup, group2: FurTaskGroup) -> Bool {
+        if group1.date == group2.date,
+           group1.name == group2.name,
+           group1.tags == group2.tags,
+           group1.project == group2.project
+        {
+            return true
+        } else {
+            return false
         }
     }
 }
