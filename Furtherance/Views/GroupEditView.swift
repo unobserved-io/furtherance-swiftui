@@ -71,16 +71,14 @@ struct GroupEditView: View {
             }
             
             HStack(spacing: 20) {
-                Button(action: {
+                Button("Cancel") {
                     dismiss()
-                }) {
-                    Text("Cancel")
                 }
                 .keyboardShortcut(.cancelAction)
 #if os(iOS)
                 .buttonStyle(.bordered)
 #endif
-                Button(action: {
+                Button("Save") {
                     errorMessage = ""
                     var error = [String]()
                     var updateName = false
@@ -139,8 +137,6 @@ struct GroupEditView: View {
                             errorMessage = error[0]
                         }
                     }
-                }) {
-                    Text("Save")
                 }
                 .keyboardShortcut(.defaultAction)
 #if os(iOS)

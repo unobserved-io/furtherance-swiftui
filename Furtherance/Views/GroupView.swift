@@ -11,57 +11,57 @@ struct GroupView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var clickedGroup: ClickedGroup
     @Environment(\.presentationMode) var presentationMode
-
+    
     @Binding var showInspector: Bool
-
+    
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
     @AppStorage("showSeconds") private var showSeconds = true
-
+    
     @StateObject var clickedTask = ClickedTask(task: nil)
-
+    
     @State private var showTaskEditSheet = false
     @State private var overallEditSheet = false
     @State private var groupAddSheet = false
     @State private var showDeleteDialog = false
     @State private var showToolbar = true
-
+    
     private let totalFormatterWithSeconds: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute, .second]
         formatter.zeroFormattingBehavior = .pad
         return formatter
     }()
-
+    
     private let totalFormatterWithoutSeconds: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
         formatter.allowedUnits = [.hour, .minute]
         formatter.zeroFormattingBehavior = .pad
         return formatter
     }()
-
+    
     private let dateFormatterWithSeconds: DateFormatter = {
         let dateformat = DateFormatter()
         dateformat.dateFormat = "HH:mm:ss"
         return dateformat
     }()
-
+    
     private let dateFormatterWithoutSeconds: DateFormatter = {
         let dateformat = DateFormatter()
         dateformat.dateFormat = "HH:mm"
         return dateformat
     }()
-
+    
     private let columns: [GridItem] = [
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible()),
         GridItem(.flexible(maximum: 50))
     ]
-
+    
     init(showInspector: Binding<Bool> = .constant(false)) {
         _showInspector = showInspector
     }
-
+    
     var body: some View {
         NavigationStack {
             if clickedGroup.taskGroup == nil {
@@ -71,27 +71,27 @@ struct GroupView: View {
                     description: Text("Select a task to edit it.")
                 )
             } else {
-                    VStack(spacing: 3) {
-                        Text(clickedGroup.taskGroup?.name ?? "Unknown")
-                            .font(.title)
-                            .bold()
-                            .padding(.bottom, 3)
-                        
-                        if let project = clickedGroup.taskGroup?.project {
-                            if !project.isEmpty {
-                                Text(project)
-                                    .font(.title2)
-                            }
-                        }
-                        
-                        if let tags = clickedGroup.taskGroup?.tags {
-                            if !tags.isEmpty {
-                                Text(clickedGroup.taskGroup?.tags ?? "Unknown")
-                                    .font(.title3)
-                            }
+                VStack(spacing: 3) {
+                    Text(clickedGroup.taskGroup?.name ?? "Unknown")
+                        .font(.title)
+                        .bold()
+                        .padding(.bottom, 3)
+                    
+                    if let project = clickedGroup.taskGroup?.project {
+                        if !project.isEmpty {
+                            Text(project)
+                                .font(.title2)
                         }
                     }
-
+                    
+                    if let tags = clickedGroup.taskGroup?.tags {
+                        if !tags.isEmpty {
+                            Text(clickedGroup.taskGroup?.tags ?? "Unknown")
+                                .font(.title3)
+                        }
+                    }
+                }
+                
                 Form {
                     ForEach(clickedGroup.taskGroup?.tasks ?? [], id: \.self) { task in
                         let startString = dateFormatterWithoutSeconds.string(from: task.startTime ?? Date.now)
@@ -99,8 +99,8 @@ struct GroupView: View {
                         let totalString = showSeconds
                             ? totalFormatterWithSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
                             : totalFormatterWithoutSeconds.string(from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now) ?? "00:00:00"
-
-                        // TODO: Make iOS use NavLink?
+                        
+// TODO: Make iOS use NavLink?
 #if os(macOS)
                         NavigationLink {
                             TaskEditView(
@@ -113,7 +113,7 @@ struct GroupView: View {
                                     Text("\(startString) to \(stopString)")
                                         .monospacedDigit()
                                         .bold()
-
+                                    
                                     Text("Total: \(totalString)")
                                         .monospacedDigit()
                                         .font(.caption)
@@ -121,7 +121,6 @@ struct GroupView: View {
                                 Spacer()
                             }
                             .contentShape(Rectangle())
-
                         }
                         .simultaneousGesture(TapGesture().onEnded {
                             clickedTask.task = task
@@ -140,7 +139,7 @@ struct GroupView: View {
                                 Text("\(startString) to \(stopString)")
                                     .monospacedDigit()
                                     .bold()
-
+                                
                                 Text("Total: \(totalString)")
                                     .monospacedDigit()
                                     .font(.caption)
@@ -232,7 +231,7 @@ struct GroupView: View {
             Text("This will delete all of the tasks listed here.")
         }
     }
-
+    
     func refreshGroup() {
         clickedGroup.taskGroup = clickedGroup.taskGroup
         if clickedGroup.taskGroup != nil {
@@ -256,7 +255,7 @@ struct GroupView: View {
             }
         }
     }
-
+    
     private func deleteAllTasksInGroup() {
         for task in clickedGroup.taskGroup!.tasks {
             viewContext.delete(task)
