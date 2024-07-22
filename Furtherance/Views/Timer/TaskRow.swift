@@ -10,12 +10,13 @@ import SwiftUI
 struct TaskRow: View {
     var taskGroup: FurTaskGroup
     @Binding var navSelection: NavItems?
-    
+
     @Environment(\.colorScheme) var colorScheme
-    
+
+    @AppStorage("showProject") private var showProject = true
     @AppStorage("showTags") private var showTags = true
     @AppStorage("showSeconds") private var showSeconds = true
-    
+
     @State var stopWatchHelper = StopWatchHelper.shared
 
     var body: some View {
@@ -27,15 +28,15 @@ struct TaskRow: View {
                     .foregroundColor(.gray)
                     .monospacedDigit()
             }
-            
+
             VStack(alignment: .leading, spacing: 3) {
                 Text(taskGroup.name)
                     .bold()
                     .truncationMode(.tail)
                     .frame(minWidth: 20)
                     .help(taskGroup.name)
-                
-                if !taskGroup.project.isEmpty {
+
+                if !taskGroup.project.isEmpty, showProject {
                     Text("@\(taskGroup.project)")
                         .lineLimit(1)
                         .bold()
@@ -45,7 +46,7 @@ struct TaskRow: View {
                         .help(taskGroup.project)
                 }
 
-                if !taskGroup.tags.isEmpty && showTags {
+                if !taskGroup.tags.isEmpty, showTags {
                     Text(taskGroup.tags)
                         .lineLimit(1)
                         .opacity(0.626)

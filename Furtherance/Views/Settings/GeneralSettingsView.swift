@@ -15,6 +15,7 @@ struct GeneralSettingsView: View {
     @AppStorage("showIconBadge") private var showIconBadge = false
     @AppStorage("showDailySum") private var showDailySum = true
     @AppStorage("showTags") private var showTags = true
+    @AppStorage("showProject") private var showProject = true
     @AppStorage("showSeconds") private var showSeconds = true
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
     @AppStorage("idleDetect") private var idleDetect = false
@@ -22,7 +23,7 @@ struct GeneralSettingsView: View {
     var body: some View {
         Form {
             BuyProView()
-            
+
             Section("Interface ") {
 #if os(macOS)
                 HStack {
@@ -52,7 +53,7 @@ struct GeneralSettingsView: View {
                 .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
                 .cornerRadius(20)
 #endif
-                
+
                 HStack {
                     Text("Show Delete Confirmation")
                     Spacer()
@@ -70,6 +71,22 @@ struct GeneralSettingsView: View {
             }
 
             Section(header: TextWithBadge("Task History")) {
+                HStack {
+                    Text("Show Project")
+                    Spacer()
+                    Toggle("Show Project", isOn: $showProject)
+                        .toggleStyle(.switch)
+                        .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
+                        .labelsHidden()
+                        .disabled(storeModel.purchasedIds.isEmpty)
+                }
+#if os(macOS)
+                .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+                .padding()
+                .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
+                .cornerRadius(20)
+#endif
+
                 HStack {
                     Text("Show Tags")
                     Spacer()
@@ -121,7 +138,7 @@ struct GeneralSettingsView: View {
         }
 #if os(macOS)
         .padding(20)
-        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 400 : 350)
+        .frame(width: 400, height: storeModel.purchasedIds.isEmpty ? 450 : 400)
 #endif
     }
 }
