@@ -20,7 +20,13 @@ struct TaskRow: View {
 
     var body: some View {
         HStack(alignment: .center) {
-            taskGroup.tasks.count == 1 ? nil : Image(systemName: taskGroup.tasks.count <= 50 ? "\(taskGroup.tasks.count).circle.fill" : "ellipsis.circle.fill").foregroundColor(.gray)
+            if taskGroup.tasks.count == 1 {
+                Spacer().frame(width: 22)
+            } else {
+                Image(systemName: taskGroup.tasks.count <= 50 ? "\(taskGroup.tasks.count).circle.fill" : "ellipsis.circle.fill")
+                    .foregroundColor(.gray)
+                    .monospacedDigit()
+            }
             
             VStack(alignment: .leading, spacing: 3) {
                 Text(taskGroup.name)
