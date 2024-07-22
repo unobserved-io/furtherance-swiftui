@@ -9,8 +9,8 @@ import SwiftData
 import SwiftUI
 
 struct ShortcutsView: View {
-    private static let itemSpacing = 12.0
-    private static let itemSize = CGSize(width: 180, height: 210)
+    private static let itemSpacing = 60.0
+    private static let itemSize = CGSize(width: 200, height: 170)
     
     @Binding var showInspector: Bool
     @Binding var inspectorView: SelectedInspectorView
@@ -35,7 +35,7 @@ struct ShortcutsView: View {
     var body: some View {
         // TODO: Make vertical spacing in VGrid equivalent to horizontal spacing (dynamic)
         ScrollView {
-            LazyVGrid(columns: columns, spacing: Self.itemSpacing) {
+            LazyVGrid(columns: columns, spacing: Self.itemSpacing / 2.0) {
                 ForEach(shortcuts) { shortcut in
                     shortcutTile(for: shortcut)
                         .alert("Delete?", isPresented: $showDeleteAlert) {
@@ -46,7 +46,7 @@ struct ShortcutsView: View {
                         }
                 }
             }
-            .padding(.vertical, Self.itemSpacing)
+            .padding(.vertical, Self.itemSpacing / 2.0)
             .toolbar {
                 if !showInspector {
                     ToolbarItem {
