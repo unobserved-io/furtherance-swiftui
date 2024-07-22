@@ -13,6 +13,7 @@ struct AddTaskView: View {
     @State private var selectedStart: Date = Calendar.current.date(byAdding: .hour, value: -1, to: Date.now) ?? Date.now
     @State private var selectedStop: Date = .now
     @State private var titleField = ""
+    @State private var projectField = ""
     @State private var tagsField = ""
     @State private var errorMessage = ""
     private let buttonColumns: [GridItem] = [
@@ -33,6 +34,19 @@ struct AddTaskView: View {
                     .stroke(Color.gray.opacity(0.5), lineWidth: 2)
             )
 #endif
+            
+            TextField("Project", text: $projectField)
+#if os(macOS)
+            .frame(minWidth: 200)
+#else
+            .frame(minHeight: 30)
+            .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+            )
+#endif
+            
             TextField("#tags", text: $tagsField)
 #if os(macOS)
             .frame(minWidth: 200)
@@ -44,6 +58,7 @@ struct AddTaskView: View {
                     .stroke(Color.gray.opacity(0.5), lineWidth: 2)
             )
 #endif
+            
             DatePicker(
                 selection: $selectedStart,
                 in: getStartRange(),
@@ -63,29 +78,35 @@ struct AddTaskView: View {
             Spacer()
                 .frame(height: 15)
             HStack(spacing: 10) {
-                Button(action: {
+                Button("Cancel") {
                     dismiss()
-                }) {
-                    Text("Cancel")
                 }
                 .keyboardShortcut(.cancelAction)
 #if os(iOS)
                 .buttonStyle(.bordered)
 #endif
-                Button(action: {
+                Button("Save") {
                     errorMessage = ""
                     var error = [String]()
                     if titleField.trimmingCharacters(in: .whitespaces).isEmpty {
-                        error.append("Title cannot be empty.")
+                        error.append("Task name cannot be empty.")
                     } else {
-                        if titleField.contains("#") {
-                            error.append("Title cannot contain a '#'. Those are reserved for tags.")
+                        if titleField.contains("#") || titleField.contains("@") {
+                            error.append("Task name cannot contain a '#' or '@'.")
                         }
+                    }
+                    
+                    if projectField.contains("@") || projectField.contains("#") {
+                        error.append("Project cannot contain a '#' or '@'.")
                     }
 
                     if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty {
                         if !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
                             error.append("Tags must start with a '#'.")
+                        }
+                        
+                        if tagsField.contains("@") {
+                            error.append("Tags cannot contain an '@'.")
                         }
                     }
 
@@ -93,6 +114,7 @@ struct AddTaskView: View {
                         let task = FurTask(context: viewContext)
                         task.id = UUID()
                         task.name = titleField
+                        task.project = projectField
                         task.startTime = selectedStart
                         task.stopTime = selectedStop
                         task.tags = separateTags(rawString: tagsField)
@@ -105,8 +127,6 @@ struct AddTaskView: View {
                             errorMessage = error[0]
                         }
                     }
-                }) {
-                    Text("Save")
                 }
                 .keyboardShortcut(.defaultAction)
 #if os(iOS)
