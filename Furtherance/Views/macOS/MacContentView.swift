@@ -17,6 +17,8 @@ struct MacContentView: View {
     @StateObject var clickedTask = ClickedTask(task: nil)
     @StateObject var clickedShortcut = ClickedShortcut(shortcut: nil)
 
+    @AppStorage("defaultView") private var defaultView: NavItems = .timer
+
     @State(initialValue: false) var showInspector: Bool
     @State(initialValue: .editTask) var inspectorView: SelectedInspectorView
 
@@ -41,10 +43,10 @@ struct MacContentView: View {
                     .environmentObject(clickedShortcut)
                 case .timer: TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
                 case .history: MacHistoryList(
-                    showInspector: $showInspector,
-                    inspectorView: $inspectorView,
-                    navSelection: $navSelection
-                )
+                        showInspector: $showInspector,
+                        inspectorView: $inspectorView,
+                        navSelection: $navSelection
+                    )
                     .environmentObject(clickedGroup)
                     .environmentObject(clickedTask)
                 case .report: Text("Report")
@@ -85,6 +87,9 @@ struct MacContentView: View {
                 EditShortcutView(showInspector: $showInspector)
                     .environmentObject(clickedShortcut)
             }
+        }
+        .onAppear {
+            navSelection = defaultView
         }
     }
 }

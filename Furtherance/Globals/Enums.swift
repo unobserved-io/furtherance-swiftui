@@ -15,9 +15,11 @@ enum SelectedInspectorView {
     case editShortcut
 }
 
-enum NavItems: String, Hashable, CaseIterable {
+enum NavItems: String, Hashable, CaseIterable, Identifiable {
     case shortcuts
     case timer
     case history
     case report
+
+    var id: Self { self }
 }
