@@ -9,15 +9,14 @@ import SwiftUI
 
 struct TaskRow: View {
     var taskGroup: FurTaskGroup
+    @Binding var navSelection: NavItems?
+    
     @Environment(\.colorScheme) var colorScheme
-    @State var stopWatchHelper = StopWatchHelper.shared
     
     @AppStorage("showTags") private var showTags = true
     @AppStorage("showSeconds") private var showSeconds = true
-
-    init(taskGroup: FurTaskGroup) {
-        self.taskGroup = taskGroup
-    }
+    
+    @State var stopWatchHelper = StopWatchHelper.shared
 
     var body: some View {
         HStack(alignment: .center) {
@@ -44,14 +43,21 @@ struct TaskRow: View {
             Text(showSeconds ? formatTimeShort(taskGroup.totalTime) : formatTimeLongWithoutSeconds(taskGroup.totalTime))
                 .font(.system(.body).monospacedDigit())
             #if os(macOS)
-            Image(systemName: "arrow.counterclockwise.circle")
-                .contentShape(Circle())
-                .onTapGesture {
-                    if !stopWatchHelper.isRunning {
+            Button {
+                if !stopWatchHelper.isRunning {
+                    if taskGroup.project.isEmpty {
                         TaskTagsInput.shared.text = "\(taskGroup.name) \(taskGroup.tags)"
-                        TimerHelper.shared.start()
+                    } else {
+                        TaskTagsInput.shared.text = "\(taskGroup.name) @\(taskGroup.project) \(taskGroup.tags)"
                     }
+                    TimerHelper.shared.start()
+                    navSelection = .timer
                 }
+            } label: {
+                Image(systemName: "arrow.counterclockwise.circle")
+            }
+            .buttonStyle(.borderless)
+            .disabled(stopWatchHelper.isRunning)
             #endif
         }
         #if os(macOS)
@@ -67,6 +73,6 @@ struct TaskRow: View {
 
 struct TaskRow_Previews: PreviewProvider {
     static var previews: some View {
-        TaskRow(taskGroup: FurTaskGroup(task: FurTask()))
+        TaskRow(taskGroup: FurTaskGroup(task: FurTask()), navSelection: .constant(NavItems.history))
     }
 }

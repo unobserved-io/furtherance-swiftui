@@ -40,7 +40,11 @@ struct MacContentView: View {
                     )
                     .environmentObject(clickedShortcut)
                 case .timer: TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
-                case .history: MacHistoryList(showInspector: $showInspector, inspectorView: $inspectorView)
+                case .history: MacHistoryList(
+                    showInspector: $showInspector,
+                    inspectorView: $inspectorView,
+                    navSelection: $navSelection
+                )
                     .environmentObject(clickedGroup)
                     .environmentObject(clickedTask)
                 case .report: Text("Report")

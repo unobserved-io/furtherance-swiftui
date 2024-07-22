@@ -118,7 +118,11 @@ struct ShortcutsView: View {
             }
         }
         .onTapGesture {
-            taskTagsInput.text = shortcut.name + " @" + shortcut.project + " " + shortcut.tags
+            if shortcut.project.isEmpty {
+                taskTagsInput.text = shortcut.name + " " + shortcut.tags
+            } else {
+                taskTagsInput.text = shortcut.name + " @" + shortcut.project + " " + shortcut.tags
+            }
             timerHelper.start()
             navSelection = .timer
         }

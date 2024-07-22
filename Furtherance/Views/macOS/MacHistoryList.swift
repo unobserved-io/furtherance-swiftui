@@ -13,6 +13,7 @@ struct MacHistoryList: View {
     
     @Binding var showInspector: Bool
     @Binding var inspectorView: SelectedInspectorView
+    @Binding var navSelection: NavItems?
     
     @AppStorage("limitHistory") private var limitHistory = true
     @AppStorage("historyListLimit") private var historyListLimit = 10
@@ -93,7 +94,7 @@ struct MacHistoryList: View {
     private func showHistoryList(_ section: SectionedFetchResults<String, FurTask>.Section) -> some View {
         return Section(header: sectionHeader(section)) {
             ForEach(sortTasks(section)) { taskGroup in
-                TaskRow(taskGroup: taskGroup)
+                TaskRow(taskGroup: taskGroup, navSelection: $navSelection)
                     .padding(.bottom, 5)
                     .contentShape(Rectangle())
                     .onTapGesture {
@@ -107,7 +108,6 @@ struct MacHistoryList: View {
                             showInspector = true
                         }
                     }
-                    .disabled(stopWatchHelper.isRunning)
             }
         }
     }
@@ -173,5 +173,5 @@ struct MacHistoryList: View {
 }
 
 #Preview {
-    MacHistoryList(showInspector: .constant(false), inspectorView: .constant(SelectedInspectorView.editTask))
+    MacHistoryList(showInspector: .constant(false), inspectorView: .constant(SelectedInspectorView.editTask), navSelection: .constant(NavItems.history))
 }

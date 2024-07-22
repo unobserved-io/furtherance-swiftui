@@ -500,6 +500,7 @@ struct TimerView: View {
         return "\(task.name ?? "Unknown"),\(task.tags ?? ""),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
     }
     
+#if os(iOS)
     private func showHistoryList(_ section: SectionedFetchResults<String, FurTask>.Section) -> some View {
         return Section(header: sectionHeader(section)) {
             ForEach(sortTasks(section)) { taskGroup in
@@ -515,7 +516,6 @@ struct TimerView: View {
                             showTaskEditSheet.toggle()
                         }
                     }
-                #if os(iOS)
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         Button("Delete", role: .destructive) {
                             for task in taskGroup.tasks {
@@ -532,11 +532,11 @@ struct TimerView: View {
                             }
                         }
                     }
-                #endif
                     .disabled(stopWatchHelper.isRunning)
             }
         }
     }
+#endif
     
     private func resumeOngoingTimer() {
         /// Continue running timer if it was running when the app was closed and it is less than 48 hours old
