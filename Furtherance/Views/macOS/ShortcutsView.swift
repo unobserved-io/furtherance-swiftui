@@ -61,6 +61,7 @@ struct ShortcutsView: View {
             }
             .onDisappear {
                 showInspector = false
+                inspectorView = .empty
             }
             Spacer()
         }

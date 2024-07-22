@@ -61,8 +61,12 @@ struct MacHistoryList: View {
                 }
             }
         }
+        .onAppear {
+            inspectorView = .empty
+        }
         .onDisappear {
             showInspector = false
+            inspectorView = .empty
         }
         .toolbar {
             ToolbarItem {

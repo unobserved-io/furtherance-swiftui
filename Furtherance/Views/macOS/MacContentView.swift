@@ -51,6 +51,23 @@ struct MacContentView: View {
         }
         .inspector(isPresented: $showInspector) {
             switch inspectorView {
+            case .empty:
+                ContentUnavailableView("Nothing selected", systemImage: "cursorarrow.rays")
+                    .toolbar {
+                        if showInspector {
+                            ToolbarItem {
+                                Spacer()
+                            }
+                            ToolbarItem {
+                                Button {
+                                    showInspector = false
+                                } label: {
+                                    Image(systemName: "sidebar.trailing")
+                                        .help("Hide inspector")
+                                }
+                            }
+                        }
+                    }
             case .editTaskGroup:
                 GroupView(showInspector: $showInspector)
                     .environmentObject(clickedGroup)
