@@ -21,12 +21,23 @@ struct TaskRow: View {
     var body: some View {
         HStack(alignment: .center) {
             taskGroup.tasks.count == 1 ? nil : Image(systemName: taskGroup.tasks.count <= 50 ? "\(taskGroup.tasks.count).circle.fill" : "ellipsis.circle.fill").foregroundColor(.gray)
-            VStack(alignment: .leading) {
+            
+            VStack(alignment: .leading, spacing: 3) {
                 Text(taskGroup.name)
-                    .fontWeight(.bold)
+                    .bold()
                     .truncationMode(.tail)
                     .frame(minWidth: 20)
                     .help(taskGroup.name)
+                
+                if !taskGroup.project.isEmpty {
+                    Text("@\(taskGroup.project)")
+                        .lineLimit(1)
+                        .bold()
+                        .opacity(0.626)
+                        .frame(minWidth: 20)
+                        .truncationMode(.tail)
+                        .help(taskGroup.project)
+                }
 
                 if !taskGroup.tags.isEmpty && showTags {
                     Text(taskGroup.tags)
@@ -61,7 +72,7 @@ struct TaskRow: View {
             #endif
         }
         #if os(macOS)
-        .frame(height: 25)
+        .frame(height: 30)
         .padding()
         .background(colorScheme == .light ? .white.opacity(0.50) : .white.opacity(0.10))
         .cornerRadius(20)
