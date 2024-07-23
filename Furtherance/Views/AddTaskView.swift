@@ -10,12 +10,17 @@ import SwiftUI
 struct AddTaskView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) var dismiss
+    
+    @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
+    
     @State private var selectedStart: Date = Calendar.current.date(byAdding: .hour, value: -1, to: Date.now) ?? Date.now
     @State private var selectedStop: Date = .now
     @State private var titleField = ""
     @State private var projectField = ""
     @State private var tagsField = ""
+    @State private var rateField = ""
     @State private var errorMessage = ""
+    
     private let buttonColumns: [GridItem] = [
         GridItem(.fixed(70)),
         GridItem(.fixed(70)),
@@ -59,6 +64,22 @@ struct AddTaskView: View {
             )
 #endif
             
+            HStack{
+                Text(chosenCurrency)
+                TextField("0.00", text: $rateField)
+                Text("/hr")
+            }
+#if os(macOS)
+            .frame(minWidth: 200)
+#else
+            .frame(minHeight: 30)
+            .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+            )
+#endif
+            
             DatePicker(
                 selection: $selectedStart,
                 in: getStartRange(),
@@ -87,7 +108,10 @@ struct AddTaskView: View {
 #endif
                 Button("Save") {
                     errorMessage = ""
+                    
+                    var unwrappedRate = 0.0
                     var error = [String]()
+                    
                     if titleField.trimmingCharacters(in: .whitespaces).isEmpty {
                         error.append("Task name cannot be empty.")
                     } else {
@@ -98,6 +122,16 @@ struct AddTaskView: View {
                     
                     if projectField.contains("@") || projectField.contains("#") {
                         error.append("Project cannot contain a '#' or '@'.")
+                    }
+                    
+                    if rateField.contains(chosenCurrency) {
+                        error.append("Do not include currency symbol ('\(chosenCurrency)') in rate.")
+                    } else {
+                        if let rate = Double(rateField.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")) {
+                            unwrappedRate = rate
+                        } else {
+                            error.append("Rate is not a valid number")
+                        }
                     }
 
                     if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -115,6 +149,7 @@ struct AddTaskView: View {
                         task.id = UUID()
                         task.name = titleField
                         task.project = projectField
+                        task.rate = unwrappedRate
                         task.startTime = selectedStart
                         task.stopTime = selectedStop
                         task.tags = separateTags(rawString: tagsField)
