@@ -35,4 +35,15 @@ class FurTaskGroup: Identifiable, ObservableObject {
     func sortTasks() {
         tasks.sort(by: { $0.startTime ?? Date.now > $1.startTime ?? Date.now })
     }
+    
+    func isEqual(to task: FurTask) -> Bool {
+        if name == task.name,
+           project == task.project,
+           tags == task.tags,
+           rate == task.rate {
+            return true
+        } else {
+            return false
+        }
+    }
 }

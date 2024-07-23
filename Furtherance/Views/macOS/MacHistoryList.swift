@@ -211,20 +211,9 @@ struct MacHistoryList: View {
     private func sortTasks(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> [FurTaskGroup] {
         var newGroups = [FurTaskGroup]()
         for task in taskSection {
-            var foundGroup = false
-            
-            // TODO: Change to firstWhere
-            for taskGroup in newGroups {
-                if taskGroup.name == task.name,
-                   taskGroup.project == task.project,
-                   taskGroup.tags == task.tags,
-                   taskGroup.rate == task.rate
-                {
-                    taskGroup.add(task: task)
-                    foundGroup = true
-                }
-            }
-            if !foundGroup {
+            if let taskGroup = newGroups.first(where: { $0.isEqual(to: task) }) {
+                taskGroup.add(task: task)
+            } else {
                 newGroups.append(FurTaskGroup(task: task))
             }
         }

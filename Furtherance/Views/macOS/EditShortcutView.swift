@@ -122,7 +122,6 @@ struct EditShortcutView: View {
                             
                             showInspector = false
                         } else {
-                            // TODO: Rate entry
                             for (index, element) in error.enumerated() {
                                 if index == 0 {
                                     errorMessage = element
