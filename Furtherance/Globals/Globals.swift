@@ -112,3 +112,10 @@ func separateTags(rawString: String) -> String {
         return ""
     }
 }
+
+func getCurrencyCode(for currency: String) -> String {
+    switch currency {
+    case "$": return "USD"
+    default: return "USD"
+    }
+}

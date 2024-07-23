@@ -16,6 +16,7 @@ struct GroupView: View {
     
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
     @AppStorage("showSeconds") private var showSeconds = true
+    @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
     
     @StateObject var clickedTask = ClickedTask(task: nil)
     
@@ -86,8 +87,16 @@ struct GroupView: View {
                     
                     if let tags = clickedGroup.taskGroup?.tags {
                         if !tags.isEmpty {
-                            Text(clickedGroup.taskGroup?.tags ?? "Unknown")
+                            Text(tags)
                                 .font(.title3)
+                        }
+                    }
+                    
+                    if let rate = clickedGroup.taskGroup?.rate {
+                        if rate != 0.0 {
+                            HStack{
+                                Text("\(rate.formatted(.currency(code: getCurrencyCode(for: chosenCurrency)))) / hr")
+                            }
                         }
                     }
                 }
