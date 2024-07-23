@@ -222,7 +222,14 @@ struct GroupView: View {
 #endif
         }
         .sheet(isPresented: $groupAddSheet, onDismiss: refreshGroup) {
-            GroupAddView(taskName: clickedGroup.taskGroup?.name ?? "Unknown", taskTags: clickedGroup.taskGroup?.tags ?? "#tags", selectedStart: Calendar.current.date(byAdding: .hour, value: -1, to: Date.now) ?? Date.now, selectedStop: Date.now)
+            GroupAddView(
+                taskName: clickedGroup.taskGroup?.name ?? "Unknown",
+                taskProject: clickedGroup.taskGroup?.project ?? "",
+                taskTags: clickedGroup.taskGroup?.tags ?? "",
+                taskRate: clickedGroup.taskGroup?.rate ?? 0.0,
+                selectedStart: Calendar.current.date(byAdding: .hour, value: -1, to: Date.now) ?? Date.now,
+                selectedStop: Date.now
+            )
                 .environmentObject(clickedGroup)
 #if os(iOS)
                 .presentationDetents([.taskBar])
