@@ -75,7 +75,7 @@ struct AddShortcutView: View {
                         error.append("Project cannot contain '#' or '@'.")
                     }
                     
-                    if !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
+                    if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty, !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
                         error.append("Tags must start with a '#'.")
                     } else if tagsField.contains("@") {
                         error.append("Tags cannot contain an '@'.")
@@ -98,8 +98,8 @@ struct AddShortcutView: View {
                         // TODO: Rate entry
                         let newShortcut = Shortcut(name: titleField, tags: tagsField, project: projectField, color: pickedColor.hex ?? "A97BEAFF", rate: unwrappedRate)
                         modelContext.insert(newShortcut)
-                        resetChanges()
                         showInspector = false
+                        resetChanges()
                     } else {
                         for (index, element) in error.enumerated() {
                             if index == 0 {
