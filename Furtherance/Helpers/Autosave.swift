@@ -11,10 +11,15 @@ import SwiftUI
 
 @MainActor
 class Autosave: ObservableObject {
-    // TEST PATH: /Users/ricky/Library/Containers/com.lakoliu.Furtherance/Data/Library/Application Support/autosave.txt
-    // TODO: Don't force unwrap here
-    private let autosaveUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("autosave.txt")
     @Published var showAlert = false
+    
+    func getAutosaveUrl() throws -> URL {
+        if let autosaveUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
+            return autosaveUrl.appendingPathComponent("autosave.txt")
+        } else {
+            throw RuntimeError("Cannot open Autosave")
+        }
+    }
     
     func write() {
         let timerHelper = TimerHelper.shared
@@ -24,7 +29,7 @@ class Autosave: ObservableObject {
         let text = "\(timerHelper.taskName)$FUR$\(convertedStart)$FUR$\(convertedStop)$FUR$\(timerHelper.taskTags)"
         
         do {
-            try text.write(to: autosaveUrl, atomically: false, encoding: .utf8)
+            try text.write(to: getAutosaveUrl(), atomically: false, encoding: .utf8)
         }
         catch {
             print("Error writing autosave: \(error)")
@@ -33,7 +38,7 @@ class Autosave: ObservableObject {
     
     func read(viewContext: NSManagedObjectContext) {
         do {
-            let input = try String(contentsOf: autosaveUrl, encoding: .utf8)
+            let input = try String(contentsOf: getAutosaveUrl(), encoding: .utf8)
             let inputSplit = input.components(separatedBy: "$FUR$")
             let convertedStart = convertFromRFC3339(dateIn: inputSplit[1])
             let convertedStop = convertFromRFC3339(dateIn: inputSplit[2])
@@ -58,7 +63,12 @@ class Autosave: ObservableObject {
     }
     
     func exists() -> Bool {
-        return FileManager.default.fileExists(atPath: autosaveUrl.path)
+        do {
+            return try FileManager.default.fileExists(atPath: getAutosaveUrl().path)
+        } catch {
+            print("Could not find autosave: \(error)")
+            return false
+        }
     }
     
     func asAlert() {
@@ -69,7 +79,7 @@ class Autosave: ObservableObject {
         if exists() {
             do {
                 // Delete file
-                try FileManager.default.removeItem(atPath: autosaveUrl.path)
+                try FileManager.default.removeItem(atPath: getAutosaveUrl().path)
             }
             catch {
                 print("Error deleting autosave \(error)")

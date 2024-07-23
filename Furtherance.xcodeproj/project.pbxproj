@@ -21,6 +21,7 @@
 		9C3649D62C4C21EA00ABD778 /* EditShortcutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3649D52C4C21E400ABD778 /* EditShortcutView.swift */; };
 		9C3649DA2C4C249100ABD778 /* ClickedShortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3649D92C4C248D00ABD778 /* ClickedShortcut.swift */; };
 		9C3649DC2C4EB9AC00ABD778 /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3649DB2C4EB99900ABD778 /* ReportView.swift */; };
+		9C3649E02C502BC100ABD778 /* RuntimeError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3649DF2C502BC100ABD778 /* RuntimeError.swift */; };
 		9C3B41372A54966E002F3F5B /* Storyboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9C3B41362A54966E002F3F5B /* Storyboard.storyboard */; platformFilter = ios; };
 		9C3BD94629BE7A2900637D36 /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3BD94529BE7A2900637D36 /* Globals.swift */; };
 		9C3BD94829BE808A00637D36 /* ReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C3BD94729BE808A00637D36 /* ReportsView.swift */; };
@@ -81,6 +82,7 @@
 		9C3649D52C4C21E400ABD778 /* EditShortcutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditShortcutView.swift; sourceTree = "<group>"; };
 		9C3649D92C4C248D00ABD778 /* ClickedShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickedShortcut.swift; sourceTree = "<group>"; };
 		9C3649DB2C4EB99900ABD778 /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
+		9C3649DF2C502BC100ABD778 /* RuntimeError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuntimeError.swift; sourceTree = "<group>"; };
 		9C3B41362A54966E002F3F5B /* Storyboard.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Storyboard.storyboard; sourceTree = "<group>"; };
 		9C3BD94529BE7A2900637D36 /* Globals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Globals.swift; sourceTree = "<group>"; };
 		9C3BD94729BE808A00637D36 /* ReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportsView.swift; sourceTree = "<group>"; };
@@ -290,6 +292,7 @@
 		9CA84E2B29A77A8000A28FDA /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				9C3649DF2C502BC100ABD778 /* RuntimeError.swift */,
 				9C3649D12C4A8D5C00ABD778 /* ColorHex.swift */,
 				9CA84E3529A7AE0600A28FDA /* TimerHelper.swift */,
 				9C98E11629A918BC0064F63F /* Autosave.swift */,
@@ -427,6 +430,7 @@
 				9CDA71822B4E694A00758CE2 /* TimeDisplayView.swift in Sources */,
 				9C4683ED2A503015006D1B7A /* PomodoroSettingsView.swift in Sources */,
 				9CA84E2729A7767500A28FDA /* TaskTagsInput.swift in Sources */,
+				9C3649E02C502BC100ABD778 /* RuntimeError.swift in Sources */,
 				9C27D34829A8B5460012C274 /* ClickedGroup.swift in Sources */,
 				9CA84E3629A7AE0600A28FDA /* TimerHelper.swift in Sources */,
 				9C3649D22C4A8D5F00ABD778 /* ColorHex.swift in Sources */,
