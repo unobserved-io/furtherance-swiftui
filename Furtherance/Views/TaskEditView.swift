@@ -65,7 +65,7 @@ struct TaskEditView: View {
                     )
                     #endif
                     
-                    TextField((clickedTask.task?.project?.isEmpty) ?? true ? "Project" : clickedTask.task!.project!, text: $projectField)
+                    TextField((clickedTask.task?.project?.isEmpty) ?? true ? "Project" : clickedTask.task?.project ?? "Project", text: $projectField)
                     #if os(macOS)
                         .frame(minWidth: 200)
                     #else
@@ -77,7 +77,7 @@ struct TaskEditView: View {
                         )
                     #endif
                     
-                    TextField((clickedTask.task?.tags?.isEmpty) ?? true ? "#tags" : clickedTask.task!.tags!, text: $tagsField)
+                    TextField((clickedTask.task?.tags?.isEmpty) ?? true ? "#tags" : clickedTask.task?.tags ?? "#tags", text: $tagsField)
                     #if os(macOS)
                         .frame(minWidth: 200)
                     #else
@@ -141,8 +141,7 @@ struct TaskEditView: View {
                         #endif
                         
                         Button("Save") {
-                            // TODO: Use if let here to prevent force unwrap
-                            let newTask: FurTask = clickedTask.task!
+                            let newTask: FurTask? = clickedTask.task
                             
                             errorMessage = ""
                             var error = [String]()
@@ -151,7 +150,7 @@ struct TaskEditView: View {
                                 if titleField.contains("#") || titleField.contains("@") {
                                     error.append("Title cannot contain a '#' or '@'. Those are reserved for tags and projects.")
                                 } else {
-                                    newTask.name = titleField
+                                    newTask?.name = titleField
                                     updated = true
                                 }
                             } // else not changed (don't update)
@@ -160,7 +159,7 @@ struct TaskEditView: View {
                                 if projectField.contains("#") || projectField.contains("@") {
                                     error.append("Project name cannot contain '#' or '@'.")
                                 } else {
-                                    newTask.project = projectField.trimmingCharacters(in: .whitespaces)
+                                    newTask?.project = projectField.trimmingCharacters(in: .whitespaces)
                                     updated = true
                                 }
                             } // else not changed (don't update)
@@ -171,20 +170,20 @@ struct TaskEditView: View {
                                 } else if tagsField.contains("@") {
                                     error.append("Tags cannot contain '@'.")
                                 } else {
-                                    newTask.tags = separateTags(rawString: tagsField)
+                                    newTask?.tags = separateTags(rawString: tagsField)
                                     updated = true
                                 }
                             } // else not changed (don't update)
                             
                             if rateField != String(clickedTask.task?.rate ?? 0.0) {
                                 if rateField.isEmpty {
-                                    newTask.rate = 0.0
+                                    newTask?.rate = 0.0
                                     updated = true
                                 } else if rateField.contains(chosenCurrency) {
                                     error.append("Do not include currency symbol ('\(chosenCurrency)') in rate.")
                                 } else {
                                     if let rate = Double(rateField.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")) {
-                                        newTask.rate = rate
+                                        newTask?.rate = rate
                                         updated = true
                                     } else {
                                         error.append("Rate is not a valid number")
@@ -193,13 +192,13 @@ struct TaskEditView: View {
                             } // else not changed (don't update)
                             
                             // TODO: Remove force unwrap
-                            if selectedStart != Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: newTask.startTime!)) ?? newTask.startTime {
-                                newTask.startTime = selectedStart
+                            if selectedStart != Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: newTask?.startTime ?? .now)) ?? newTask?.startTime {
+                                newTask?.startTime = selectedStart
                                 updated = true
                             } // else not changed (don't update)
                             
-                            if selectedStop != Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: newTask.stopTime!)) ?? newTask.stopTime {
-                                newTask.stopTime = selectedStop
+                            if selectedStop != Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: newTask?.stopTime ?? .now)) ?? newTask?.stopTime {
+                                newTask?.stopTime = selectedStop
                                 updated = true
                             } // else not changed (don't update)
                             
@@ -305,8 +304,8 @@ struct TaskEditView: View {
     }
     
     private func deleteTask() {
-        if clickedTask.task != nil {
-            viewContext.delete(clickedTask.task!)
+        if let task = clickedTask.task {
+            viewContext.delete(task)
             do {
                 try viewContext.save()
                 showInspector = false
@@ -317,12 +316,14 @@ struct TaskEditView: View {
     }
     
     private func resetChanges() {
-        selectedStart = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: clickedTask.task?.startTime ?? .now)) ?? clickedTask.task!.startTime!
-        selectedStop = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: clickedTask.task?.stopTime ?? .now)) ?? clickedTask.task!.stopTime!
-        titleField = clickedTask.task?.name ?? ""
-        projectField = clickedTask.task?.project ?? ""
-        tagsField = clickedTask.task?.tags ?? ""
-        rateField = String(format: "%.2f", clickedTask.task?.rate ?? 0.0)
+        if let task = clickedTask.task {
+            selectedStart = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: task.startTime ?? .now)) ?? .now
+            selectedStop = Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: task.stopTime ?? .now)) ?? .now
+            titleField = task.name ?? ""
+            projectField = task.project ?? ""
+            tagsField = task.tags ?? ""
+            rateField = String(format: "%.2f", task.rate ?? 0.0)
+        }
     }
 }
 

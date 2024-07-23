@@ -12,6 +12,7 @@ import SwiftUI
 @MainActor
 class Autosave: ObservableObject {
     // TEST PATH: /Users/ricky/Library/Containers/com.lakoliu.Furtherance/Data/Library/Application Support/autosave.txt
+    // TODO: Don't force unwrap here
     private let autosaveUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("autosave.txt")
     @Published var showAlert = false
     

@@ -16,30 +16,30 @@ extension Date {
         var components = DateComponents()
         components.day = 1
         components.second = -1
-        return Calendar.current.date(byAdding: components, to: startOfDay)!
+        return Calendar.current.date(byAdding: components, to: startOfDay) ?? .now
     }
     
     var startOfWeek: Date {
-        Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: self).date!
+        Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: self).date ?? .now
     }
     
     var endOfWeek: Date {
         var components = DateComponents()
         components.weekOfYear = 1
         components.second = -1
-        return Calendar.current.date(byAdding: components, to: startOfWeek)!
+        return Calendar.current.date(byAdding: components, to: startOfWeek) ?? .now
     }
     
     var startOfMonth: Date {
         let components = Calendar.current.dateComponents([.year, .month], from: startOfDay)
-        return Calendar.current.date(from: components)!
+        return Calendar.current.date(from: components) ?? .now
     }
 
     var endOfMonth: Date {
         var components = DateComponents()
         components.month = 1
         components.second = -1
-        return Calendar.current.date(byAdding: components, to: startOfMonth)!
+        return Calendar.current.date(byAdding: components, to: startOfMonth) ?? .now
     }
     
     var trimMilliseconds: Date {
@@ -64,14 +64,14 @@ extension FurTask {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMM dd, yyyy"
         
-        if startTime != nil {
+        if let unwrappedStart = startTime {
             // Order matters here to avoid overlapping
-            if Calendar.current.isDateInToday(startTime!) {
+            if Calendar.current.isDateInToday(unwrappedStart) {
                 result = "today"
-            } else if Calendar.current.isDateInYesterday(startTime!) {
+            } else if Calendar.current.isDateInYesterday(unwrappedStart) {
                 result = "yesterday"
             } else {
-                result = dateFormatter.string(from: startTime!)
+                result = dateFormatter.string(from: unwrappedStart)
             }
         } else {
             result = "unknown"

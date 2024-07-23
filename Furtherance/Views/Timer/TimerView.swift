@@ -449,7 +449,7 @@ struct TimerView: View {
     private func totalSectionTime(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> Int {
         var totalTime = 0
         for task in taskSection {
-            totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+            totalTime = totalTime + (Calendar.current.dateComponents([.second], from: task.startTime ?? .now, to: task.stopTime ?? .now).second ?? 0)
         }
         return totalTime
     }
@@ -528,7 +528,7 @@ struct TimerView: View {
                             clickedGroup.taskGroup = taskGroup
                             navigator.openView(.group)
                         } else {
-                            clickedTask.task = taskGroup.tasks.first!
+                            clickedTask.task = taskGroup.tasks.first
                             showTaskEditSheet.toggle()
                         }
                     }

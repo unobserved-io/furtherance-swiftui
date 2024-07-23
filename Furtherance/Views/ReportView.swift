@@ -228,10 +228,9 @@ struct ReportView: View {
             }
             
             if match {
-                let index = uniqueList.firstIndex { $0.heading == task.name }
-                if index != nil {
+                if let index = uniqueList.firstIndex(where: { $0.heading == task.name }) {
                     // Task was found
-                    uniqueList[index!].addTask(task)
+                    uniqueList[index].addTask(task)
                 } else {
                     // Task not found
                     uniqueList.append(ReportByTask(task))
@@ -274,10 +273,9 @@ struct ReportView: View {
             }
             
             if match {
-                let index = uniqueList.firstIndex { $0.heading == task.tags }
-                if index != nil {
+                if let index = uniqueList.firstIndex(where: { $0.heading == task.tags }) {
                     // Task was found
-                    uniqueList[index!].addTask(task)
+                    uniqueList[index].addTask(task)
                 } else {
                     // Task not found
                     uniqueList.append(ReportByTags(task))
@@ -320,7 +318,7 @@ struct ReportView: View {
             }
             
             if match {
-                totalTaskTime += (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+                totalTaskTime += (Calendar.current.dateComponents([.second], from: task.startTime ?? .now, to: task.stopTime ?? .now).second ?? 0)
             }
         }
         return totalTaskTime
@@ -349,18 +347,17 @@ struct ReportByTask: Identifiable {
     
     mutating func addTask(_ task: FurTask) {
         // add total time to total seconds
-        totalSeconds = totalSeconds + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+        totalSeconds = totalSeconds + (Calendar.current.dateComponents([.second], from: task.startTime ?? .now, to: task.stopTime ?? .now).second ?? 0)
         // check if tags contains tags. Either way, add time
         var unwrappedTags = "No tags"
         if !(task.tags?.isEmpty ?? true) {
             unwrappedTags = task.tags ?? "No tags"
         }
         
-        let index = tags.firstIndex { $0.0 == unwrappedTags }
-        if index != nil {
-            tags[index!].1 += (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+        if let index = tags.firstIndex(where: { $0.0 == unwrappedTags }) {
+            tags[index].1 += (Calendar.current.dateComponents([.second], from: task.startTime ?? .now, to: task.stopTime ?? .now).second ?? 0)
         } else {
-            tags.append((unwrappedTags, Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0))
+            tags.append((unwrappedTags, Calendar.current.dateComponents([.second], from: task.startTime ?? .now, to: task.stopTime ?? .now).second ?? 0))
         }
     }
 }
@@ -382,14 +379,13 @@ struct ReportByTags: Identifiable {
     
     mutating func addTask(_ task: FurTask) {
         // add total time to total seconds
-        totalSeconds = totalSeconds + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+        totalSeconds = totalSeconds + (Calendar.current.dateComponents([.second], from: task.startTime ?? .now, to: task.stopTime ?? .now).second ?? 0)
 
         // check if tags contains tags. Either way, add time
-        let index = taskNames.firstIndex { $0.0 == task.name }
-        if index != nil {
-            taskNames[index!].1 += (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+        if let index = taskNames.firstIndex(where: { $0.0 == task.name }) {
+            taskNames[index].1 += (Calendar.current.dateComponents([.second], from: task.startTime ?? .now, to: task.stopTime ?? .now).second ?? 0)
         } else {
-            taskNames.append((task.name ?? "Unknown", Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0))
+            taskNames.append((task.name ?? "Unknown", Calendar.current.dateComponents([.second], from: task.startTime ?? .now, to: task.stopTime ?? .now).second ?? 0))
         }
     }
 }

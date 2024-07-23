@@ -251,18 +251,20 @@ struct GroupView: View {
     func refreshGroup() {
         clickedGroup.taskGroup = clickedGroup.taskGroup
         if clickedGroup.taskGroup != nil {
-            for task in clickedGroup.taskGroup!.tasks {
+            for task in clickedGroup.taskGroup?.tasks ?? [] {
                 let taskDate = localDateFormatter.string(from: task.startTime ?? Date.now)
                 if task.id == nil {
-                    let index = clickedGroup.taskGroup?.tasks.firstIndex(of: task)
-                    clickedGroup.taskGroup?.tasks.remove(at: index!)
+                    if let index = clickedGroup.taskGroup?.tasks.firstIndex(of: task) {
+                        clickedGroup.taskGroup?.tasks.remove(at: index)
+                    }
                 } else {
                     if task.name != clickedGroup.taskGroup?.name
                         || task.tags != clickedGroup.taskGroup?.tags
                         || taskDate != clickedGroup.taskGroup?.date
                     {
-                        let index = clickedGroup.taskGroup?.tasks.firstIndex(of: task)
-                        clickedGroup.taskGroup?.tasks.remove(at: index!)
+                        if let index = clickedGroup.taskGroup?.tasks.firstIndex(of: task) {
+                            clickedGroup.taskGroup?.tasks.remove(at: index)
+                        }
                     }
                 }
             }
@@ -273,7 +275,7 @@ struct GroupView: View {
     }
     
     private func deleteAllTasksInGroup() {
-        for task in clickedGroup.taskGroup!.tasks {
+        for task in clickedGroup.taskGroup?.tasks ?? [] {
             viewContext.delete(task)
         }
         do {

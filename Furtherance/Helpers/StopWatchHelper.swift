@@ -298,10 +298,13 @@ class StopWatchHelper {
     func getIdleTime() -> Int {
         /// Get user's idle time
         let usbInfoAsString = IORegistryEntryCreateCFProperty(usbInfoRaw, kIOHIDIdleTimeKey as CFString, kCFAllocatorDefault, 0)
-        let usbInfoVal: CFTypeRef = usbInfoAsString!.takeUnretainedValue()
-        let idleTime = Int("\(usbInfoVal)")
-        let idleTimeSecs = idleTime! / 1000000000
-        return idleTimeSecs
+        if let usbInfoVal: CFTypeRef = usbInfoAsString?.takeUnretainedValue() {
+            if let idleTime = Int("\(usbInfoVal)") {
+                let idleTimeSecs = idleTime / 1000000000
+                return idleTimeSecs
+            }
+        }
+        return 0
     }
     
     func checkUserIdle() {
@@ -329,7 +332,7 @@ class StopWatchHelper {
             let formatter = DateComponentsFormatter()
             formatter.allowedUnits = [.hour, .minute, .second]
             formatter.unitsStyle = .short
-            idleLength = formatter.string(from: idleStartTime, to: resumeTime)!
+            idleLength = formatter.string(from: idleStartTime, to: resumeTime) ?? "0 sec"
             
             // Show notification
             registerLocal(notificationType: "idle")

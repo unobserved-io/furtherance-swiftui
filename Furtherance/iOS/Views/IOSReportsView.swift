@@ -230,10 +230,9 @@ struct IOSReportsView: View {
             }
             
             if match {
-                let index = uniqueList.firstIndex { $0.heading == task.name }
-                if index != nil {
+                if let index = uniqueList.firstIndex(where: { $0.heading == task.name }) {
                     // Task was found
-                    uniqueList[index!].addTask(task)
+                    uniqueList[index].addTask(task)
                 } else {
                     // Task not found
                     uniqueList.append(ReportByTask(task))
@@ -276,10 +275,9 @@ struct IOSReportsView: View {
             }
             
             if match {
-                let index = uniqueList.firstIndex { $0.heading == task.tags }
-                if index != nil {
+                if let index = uniqueList.firstIndex(where: { $0.heading == task.tags }) {
                     // Task was found
-                    uniqueList[index!].addTask(task)
+                    uniqueList[index].addTask(task)
                 } else {
                     // Task not found
                     uniqueList.append(ReportByTags(task))
@@ -322,7 +320,7 @@ struct IOSReportsView: View {
             }
             
             if match {
-                totalTaskTime += (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+                totalTaskTime += (Calendar.current.dateComponents([.second], from: task.startTime ?? .now, to: task.stopTime ?? .now).second ?? 0)
             }
         }
         return totalTaskTime

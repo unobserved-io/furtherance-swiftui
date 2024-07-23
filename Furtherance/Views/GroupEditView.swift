@@ -44,7 +44,7 @@ struct GroupEditView: View {
             )
 #endif
             
-            TextField(clickedGroup.taskGroup!.project.isEmpty ? "Project" : clickedGroup.taskGroup!.project, text: $projectField)
+            TextField(clickedGroup.taskGroup?.project.isEmpty ?? true ? "Project" : clickedGroup.taskGroup?.project ?? "Project", text: $projectField)
 #if os(macOS)
                 .frame(minWidth: 200)
 #else
@@ -56,7 +56,7 @@ struct GroupEditView: View {
             )
 #endif
             
-            TextField(clickedGroup.taskGroup!.tags.isEmpty ? "#add #tags" : clickedGroup.taskGroup!.tags, text: $tagsField)
+            TextField(clickedGroup.taskGroup?.tags.isEmpty ?? true ? "#add #tags" : clickedGroup.taskGroup?.tags ?? "#add #tags", text: $tagsField)
 #if os(macOS)
                 .frame(minWidth: 200)
 #else
