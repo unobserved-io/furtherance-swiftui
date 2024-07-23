@@ -191,6 +191,7 @@ struct GroupEditView: View {
                 titleField = taskGroup.name
                 projectField = taskGroup.project
                 tagsField = taskGroup.tags
+                rateField = String(format: "%.2f", taskGroup.rate)
             }
         }
     }
