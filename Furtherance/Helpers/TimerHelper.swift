@@ -44,20 +44,49 @@ final class TimerHelper {
             if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#",
                TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "@",
-               TaskTagsInput.shared.text.count(where: { $0 == "@" }) < 2
+               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != Character(chosenCurrency),
+               TaskTagsInput.shared.text.count(where: { $0 == "@" }) < 2,
+               TaskTagsInput.shared.text.count(where: { $0 == Character(chosenCurrency) }) < 2
             {
-                let trimmedStartTime = Date.now.trimMilliseconds
-                stopWatchHelper.start(at: trimmedStartTime)
-                startTime = trimmedStartTime
-                nameAndTags = TaskTagsInput.shared.text
-                separateTags()
-                initiatePersistentTimer()
+                if TaskTagsInput.shared.text.contains(chosenCurrency) {
+                    let rateRegex = Regex {
+                        chosenCurrency
+                        Capture {
+                            OneOrMore(CharacterClass.anyOf("#@").inverted)
+                        }
+                    }
+                    if let match = TaskTagsInput.shared.text.firstMatch(of: rateRegex) {
+                        let (_, rate) = match.output
+                        let modifiedRate = rate.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")
+                        if let doubleRate = Double(modifiedRate) {
+                            let trimmedStartTime = Date.now.trimMilliseconds
+                            stopWatchHelper.start(at: trimmedStartTime)
+                            startTime = trimmedStartTime
+                            nameAndTags = TaskTagsInput.shared.text
+                            separateTags()
+                            initiatePersistentTimer()
+                        }
+                    } else {
+                        Navigator.shared.showCurrencyNotValidNumberAlert = true
+                    }
+                } else {
+                    let trimmedStartTime = Date.now.trimMilliseconds
+                    stopWatchHelper.start(at: trimmedStartTime)
+                    startTime = trimmedStartTime
+                    nameAndTags = TaskTagsInput.shared.text
+                    separateTags()
+                    initiatePersistentTimer()
+                }
             } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "#" {
                 Navigator.shared.showTaskBeginsWithHashtagAlert = true
             } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "@" {
                 Navigator.shared.showTaskBeginsWithAtSymbolAlert = true
+            } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == Character(chosenCurrency) {
+                Navigator.shared.showTaskBeginsWithCurrencySymbolAlert = true
             } else if TaskTagsInput.shared.text.count(where: { $0 == "@" }) >= 2 {
                 Navigator.shared.showTaskContainsMoreThanOneAtSymbolAlert = true
+            } else if TaskTagsInput.shared.text.count(where: { $0 == Character(chosenCurrency) }) >= 2 {
+                Navigator.shared.showTaskContainsMoreThanOneCurrencySymbolAlert = true
             }
         }
     }
@@ -170,7 +199,8 @@ final class TimerHelper {
         }
         if let match = allText.firstMatch(of: rateRegex) {
             let (wholeMatch, rate) = match.output
-            taskRate = Double(rate.trimmingCharacters(in: .whitespaces)) ?? 0.0
+            let modifiedRate = rate.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")
+            taskRate = Double(modifiedRate) ?? 0.0
             allText = allText.replacingOccurrences(of: wholeMatch, with: "")
         }
 

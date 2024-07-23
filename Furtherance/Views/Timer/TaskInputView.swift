@@ -10,6 +10,8 @@ import SwiftUI
 struct TaskInputView: View {
     @StateObject var taskTagsInput = TaskTagsInput.shared
     
+    @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
+    
     let timerHelper = TimerHelper.shared
     @State private var stopWatchHelper = StopWatchHelper.shared
     
@@ -32,7 +34,10 @@ struct TaskInputView: View {
                 if newVal != timerHelper.nameAndTags {
                     if !newVal.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                        newVal.trimmingCharacters(in: .whitespaces).first != "#",
-                       newVal.trimmingCharacters(in: .whitespaces).first != "@"
+                       newVal.trimmingCharacters(in: .whitespaces).first != "@",
+                       newVal.trimmingCharacters(in: .whitespaces).first != Character(chosenCurrency),
+                       TaskTagsInput.shared.text.count(where: { $0 == "@" }) < 2,
+                       TaskTagsInput.shared.text.count(where: { $0 == Character(chosenCurrency) }) < 2
                     {
                         timerHelper.updateTaskAndTagsIfChanged()
                         #if os(iOS)

@@ -22,6 +22,9 @@ class Navigator {
     var showTaskBeginsWithHashtagAlert: Bool = false
     var showTaskBeginsWithAtSymbolAlert: Bool = false
     var showTaskContainsMoreThanOneAtSymbolAlert: Bool = false
+    var showTaskContainsMoreThanOneCurrencySymbolAlert: Bool = false
+    var showTaskBeginsWithCurrencySymbolAlert: Bool = false
+    var showCurrencyNotValidNumberAlert: Bool = false
     
     func openView(_ viewPath: ViewPath) {
         if viewPath == .home {

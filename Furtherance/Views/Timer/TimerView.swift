@@ -33,6 +33,7 @@ struct TimerView: View {
     @AppStorage("pomodoroIntermissionTime") private var pomodoroIntermissionTime: Int = 5
     @AppStorage("pomodoroBigBreak") private var pomodoroBigBreak: Bool = false
     @AppStorage("pomodoroBigBreakInterval") private var pomodoroBigBreakInterval: Int = 4
+    @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
     
     @AppStorage("ptIsRunning") private var ptIsRunning: Bool = false
     @AppStorage("ptIsIntermission") private var ptIsIntermission: Bool = false
@@ -326,10 +327,25 @@ struct TimerView: View {
             } message: {
                 Text("A task name must be provided before the project. The first character cannot be a '@'.")
             }
+            .alert("Improper Task Name", isPresented: $navigator.showTaskBeginsWithCurrencySymbolAlert) {
+                Button("OK") {}
+            } message: {
+                Text("A task name must be provided before the rate. The first character cannot be a '\(chosenCurrency)'.")
+            }
             .alert("Improper Task Name", isPresented: $navigator.showTaskContainsMoreThanOneAtSymbolAlert) {
                 Button("OK") {}
             } message: {
                 Text("A task cannot contain more than one project (marked by '@').")
+            }
+            .alert("Improper Task Name", isPresented: $navigator.showTaskContainsMoreThanOneCurrencySymbolAlert) {
+                Button("OK") {}
+            } message: {
+                Text("A task cannot contain more than one rate (marked by '\(chosenCurrency)').")
+            }
+            .alert("Invalid Rate", isPresented: $navigator.showCurrencyNotValidNumberAlert) {
+                Button("OK") {}
+            } message: {
+                Text("The rate is not a valid number.")
             }
             .alert("Task Name Empty", isPresented: $showingTaskEmptyAlert) {
                 Button("OK") {}
