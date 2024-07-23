@@ -58,7 +58,7 @@ final class TimerHelper {
                     if let match = TaskTagsInput.shared.text.firstMatch(of: rateRegex) {
                         let (_, rate) = match.output
                         let modifiedRate = rate.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")
-                        if let doubleRate = Double(modifiedRate) {
+                        if let _ = Double(modifiedRate) {
                             let trimmedStartTime = Date.now.trimMilliseconds
                             stopWatchHelper.start(at: trimmedStartTime)
                             startTime = trimmedStartTime
