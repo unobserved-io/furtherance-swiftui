@@ -14,6 +14,7 @@ final class TimerHelper {
     static let shared = TimerHelper()
     
     @AppStorage("pomodoroIntermissionTime") private var pomodoroIntermissionTime = 5
+    @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
     @AppStorage("ptIsRunning") private var ptIsRunning: Bool = false
     @AppStorage("ptIsIntermission") private var ptIsIntermission: Bool = false
     @AppStorage("ptIsExtended") private var ptIsExtended: Bool = false
@@ -145,19 +146,35 @@ final class TimerHelper {
     
     private func separateTags() {
         /// Separate task from tags and save each in the relative variable
-        let regex = Regex {
+        var allText = nameAndTags // This stops update from running when replacing text
+        
+        // Capture and remove project
+        let projectRegex = Regex {
             "@"
             Capture {
-                OneOrMore(CharacterClass.anyOf("#").inverted)
+                OneOrMore(CharacterClass.anyOf("#$").inverted)
             }
         }
-        if let match = nameAndTags.firstMatch(of: regex) {
+        if let match = allText.firstMatch(of: projectRegex) {
             let (wholeMatch, project) = match.output
             taskProject = project.trimmingCharacters(in: .whitespaces)
-            nameAndTags = nameAndTags.replacingOccurrences(of: wholeMatch, with: "")
+            allText = allText.replacingOccurrences(of: wholeMatch, with: "")
+        }
+        
+        // Capture and remove rate
+        let rateRegex = Regex {
+            chosenCurrency
+            Capture {
+                OneOrMore(CharacterClass.anyOf("#@").inverted)
+            }
+        }
+        if let match = allText.firstMatch(of: rateRegex) {
+            let (wholeMatch, rate) = match.output
+            taskRate = Double(rate.trimmingCharacters(in: .whitespaces)) ?? 0.0
+            allText = allText.replacingOccurrences(of: wholeMatch, with: "")
         }
 
-        var splitTags = nameAndTags.trimmingCharacters(in: .whitespaces).split(separator: "#")
+        var splitTags = allText.trimmingCharacters(in: .whitespaces).split(separator: "#")
         // Get and remove task name from tags list
         taskName = splitTags[0].trimmingCharacters(in: .whitespaces)
         splitTags.remove(at: 0)
@@ -184,6 +201,7 @@ final class TimerHelper {
         task.stopTime = stopTime
         task.tags = taskTags
         task.project = taskProject
+        task.rate = taskRate
         try? persistenceController.container.viewContext.save()
     }
     
