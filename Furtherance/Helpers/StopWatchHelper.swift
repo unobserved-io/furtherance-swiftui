@@ -161,8 +161,7 @@ class StopWatchHelper {
     func initiatePomodoroTimer() {
         if pomodoro {
             pomodoroSessions += 1
-            // TODO: Replace this with .minute?
-            stopTime = Calendar.current.date(byAdding: .second, value: pomodoroTime * 60, to: startTime) ?? Date.now
+            stopTime = Calendar.current.date(byAdding: .minute, value: pomodoroTime, to: startTime) ?? Date.now
             pomodoroEndTimer = Timer(fireAt: stopTime, interval: 0, target: self, selector: #selector(showPomodoroTimesUpAlert), userInfo: nil, repeats: false)
             RunLoop.main.add(pomodoroEndTimer, forMode: .common)
             registerLocal(notificationType: "pomodoro")
