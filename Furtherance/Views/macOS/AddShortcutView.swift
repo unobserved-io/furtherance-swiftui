@@ -18,7 +18,6 @@ struct AddShortcutView: View {
     @State private var projectField: String = ""
     @State private var tagsField: String = ""
     @State private var rateField: String = ""
-    // TODO: Change to a random color each time
     @State private var pickedColor: Color = Color.random
     @State private var errorMessage = ""
     
@@ -95,7 +94,6 @@ struct AddShortcutView: View {
 
                     // Save shortcut or show error
                     if error.isEmpty {
-                        // TODO: Rate entry
                         let newShortcut = Shortcut(name: titleField, tags: tagsField, project: projectField, color: pickedColor.hex ?? "A97BEAFF", rate: unwrappedRate)
                         modelContext.insert(newShortcut)
                         showInspector = false
