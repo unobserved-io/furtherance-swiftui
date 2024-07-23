@@ -59,8 +59,17 @@ struct TaskRow: View {
 
             Spacer()
 
-            Text(showSeconds ? formatTimeShort(taskGroup.totalTime) : formatTimeLongWithoutSeconds(taskGroup.totalTime))
-                .font(.system(.body).monospacedDigit())
+            VStack(alignment: .trailing) {
+                Text(showSeconds ? formatTimeShort(taskGroup.totalTime) : formatTimeLongWithoutSeconds(taskGroup.totalTime))
+                    .monospacedDigit()
+                if taskGroup.rate > 0 {
+                    let amountEarned = (taskGroup.rate / 3600.0) * Double(taskGroup.totalTime)
+                    Text(String(amountEarned.formatted(.currency(code: getCurrencyCode(for: chosenCurrency)))))
+                        .opacity(0.626)
+                        .monospacedDigit()
+                }
+            }
+            
             #if os(macOS)
             Button {
                 if !stopWatchHelper.isRunning {
