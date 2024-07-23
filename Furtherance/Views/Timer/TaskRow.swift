@@ -16,6 +16,7 @@ struct TaskRow: View {
     @AppStorage("showProject") private var showProject = true
     @AppStorage("showTags") private var showTags = true
     @AppStorage("showSeconds") private var showSeconds = true
+    @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
 
     @State var stopWatchHelper = StopWatchHelper.shared
 
@@ -63,11 +64,18 @@ struct TaskRow: View {
             #if os(macOS)
             Button {
                 if !stopWatchHelper.isRunning {
-                    if taskGroup.project.isEmpty {
-                        TaskTagsInput.shared.text = "\(taskGroup.name) \(taskGroup.tags)"
-                    } else {
-                        TaskTagsInput.shared.text = "\(taskGroup.name) @\(taskGroup.project) \(taskGroup.tags)"
+                    var taskTextBuilder = "\(taskGroup.name)"
+                    if !taskGroup.project.isEmpty {
+                        taskTextBuilder += " @\(taskGroup.project)"
                     }
+                    if !taskGroup.tags.isEmpty {
+                        taskTextBuilder += " \(taskGroup.tags)"
+                    }
+                    if taskGroup.rate > 0.0 {
+                        taskTextBuilder += " \(chosenCurrency)\(taskGroup.rate)"
+                    }
+
+                    TaskTagsInput.shared.text = taskTextBuilder
                     TimerHelper.shared.start()
                     navSelection = .timer
                 }
