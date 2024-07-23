@@ -355,7 +355,7 @@ struct TimerView: View {
             #if os(macOS)
             // Idle alert
             .alert("You have been idle for \(stopWatchHelper.idleLength)", isPresented: stopWatchHelper.showingIdleAlertBinding) {
-                Button("Discard", role: .cancel) {
+                Button("Discard", role: .destructive) {
                     timerHelper.stop(at: stopWatchHelper.idleStartTime)
                 }
                 Button("Continue") {
