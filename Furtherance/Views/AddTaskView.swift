@@ -123,16 +123,6 @@ struct AddTaskView: View {
                     if projectField.contains("@") || projectField.contains("#") {
                         error.append("Project cannot contain a '#' or '@'.")
                     }
-                    
-                    if rateField.contains(chosenCurrency) {
-                        error.append("Do not include currency symbol ('\(chosenCurrency)') in rate.")
-                    } else {
-                        if let rate = Double(rateField.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")) {
-                            unwrappedRate = rate
-                        } else {
-                            error.append("Rate is not a valid number")
-                        }
-                    }
 
                     if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty {
                         if !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
@@ -141,6 +131,16 @@ struct AddTaskView: View {
                         
                         if tagsField.contains("@") {
                             error.append("Tags cannot contain an '@'.")
+                        }
+                    }
+                    
+                    if rateField.contains(chosenCurrency) {
+                        error.append("Do not include currency symbol ('\(chosenCurrency)') in rate.")
+                    } else {
+                        if let rate = Double(rateField.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")) {
+                            unwrappedRate = rate
+                        } else {
+                            error.append("Rate is not a valid number")
                         }
                     }
 
