@@ -35,7 +35,6 @@ struct ShortcutsView: View {
     private let timerHelper = TimerHelper.shared
     
     var body: some View {
-        // TODO: Make vertical spacing in VGrid equivalent to horizontal spacing (dynamic)
         ScrollView {
             LazyVGrid(columns: columns, spacing: Self.itemSpacing / 2.0) {
                 ForEach(shortcuts) { shortcut in
@@ -70,7 +69,6 @@ struct ShortcutsView: View {
     }
     
     private func shortcutTile(for shortcut: Shortcut) -> some View {
-        // TODO: Full task name on hover if it is cut off
         let fontColor = calculateFontColor(bgColor: Color(hex: shortcut.colorHex))
         return VStack(alignment: .leading, spacing: 10.0) {
             Text(shortcut.name)
@@ -78,11 +76,14 @@ struct ShortcutsView: View {
                 .font(.title)
                 .bold()
                 .lineLimit(2)
+                .help(shortcut.name)
             Text("@\(shortcut.project)")
                 .foregroundStyle(fontColor)
                 .font(.title2)
-            Text(shortcut.tags) // TODO: Print all with '#'
+                .help(shortcut.project)
+            Text(shortcut.tags)
                 .foregroundStyle(fontColor)
+                .help(shortcut.tags)
         }
         .padding(.top, 15)
         .padding(.horizontal, 8)
