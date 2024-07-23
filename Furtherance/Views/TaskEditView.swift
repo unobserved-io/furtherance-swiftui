@@ -319,7 +319,7 @@ struct TaskEditView: View {
         titleField = clickedTask.task?.name ?? ""
         projectField = clickedTask.task?.project ?? ""
         tagsField = clickedTask.task?.tags ?? ""
-        rateField = String(clickedTask.task?.rate ?? 0.0)
+        rateField = String(format: "%.2f", clickedTask.task?.rate ?? 0.0)
     }
 }
 
