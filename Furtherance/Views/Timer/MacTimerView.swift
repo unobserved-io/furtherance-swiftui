@@ -45,7 +45,7 @@ struct MacTimerView: View {
     
     private func startStopPress() {
         if stopWatchHelper.isRunning {
-            timerHelper.stop(stopTime: Date.now)
+            timerHelper.stop(at: Date.now)
         } else {
             timerHelper.start()
         }

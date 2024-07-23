@@ -359,7 +359,7 @@ struct TimerView: View {
                     title: Text("You have been idle for \(stopWatchHelper.idleLength)"),
                     message: Text("Would you like to discard that time, or continue the clock?"),
                     primaryButton: .default(Text("Discard"), action: {
-                        timerHelper.stop(stopTime: stopWatchHelper.idleStartTime)
+                        timerHelper.stop(at: stopWatchHelper.idleStartTime)
                     }),
                     secondaryButton: .cancel(Text("Continue"), action: {
                         stopWatchHelper.resetIdle()
@@ -389,7 +389,7 @@ struct TimerView: View {
                 Text("^[\(pomodoroMoreTime) More Minute](inflect: true)\(storeModel.purchasedIds.isEmpty ? " (Pro)" : "")")
             }.disabled(storeModel.purchasedIds.isEmpty)
             Button("Stop") {
-                timerHelper.stop(stopTime: stopWatchHelper.stopTime)
+                timerHelper.stop(at: stopWatchHelper.stopTime)
             }
             Button(pomodoroBigBreak && stopWatchHelper.pomodoroSessions % pomodoroBigBreakInterval == 0 ? "Long Break" : "Break") {
                 timerHelper.pomodoroStartIntermission()
@@ -416,7 +416,7 @@ struct TimerView: View {
         
     private func startStopPress() {
         if stopWatchHelper.isRunning {
-            timerHelper.stop(stopTime: Date.now)
+            timerHelper.stop(at: Date.now)
         } else {
             timerHelper.start()
         }

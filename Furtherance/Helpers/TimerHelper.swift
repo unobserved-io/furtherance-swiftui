@@ -92,8 +92,7 @@ final class TimerHelper {
         }
     }
     
-    // TODO: Change "stopTime" var to at
-    func stop(stopTime: Date = .now) {
+    func stop(at stopTime: Date = .now) {
         /// Stop the timer and perform relative actions
         stopWatchHelper.stop()
         self.stopTime = stopTime
