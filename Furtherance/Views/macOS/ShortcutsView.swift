@@ -71,8 +71,8 @@ struct ShortcutsView: View {
     
     private func shortcutTile(for shortcut: Shortcut) -> some View {
         // TODO: Full task name on hover if it is cut off
-        VStack(alignment: .leading, spacing: 10.0) {
-            let fontColor = calculateFontColor(bgColor: Color(hex: shortcut.colorHex))
+        let fontColor = calculateFontColor(bgColor: Color(hex: shortcut.colorHex))
+        return VStack(alignment: .leading, spacing: 10.0) {
             Text(shortcut.name)
                 .foregroundStyle(fontColor)
                 .font(.title)
@@ -98,8 +98,9 @@ struct ShortcutsView: View {
                     Text(shortcut.rate, format: .currency(code: getCurrencyCode(for: chosenCurrency)))
                     Text(" / hr")
                 }
-                    .bold()
-                    .padding(8)
+                .foregroundStyle(fontColor)
+                .bold()
+                .padding(8)
             }
         }
         .contextMenu {
