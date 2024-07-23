@@ -28,6 +28,7 @@ struct SettingsView: View {
                     Label("Pomodoro", systemImage: "stopwatch")
                 }
         }
+        .frame(width: 400, height: 450)
         .onAppear {
             Task {
                 try await storeModel.fetchProducts()
