@@ -22,6 +22,8 @@ struct ShortcutsView: View {
     
     @Query var shortcuts: [Shortcut]
     
+    @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
+    
     @State private var hovering: UUID? = nil
     @State private var showDeleteAlert: Bool = false
     
@@ -91,11 +93,12 @@ struct ShortcutsView: View {
             in: RoundedRectangle(cornerRadius: 15)
         )
         .overlay(alignment: .bottomTrailing) {
-            if shortcut.rate != 0 {
-                // TODO: Change currency based on user
-                Text(shortcut.rate, format: .currency(code: "USD"))
+            if shortcut.rate > 0 {
+                HStack(spacing: 0) {
+                    Text(shortcut.rate, format: .currency(code: getCurrencyCode(for: chosenCurrency)))
+                    Text(" / hr")
+                }
                     .bold()
-                    .monospacedDigit()
                     .padding(8)
             }
         }
@@ -118,13 +121,22 @@ struct ShortcutsView: View {
             }
         }
         .onTapGesture {
-            if shortcut.project.isEmpty {
-                taskTagsInput.text = shortcut.name + " " + shortcut.tags
-            } else {
-                taskTagsInput.text = shortcut.name + " @" + shortcut.project + " " + shortcut.tags
+            if !StopWatchHelper.shared.isRunning {
+                var taskTextBuilder = "\(shortcut.name)"
+                if !shortcut.project.isEmpty {
+                    taskTextBuilder += " @\(shortcut.project)"
+                }
+                if !shortcut.tags.isEmpty {
+                    taskTextBuilder += " \(shortcut.tags)"
+                }
+                if shortcut.rate > 0.0 {
+                    taskTextBuilder += " \(chosenCurrency)\(shortcut.rate)"
+                }
+                
+                taskTagsInput.text = taskTextBuilder
+                timerHelper.start()
+                navSelection = .timer
             }
-            timerHelper.start()
-            navSelection = .timer
         }
     }
     

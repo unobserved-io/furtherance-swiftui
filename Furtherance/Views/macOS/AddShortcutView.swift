@@ -14,9 +14,12 @@ struct AddShortcutView: View {
     
     @Environment(\.modelContext) private var modelContext
     
+    @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
+    
     @State private var titleField: String = ""
     @State private var projectField: String = ""
     @State private var tagsField: String = ""
+    @State private var rateField: String = ""
     // TODO: Change to a random color each time
     @State private var pickedColor: String = Self.defaultColor
     @State private var errorMessage = ""
@@ -29,13 +32,16 @@ struct AddShortcutView: View {
                     titleField = newValue.trimmingCharacters(in: ["#", "@"])
                 }
             ))
-//            .frame(minWidth: 200)
             
             TextField("Project", text: $projectField)
-//                .frame(minWidth: 200)
             
             TextField("#tags", text: $tagsField)
-//                .frame(minWidth: 200)
+            
+            HStack{
+                Text(chosenCurrency)
+                TextField("0.00", text: $rateField)
+                Text("/hr")
+            }
             
             ColorPicker("Color", selection: Binding(
                 get: {
@@ -63,6 +69,8 @@ struct AddShortcutView: View {
                 Button("Save") {
                     errorMessage = ""
                     var error: [String] = []
+                    var unwrappedRate: Double = 0.0
+                    
                     if !titleField.trimmingCharacters(in: .whitespaces).isEmpty {
                         if titleField.contains("#") || titleField.contains("@") {
                             error.append("Task name cannot contain a '#' or '@'. Those are reserved for tags and projects.")
@@ -80,11 +88,21 @@ struct AddShortcutView: View {
                     } else if tagsField.contains("@") {
                         error.append("Tags cannot contain an '@'.")
                     }
+                    
+                    if rateField.contains(chosenCurrency) {
+                        error.append("Do not include currency symbol ('\(chosenCurrency)') in rate.")
+                    } else {
+                        if let rate = Double(rateField.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")) {
+                            unwrappedRate = rate
+                        } else {
+                            error.append("Rate is not a valid number")
+                        }
+                    }
 
                     // Save shortcut or show error
                     if error.isEmpty {
                         // TODO: Rate entry
-                        let newShortcut = Shortcut(name: titleField, tags: tagsField, project: projectField, color: pickedColor, rate: 0.0)
+                        let newShortcut = Shortcut(name: titleField, tags: tagsField, project: projectField, color: pickedColor, rate: unwrappedRate)
                         modelContext.insert(newShortcut)
                         resetChanges()
                         showInspector = false

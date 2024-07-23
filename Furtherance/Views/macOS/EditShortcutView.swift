@@ -15,11 +15,12 @@ struct EditShortcutView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var clickedShortcut: ClickedShortcut
     
+    @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
+    
     @State private var titleField: String = ""
     @State private var projectField: String = ""
     @State private var tagsField: String = ""
-    @State private var rateField: Double = 0.0
-    // TODO: Change to a random color each time
+    @State private var rateField: String = ""
     @State private var pickedColor: String = Self.defaultColor
     @State private var errorMessage = ""
     
@@ -31,13 +32,16 @@ struct EditShortcutView: View {
                     titleField = newValue.trimmingCharacters(in: ["#", "@"])
                 }
             ))
-//            .frame(minWidth: 200)
             
             TextField("Project", text: $projectField)
-//                .frame(minWidth: 200)
             
             TextField("#tags", text: $tagsField)
-//                .frame(minWidth: 200)
+            
+            HStack{
+                Text(chosenCurrency)
+                TextField("0.00", text: $rateField)
+                Text("/hr")
+            }
             
             ColorPicker("Color", selection: Binding(
                 get: {
@@ -66,6 +70,8 @@ struct EditShortcutView: View {
                     if let shortcut = clickedShortcut.shortcut {
                         errorMessage = ""
                         var error: [String] = []
+                        var unwrappedRate: Double = 0.0
+                        
                         if !titleField.trimmingCharacters(in: .whitespaces).isEmpty {
                             if titleField.contains("#") || titleField.contains("@") {
                                 error.append("Task name cannot contain a '#' or '@'. Those are reserved for tags and projects.")
@@ -83,6 +89,16 @@ struct EditShortcutView: View {
                         } else if tagsField.contains("@") {
                             error.append("Tags cannot contain an '@'.")
                         }
+                        
+                        if rateField.contains(chosenCurrency) {
+                            error.append("Do not include currency symbol ('\(chosenCurrency)') in rate.")
+                        } else {
+                            if let rate = Double(rateField.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")) {
+                                unwrappedRate = rate
+                            } else {
+                                error.append("Rate is not a valid number")
+                            }
+                        }
 
                         // Save shortcut or show error
                         if error.isEmpty {
@@ -94,6 +110,9 @@ struct EditShortcutView: View {
                             }
                             if tagsField != shortcut.tags {
                                 shortcut.tags = tagsField.trimmingCharacters(in: .whitespaces)
+                            }
+                            if rateField != String(shortcut.rate) {
+                                shortcut.rate = unwrappedRate
                             }
                             if pickedColor != shortcut.colorHex {
                                 shortcut.colorHex = pickedColor
@@ -137,7 +156,7 @@ struct EditShortcutView: View {
         titleField = clickedShortcut.shortcut?.name ?? ""
         projectField = clickedShortcut.shortcut?.project ?? ""
         tagsField = clickedShortcut.shortcut?.tags ?? ""
-        rateField = clickedShortcut.shortcut?.rate ?? 0.0
+        rateField = String(format: "%.2f", clickedShortcut.shortcut?.rate ?? 0.0)
         pickedColor = clickedShortcut.shortcut?.colorHex ?? ""
         errorMessage = ""
     }
