@@ -22,6 +22,7 @@ struct MacHistoryList: View {
     @AppStorage("totalInclusive") private var totalInclusive = false
     @AppStorage("showSeconds") private var showSeconds = true
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
+    @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
     
     @State private var showDeleteTaskDialog = false
     @State private var showDeleteTaskGroupDialog = false
@@ -130,6 +131,25 @@ struct MacHistoryList: View {
                         }
                     }
                     .contextMenu {
+                        Button("Repeat") {
+                            if !stopWatchHelper.isRunning {
+                                var taskTextBuilder = "\(taskGroup.name)"
+                                if !taskGroup.project.isEmpty {
+                                    taskTextBuilder += " @\(taskGroup.project)"
+                                }
+                                if !taskGroup.tags.isEmpty {
+                                    taskTextBuilder += " \(taskGroup.tags)"
+                                }
+                                if taskGroup.rate > 0.0 {
+                                    taskTextBuilder += " \(chosenCurrency)\(taskGroup.rate)"
+                                }
+
+                                TaskTagsInput.shared.text = taskTextBuilder
+                                TimerHelper.shared.start()
+                                navSelection = .timer
+                            }
+                        }
+                        
                         Button("Edit") {
                             if taskGroup.tasks.count > 1 {
                                 clickedGroup.taskGroup = taskGroup
