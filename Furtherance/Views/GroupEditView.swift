@@ -11,10 +11,15 @@ struct GroupEditView: View {
     @EnvironmentObject var clickedGroup: ClickedGroup
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) var dismiss
+    
+    @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
+    
     @State private var titleField = ""
     @State private var projectField = ""
     @State private var tagsField = ""
+    @State private var rateField = ""
     @State private var errorMessage = ""
+    
     private let buttonColumns: [GridItem] = [
         GridItem(.fixed(70)),
         GridItem(.fixed(70)),
@@ -62,6 +67,23 @@ struct GroupEditView: View {
                     .stroke(Color.gray.opacity(0.5), lineWidth: 2)
             )
 #endif
+            
+            HStack{
+                Text(chosenCurrency)
+                TextField(String(clickedGroup.taskGroup?.rate ?? 0.0), text: $rateField)
+                Text("/hr")
+            }
+#if os(macOS)
+                .frame(minWidth: 200)
+#else
+            .frame(minHeight: 30)
+            .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+            .overlay(
+                RoundedRectangle(cornerRadius: 3)
+                    .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+            )
+#endif
+            
             if !errorMessage.isEmpty {
                 Text(errorMessage)
                     .foregroundColor(.red)
@@ -84,8 +106,10 @@ struct GroupEditView: View {
                     var updateName = false
                     var updateProject = false
                     var updateTags = false
+                    var updateRate = false
                     var newTags = ""
-                    if !titleField.trimmingCharacters(in: .whitespaces).isEmpty, titleField != clickedGroup.taskGroup!.name {
+                    var newRate: Double = 0.0
+                    if !titleField.trimmingCharacters(in: .whitespaces).isEmpty, titleField != clickedGroup.taskGroup?.name ?? "" {
                         if titleField.contains("#") || titleField.contains("@") {
                             error.append("Title cannot contain a '#' or '@'.")
                         } else {
@@ -101,7 +125,7 @@ struct GroupEditView: View {
                         }
                     } // else not changed (don't update)
                     
-                    if tagsField != clickedGroup.taskGroup!.tags {
+                    if tagsField != clickedGroup.taskGroup?.tags ?? "" {
                         if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty, !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
                             error.append("Tags must start with a '#'.")
                         } else if tagsField.contains("@") {
@@ -112,12 +136,26 @@ struct GroupEditView: View {
                         }
                     } // else not changed (don't update)
                     
+                    if rateField != String(clickedGroup.taskGroup?.rate ?? 0.0) {
+                        if rateField.contains(chosenCurrency) {
+                            error.append("Do not include currency symbol ('\(chosenCurrency)') in rate.")
+                        } else {
+                            if let rate = Double(rateField.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")) {
+                                newRate = rate
+                                updateRate = true
+                            } else {
+                                error.append("Rate is not a valid number")
+                            }
+                        }
+                    } // else not changed (don't update)
+                    
                     if error.isEmpty {
-                        if updateName || updateProject || updateTags {
+                        if updateName || updateProject || updateTags || updateRate {
                             for task in clickedGroup.taskGroup?.tasks ?? [] {
                                 if updateName { task.name = titleField }
                                 if updateProject { task.project = projectField }
                                 if updateTags { task.tags = newTags }
+                                if updateRate { task.rate = newRate }
                             }
                             
                             do {
@@ -128,6 +166,7 @@ struct GroupEditView: View {
                             if updateName { clickedGroup.taskGroup?.name = titleField }
                             if updateProject { clickedGroup.taskGroup?.project = projectField }
                             if updateTags { clickedGroup.taskGroup?.tags = newTags }
+                            if updateRate { clickedGroup.taskGroup?.rate = newRate }
                         }
                         dismiss()
                     } else {
