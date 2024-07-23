@@ -41,7 +41,6 @@ final class TimerHelper {
     func start() {
         /// Start the timer and perform relative actions
         if !stopWatchHelper.isRunning {
-            // TODO: Change taskTagsInput to var
             if !taskTagsInput.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "#",
                taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "@",
