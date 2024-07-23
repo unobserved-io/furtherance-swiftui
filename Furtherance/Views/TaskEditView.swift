@@ -16,10 +16,12 @@ struct TaskEditView: View {
     @Binding var showGroupToolbar: Bool
     
     @AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
+    @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
     
     @State private var titleField = ""
     @State private var projectField = ""
     @State private var tagsField = ""
+    @State private var rateField = ""
     @State private var showDeleteDialog = false
     
     @State var selectedStart = Date(timeIntervalSinceReferenceDate: 0)
@@ -87,6 +89,22 @@ struct TaskEditView: View {
                         )
                     #endif
                     
+                    HStack{
+                        Text(chosenCurrency)
+                        TextField(String(clickedTask.task?.rate ?? 0.0), text: $rateField)
+                        Text("/hr")
+                    }
+                    #if os(macOS)
+                        .frame(minWidth: 200)
+                    #else
+                        .frame(minHeight: 30)
+                        .padding(EdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 3)
+                                .stroke(Color.gray.opacity(0.5), lineWidth: 2)
+                        )
+                    #endif
+                    
                     DatePicker(
                         selection: $selectedStart,
                         in: getStartRange(),
@@ -129,7 +147,7 @@ struct TaskEditView: View {
                             errorMessage = ""
                             var error = [String]()
                             var updated = false
-                            if !titleField.trimmingCharacters(in: .whitespaces).isEmpty, titleField != clickedTask.task!.name {
+                            if !titleField.trimmingCharacters(in: .whitespaces).isEmpty, titleField != clickedTask.task?.name ?? "" {
                                 if titleField.contains("#") || titleField.contains("@") {
                                     error.append("Title cannot contain a '#' or '@'. Those are reserved for tags and projects.")
                                 } else {
@@ -138,16 +156,29 @@ struct TaskEditView: View {
                                 }
                             } // else not changed (don't update)
                             
-                            if !projectField.trimmingCharacters(in: .whitespaces).isEmpty, projectField != clickedTask.task!.project {
+                            if projectField != clickedTask.task!.project {
                                 if projectField.contains("#") || projectField.contains("@") {
                                     error.append("Project name cannot contain '#' or '@'.")
                                 } else {
-                                    newTask.project = projectField
+                                    newTask.project = projectField.trimmingCharacters(in: .whitespaces)
                                     updated = true
                                 }
                             } // else not changed (don't update)
                             
-                            if !tagsField.trimmingCharacters(in: .whitespaces).isEmpty, tagsField != clickedTask.task!.tags {
+                            if rateField != String(clickedTask.task?.rate ?? 0.0) {
+                                if rateField.contains(chosenCurrency) {
+                                    error.append("Do not include currency symbol ('\(chosenCurrency)') in rate.")
+                                } else {
+                                    if let rate = Double(rateField.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")) {
+                                        newTask.rate = rate
+                                        updated = true
+                                    } else {
+                                        error.append("Rate is not a valid number")
+                                    }
+                                }
+                            } // else not changed (don't update)
+                            
+                            if tagsField != clickedTask.task?.tags ?? "" {
                                 if !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
                                     error.append("Tags must start with a '#'.")
                                 } else if tagsField.contains("@") {
@@ -158,10 +189,11 @@ struct TaskEditView: View {
                                 }
                             } // else not changed (don't update)
                             
+                            // TODO: Remove force unwrap
                             if selectedStart != Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: newTask.startTime!)) ?? newTask.startTime {
                                 newTask.startTime = selectedStart
                                 updated = true
-                            } // else not changed (don't update)\
+                            } // else not changed (don't update)
                             
                             if selectedStop != Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: newTask.stopTime!)) ?? newTask.stopTime {
                                 newTask.stopTime = selectedStop
@@ -287,6 +319,7 @@ struct TaskEditView: View {
         titleField = clickedTask.task?.name ?? ""
         projectField = clickedTask.task?.project ?? ""
         tagsField = clickedTask.task?.tags ?? ""
+        rateField = String(clickedTask.task?.rate ?? 0.0)
     }
 }
 
