@@ -353,18 +353,16 @@ struct TimerView: View {
                 Text("The task name cannot be empty.")
             }
             #if os(macOS)
-            // Idle alert TODO: Change to new alert style
-            .alert(isPresented: stopWatchHelper.showingIdleAlertBinding) {
-                Alert(
-                    title: Text("You have been idle for \(stopWatchHelper.idleLength)"),
-                    message: Text("Would you like to discard that time, or continue the clock?"),
-                    primaryButton: .default(Text("Discard"), action: {
-                        timerHelper.stop(at: stopWatchHelper.idleStartTime)
-                    }),
-                    secondaryButton: .cancel(Text("Continue"), action: {
-                        stopWatchHelper.resetIdle()
-                    })
-                )
+            // Idle alert
+            .alert("You have been idle for \(stopWatchHelper.idleLength)", isPresented: stopWatchHelper.showingIdleAlertBinding) {
+                Button("Discard", role: .cancel) {
+                    timerHelper.stop(at: stopWatchHelper.idleStartTime)
+                }
+                Button("Continue") {
+                    stopWatchHelper.resetIdle()
+                }
+            } message: {
+                Text("Would you like to discard that time, or continue the clock?")
             }
             #endif
             // CSV Export
