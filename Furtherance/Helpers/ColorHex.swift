@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-// TODO: Clean up comments
 public extension Color {
     init?(hex: String?) {
         guard let hexString = hex else { return nil }
@@ -64,7 +63,7 @@ public extension Color {
                 (!colorElement.isEmpty) && (String(colorElement).replacingOccurrences(of: ".", with: "").rangeOfCharacter(from: CharacterSet.decimalDigits.inverted) == nil)
             }
             
-            if colorArray.count == 3 { // count == 3 no alpha set
+            if colorArray.count == 3 {
                 var r = Float(colorArray[0]) ?? 1
                 var g = Float(colorArray[1]) ?? 1
                 var b = Float(colorArray[2]) ?? 1
@@ -78,7 +77,7 @@ public extension Color {
                 if b > 1.0 { b = 1.0 }
                 
                 return String(format: "%02lX%02lX%02lX", lroundf(r * 255), lroundf(g * 255), lroundf(b * 255)).cleanedHex
-            } else if colorArray.count == 4 { // count == 4 alpha is set
+            } else if colorArray.count == 4 {
                 var r = Float(colorArray[0]) ?? 1
                 var g = Float(colorArray[1]) ?? 1
                 var b = Float(colorArray[2]) ?? 1
