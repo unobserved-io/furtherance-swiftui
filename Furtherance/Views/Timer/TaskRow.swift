@@ -15,6 +15,7 @@ struct TaskRow: View {
 
     @AppStorage("showProject") private var showProject = true
     @AppStorage("showTags") private var showTags = true
+    @AppStorage("showEarnings") private var showEarnings = true
     @AppStorage("showSeconds") private var showSeconds = true
     @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
 
@@ -62,7 +63,7 @@ struct TaskRow: View {
             VStack(alignment: .trailing) {
                 Text(showSeconds ? formatTimeShort(taskGroup.totalTime) : formatTimeLongWithoutSeconds(taskGroup.totalTime))
                     .monospacedDigit()
-                if taskGroup.rate > 0 {
+                if taskGroup.rate > 0, showEarnings {
                     let amountEarned = (taskGroup.rate / 3600.0) * Double(taskGroup.totalTime)
                     Text(String(amountEarned.formatted(.currency(code: getCurrencyCode(for: chosenCurrency)))))
                         .opacity(0.626)
