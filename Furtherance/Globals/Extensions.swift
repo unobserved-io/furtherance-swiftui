@@ -79,3 +79,11 @@ extension FurTask {
         return result
     }
 }
+
+extension Color {
+    static var random: Color {
+        let hexElements = "123456789ABCDEF"
+        let hexColor = String((0..<6).map{ _ in hexElements.randomElement() ?? "F" })
+        return Color(hex: hexColor + "FF") ?? Color.accentColor
+    }
+}

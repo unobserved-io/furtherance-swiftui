@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct AddShortcutView: View {
-    private static let defaultColor: String = Color.accentColor.hex ?? "A97BEAFF"
-    
     @Binding var showInspector: Bool
     
     @Environment(\.modelContext) private var modelContext
@@ -21,7 +19,7 @@ struct AddShortcutView: View {
     @State private var tagsField: String = ""
     @State private var rateField: String = ""
     // TODO: Change to a random color each time
-    @State private var pickedColor: String = Self.defaultColor
+    @State private var pickedColor: Color = Color.random
     @State private var errorMessage = ""
     
     var body: some View {
@@ -43,13 +41,7 @@ struct AddShortcutView: View {
                 Text("/hr")
             }
             
-            ColorPicker("Color", selection: Binding(
-                get: {
-                    Color(hex: pickedColor) ?? .accent
-                },
-                set: { newValue in
-                    pickedColor = newValue.hex ?? Self.defaultColor
-                }))
+            ColorPicker("Color", selection: $pickedColor)
             
             errorMessage.isEmpty ? nil : Text(errorMessage)
                 .foregroundColor(.red)
@@ -57,8 +49,8 @@ struct AddShortcutView: View {
             
             HStack(spacing: 20) {
                 Button("Cancel") {
-                    resetChanges()
                     showInspector = false
+                    resetChanges()
                 }
 
                 .keyboardShortcut(.cancelAction)
@@ -104,7 +96,7 @@ struct AddShortcutView: View {
                     // Save shortcut or show error
                     if error.isEmpty {
                         // TODO: Rate entry
-                        let newShortcut = Shortcut(name: titleField, tags: tagsField, project: projectField, color: pickedColor, rate: unwrappedRate)
+                        let newShortcut = Shortcut(name: titleField, tags: tagsField, project: projectField, color: pickedColor.hex ?? "A97BEAFF", rate: unwrappedRate)
                         modelContext.insert(newShortcut)
                         resetChanges()
                         showInspector = false
@@ -140,7 +132,7 @@ struct AddShortcutView: View {
         titleField = ""
         projectField = ""
         tagsField = ""
-        pickedColor = Self.defaultColor
+        pickedColor = Color.random
         errorMessage = ""
     }
 }
