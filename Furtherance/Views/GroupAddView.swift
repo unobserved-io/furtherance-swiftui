@@ -113,7 +113,7 @@ struct GroupAddView: View {
 #if os(iOS)
                     .buttonStyle(.bordered)
 #endif
-                Button(action: {
+                Button("Save") {
                     let task = FurTask(context: viewContext)
                     task.id = UUID()
                     task.name = taskName
@@ -126,8 +126,6 @@ struct GroupAddView: View {
                     clickedGroup.taskGroup?.add(task: task)
                     clickedGroup.taskGroup?.sortTasks()
                     dismiss()
-                }) {
-                    Text("Save")
                 }
                 .keyboardShortcut(.defaultAction)
 #if os(iOS)

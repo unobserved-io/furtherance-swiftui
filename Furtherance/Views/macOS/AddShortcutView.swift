@@ -89,7 +89,9 @@ struct AddShortcutView: View {
                         error.append("Tags cannot contain an '@'.")
                     }
                     
-                    if rateField.contains(chosenCurrency) {
+                    if rateField.isEmpty {
+                        unwrappedRate = 0.0
+                    } else if rateField.contains(chosenCurrency) {
                         error.append("Do not include currency symbol ('\(chosenCurrency)') in rate.")
                     } else {
                         if let rate = Double(rateField.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")) {

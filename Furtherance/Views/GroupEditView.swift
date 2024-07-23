@@ -137,7 +137,10 @@ struct GroupEditView: View {
                     } // else not changed (don't update)
                     
                     if rateField != String(clickedGroup.taskGroup?.rate ?? 0.0) {
-                        if rateField.contains(chosenCurrency) {
+                        if rateField.isEmpty {
+                            newRate = 0.0
+                            updateRate = true
+                        } else if rateField.contains(chosenCurrency) {
                             error.append("Do not include currency symbol ('\(chosenCurrency)') in rate.")
                         } else {
                             if let rate = Double(rateField.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")) {

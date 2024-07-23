@@ -177,7 +177,10 @@ struct TaskEditView: View {
                             } // else not changed (don't update)
                             
                             if rateField != String(clickedTask.task?.rate ?? 0.0) {
-                                if rateField.contains(chosenCurrency) {
+                                if rateField.isEmpty {
+                                    newTask.rate = 0.0
+                                    updated = true
+                                } else if rateField.contains(chosenCurrency) {
                                     error.append("Do not include currency symbol ('\(chosenCurrency)') in rate.")
                                 } else {
                                     if let rate = Double(rateField.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")) {
