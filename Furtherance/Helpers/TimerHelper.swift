@@ -28,6 +28,7 @@ final class TimerHelper {
     
     let persistenceController = PersistenceController.shared
     let stopWatchHelper = StopWatchHelper.shared
+    let taskTagsInput = TaskTagsInput.shared
     
     var startTime: Date = .now
     var stopTime: Date = .now
@@ -40,29 +41,29 @@ final class TimerHelper {
     func start() {
         /// Start the timer and perform relative actions
         if !stopWatchHelper.isRunning {
-            // TODO: Change tasktagsinput.shared to var
-            if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#",
-               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "@",
-               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != Character(chosenCurrency),
-               TaskTagsInput.shared.text.count(where: { $0 == "@" }) < 2,
-               TaskTagsInput.shared.text.count(where: { $0 == Character(chosenCurrency) }) < 2
+            // TODO: Change taskTagsInput to var
+            if !taskTagsInput.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+               taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "#",
+               taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "@",
+               taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != Character(chosenCurrency),
+               taskTagsInput.text.count(where: { $0 == "@" }) < 2,
+               taskTagsInput.text.count(where: { $0 == Character(chosenCurrency) }) < 2
             {
-                if TaskTagsInput.shared.text.contains(chosenCurrency) {
+                if taskTagsInput.text.contains(chosenCurrency) {
                     let rateRegex = Regex {
                         chosenCurrency
                         Capture {
                             OneOrMore(CharacterClass.anyOf("#@").inverted)
                         }
                     }
-                    if let match = TaskTagsInput.shared.text.firstMatch(of: rateRegex) {
+                    if let match = taskTagsInput.text.firstMatch(of: rateRegex) {
                         let (_, rate) = match.output
                         let modifiedRate = rate.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")
                         if let _ = Double(modifiedRate) {
                             let trimmedStartTime = Date.now.trimMilliseconds
                             stopWatchHelper.start(at: trimmedStartTime)
                             startTime = trimmedStartTime
-                            nameAndTags = TaskTagsInput.shared.text
+                            nameAndTags = taskTagsInput.text
                             separateTags()
                             initiatePersistentTimer()
                         }
@@ -73,19 +74,19 @@ final class TimerHelper {
                     let trimmedStartTime = Date.now.trimMilliseconds
                     stopWatchHelper.start(at: trimmedStartTime)
                     startTime = trimmedStartTime
-                    nameAndTags = TaskTagsInput.shared.text
+                    nameAndTags = taskTagsInput.text
                     separateTags()
                     initiatePersistentTimer()
                 }
-            } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "#" {
+            } else if taskTagsInput.text.trimmingCharacters(in: .whitespaces).first == "#" {
                 Navigator.shared.showTaskBeginsWithHashtagAlert = true
-            } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "@" {
+            } else if taskTagsInput.text.trimmingCharacters(in: .whitespaces).first == "@" {
                 Navigator.shared.showTaskBeginsWithAtSymbolAlert = true
-            } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == Character(chosenCurrency) {
+            } else if taskTagsInput.text.trimmingCharacters(in: .whitespaces).first == Character(chosenCurrency) {
                 Navigator.shared.showTaskBeginsWithCurrencySymbolAlert = true
-            } else if TaskTagsInput.shared.text.count(where: { $0 == "@" }) >= 2 {
+            } else if taskTagsInput.text.count(where: { $0 == "@" }) >= 2 {
                 Navigator.shared.showTaskContainsMoreThanOneAtSymbolAlert = true
-            } else if TaskTagsInput.shared.text.count(where: { $0 == Character(chosenCurrency) }) >= 2 {
+            } else if taskTagsInput.text.count(where: { $0 == Character(chosenCurrency) }) >= 2 {
                 Navigator.shared.showTaskContainsMoreThanOneCurrencySymbolAlert = true
             }
         }
@@ -98,7 +99,7 @@ final class TimerHelper {
         self.stopTime = stopTime
         updateTaskAndTagsIfChanged()
         saveTask()
-        TaskTagsInput.shared.text = ""
+        taskTagsInput.text = ""
         refreshAfterMidnight()
         resetPersistentTimer()
     }
@@ -118,19 +119,19 @@ final class TimerHelper {
     }
     
     func updateTaskAndTagsIfChanged() {
-        if TaskTagsInput.shared.text != nameAndTags {
-            if !TaskTagsInput.shared.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "#",
-               TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first != "@",
-               TaskTagsInput.shared.text.count(where: { $0 == "@" }) < 2
+        if taskTagsInput.text != nameAndTags {
+            if !taskTagsInput.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+               taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "#",
+               taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "@",
+               taskTagsInput.text.count(where: { $0 == "@" }) < 2
             {
-                nameAndTags = TaskTagsInput.shared.text
+                nameAndTags = taskTagsInput.text
                 separateTags()
-            } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "#" {
+            } else if taskTagsInput.text.trimmingCharacters(in: .whitespaces).first == "#" {
                 Navigator.shared.showTaskBeginsWithHashtagAlert = true
-            } else if TaskTagsInput.shared.text.trimmingCharacters(in: .whitespaces).first == "@" {
+            } else if taskTagsInput.text.trimmingCharacters(in: .whitespaces).first == "@" {
                 Navigator.shared.showTaskBeginsWithAtSymbolAlert = true
-            } else if TaskTagsInput.shared.text.count(where: { $0 == "@" }) >= 2 {
+            } else if taskTagsInput.text.count(where: { $0 == "@" }) >= 2 {
                 Navigator.shared.showTaskContainsMoreThanOneAtSymbolAlert = true
             }
         }
@@ -168,7 +169,7 @@ final class TimerHelper {
         /// Stop the timer after just on a Pomodoro break
         stopWatchHelper.stop()
         updateTaskAndTagsIfChanged()
-        TaskTagsInput.shared.text = ""
+        taskTagsInput.text = ""
         refreshAfterMidnight()
         resetPersistentTimer()
     }
