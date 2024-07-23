@@ -77,13 +77,19 @@ struct ShortcutsView: View {
                 .bold()
                 .lineLimit(2)
                 .help(shortcut.name)
-            Text("@\(shortcut.project)")
-                .foregroundStyle(fontColor)
-                .font(.title2)
-                .help(shortcut.project)
-            Text(shortcut.tags)
-                .foregroundStyle(fontColor)
-                .help(shortcut.tags)
+            
+            if !shortcut.project.isEmpty {
+                Text("@\(shortcut.project)")
+                    .foregroundStyle(fontColor)
+                    .font(.title2)
+                    .help(shortcut.project)
+            }
+            
+            if !shortcut.tags.isEmpty {
+                Text(shortcut.tags)
+                    .foregroundStyle(fontColor)
+                    .help(shortcut.tags)
+            }
         }
         .padding(.top, 15)
         .padding(.horizontal, 8)
