@@ -165,6 +165,17 @@ struct TaskEditView: View {
                                 }
                             } // else not changed (don't update)
                             
+                            if tagsField != clickedTask.task?.tags ?? "" {
+                                if !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
+                                    error.append("Tags must start with a '#'.")
+                                } else if tagsField.contains("@") {
+                                    error.append("Tags cannot contain '@'.")
+                                } else {
+                                    newTask.tags = separateTags(rawString: tagsField)
+                                    updated = true
+                                }
+                            } // else not changed (don't update)
+                            
                             if rateField != String(clickedTask.task?.rate ?? 0.0) {
                                 if rateField.contains(chosenCurrency) {
                                     error.append("Do not include currency symbol ('\(chosenCurrency)') in rate.")
@@ -175,17 +186,6 @@ struct TaskEditView: View {
                                     } else {
                                         error.append("Rate is not a valid number")
                                     }
-                                }
-                            } // else not changed (don't update)
-                            
-                            if tagsField != clickedTask.task?.tags ?? "" {
-                                if !(tagsField.trimmingCharacters(in: .whitespaces).first == "#") {
-                                    error.append("Tags must start with a '#'.")
-                                } else if tagsField.contains("@") {
-                                    error.append("Tags cannot contain '@'.")
-                                } else {
-                                    newTask.tags = separateTags(rawString: tagsField)
-                                    updated = true
                                 }
                             } // else not changed (don't update)
                             
