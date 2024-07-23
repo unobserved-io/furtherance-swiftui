@@ -193,8 +193,13 @@ struct MacHistoryList: View {
         for task in taskSection {
             var foundGroup = false
             
+            // TODO: Change to firstWhere
             for taskGroup in newGroups {
-                if taskGroup.name == task.name && taskGroup.tags == task.tags {
+                if taskGroup.name == task.name,
+                   taskGroup.project == task.project,
+                   taskGroup.tags == task.tags,
+                   taskGroup.rate == task.rate
+                {
                     taskGroup.add(task: task)
                     foundGroup = true
                 }
