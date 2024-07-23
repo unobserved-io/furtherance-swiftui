@@ -191,7 +191,6 @@ struct TaskEditView: View {
                                 }
                             } // else not changed (don't update)
                             
-                            // TODO: Remove force unwrap
                             if selectedStart != Calendar.current.date(from: Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: newTask?.startTime ?? .now)) ?? newTask?.startTime {
                                 newTask?.startTime = selectedStart
                                 updated = true
