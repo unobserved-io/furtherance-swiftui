@@ -9,8 +9,8 @@ import AppIntents
 import Foundation
 
 struct OpenFurtheranceTimerIntent: AppIntent {
-    static var title: LocalizedStringResource = "Open Furtherance Timer"
-    static var openAppWhenRun: Bool = true
+    static let title: LocalizedStringResource = "Open Furtherance Timer"
+    static let openAppWhenRun: Bool = true
 
     @MainActor
     func perform() async throws -> some IntentResult {

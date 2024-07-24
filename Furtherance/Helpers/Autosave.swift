@@ -13,7 +13,7 @@ import SwiftUI
 class Autosave: ObservableObject {
     @Published var showAlert = false
     
-    func getAutosaveUrl() throws -> URL {
+    func getAutosaveUrl() async throws -> URL {
         if let autosaveUrl = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
             return autosaveUrl.appendingPathComponent("autosave.txt")
         } else {
@@ -21,7 +21,7 @@ class Autosave: ObservableObject {
         }
     }
     
-    func write() {
+    func write() async {
         let timerHelper = TimerHelper.shared
         let convertedStart = convertToRFC3339(dateIn: timerHelper.startTime)
         let convertedStop = convertToRFC3339(dateIn: Date.now)
@@ -29,16 +29,16 @@ class Autosave: ObservableObject {
         let text = "\(timerHelper.taskName)$FUR$\(convertedStart)$FUR$\(convertedStop)$FUR$\(timerHelper.taskTags)"
         
         do {
-            try text.write(to: getAutosaveUrl(), atomically: false, encoding: .utf8)
+            try text.write(to: await getAutosaveUrl(), atomically: false, encoding: .utf8)
         }
         catch {
             print("Error writing autosave: \(error)")
         }
     }
     
-    func read(viewContext: NSManagedObjectContext) {
+    func read(viewContext: NSManagedObjectContext) async {
         do {
-            let input = try String(contentsOf: getAutosaveUrl(), encoding: .utf8)
+            let input = try String(contentsOf: await getAutosaveUrl(), encoding: .utf8)
             let inputSplit = input.components(separatedBy: "$FUR$")
             let convertedStart = convertFromRFC3339(dateIn: inputSplit[1])
             let convertedStop = convertFromRFC3339(dateIn: inputSplit[2])
@@ -55,16 +55,16 @@ class Autosave: ObservableObject {
             catch {
                 print("Error writing autosave: \(error)")
             }
-            delete()
+            await delete()
         }
         catch {
             print("Error reading autosave: \(error)")
         }
     }
     
-    func exists() -> Bool {
+    func exists() async -> Bool {
         do {
-            return try FileManager.default.fileExists(atPath: getAutosaveUrl().path)
+            return try FileManager.default.fileExists(atPath: await getAutosaveUrl().path)
         } catch {
             print("Could not find autosave: \(error)")
             return false
@@ -75,11 +75,11 @@ class Autosave: ObservableObject {
         showAlert.toggle()
     }
     
-    func delete() {
-        if exists() {
+    func delete() async {
+        if await exists() {
             do {
                 // Delete file
-                try FileManager.default.removeItem(atPath: getAutosaveUrl().path)
+                try FileManager.default.removeItem(atPath: await getAutosaveUrl().path)
             }
             catch {
                 print("Error deleting autosave \(error)")

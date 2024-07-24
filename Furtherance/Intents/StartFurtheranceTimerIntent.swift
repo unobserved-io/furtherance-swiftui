@@ -9,12 +9,12 @@ import AppIntents
 import SwiftUI
 
 struct StartFurtheranceTimerIntent: AppIntent {
-    static var title: LocalizedStringResource = "Start Furtherance Timer"
+    static let title: LocalizedStringResource = "Start Furtherance Timer"
     
     #if os(iOS)
-    static var openAppWhenRun: Bool = false
+    static let openAppWhenRun: Bool = false
     #elseif os(macOS)
-    static var openAppWhenRun: Bool = true
+    static let openAppWhenRun: Bool = true
     #endif
     
     @Parameter(title: "Task #tags", requestValueDialog: "What task and tags?")

@@ -285,7 +285,9 @@ struct TimerView: View {
                 #endif
                 
                 #if os(macOS)
-                    checkForAutosave()
+                    Task {
+                        await checkForAutosave()
+                    }
                 #endif
             }
             .onReceive(willBecomeActive) { _ in
@@ -313,7 +315,7 @@ struct TimerView: View {
             }
             #endif
             .alert("Autosave Restored", isPresented: $autosave.showAlert) {
-                Button("OK") { autosave.read(viewContext: viewContext) }
+                Button("OK") { Task { await autosave.read(viewContext: viewContext) } }
             } message: {
                 Text("Furtherance shut down improperly. An autosave was restored.")
             }
@@ -479,8 +481,8 @@ struct TimerView: View {
         return newGroups
     }
     
-    private func checkForAutosave() {
-        if autosave.exists() {
+    private func checkForAutosave() async {
+        if await autosave.exists() {
             autosave.asAlert()
         }
     }

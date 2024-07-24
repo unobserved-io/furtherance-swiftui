@@ -116,9 +116,11 @@ class StopWatchHelper {
 #endif
         
         // Delete any autosave
-        let autosave = Autosave()
-        if autosave.exists() {
-            autosave.delete()
+        Task {
+            let autosave = Autosave()
+            if await autosave.exists() {
+                await autosave.delete()
+            }
         }
     }
     
@@ -294,7 +296,7 @@ class StopWatchHelper {
     }
     
 #if os(macOS)
-    func getIdleTime() -> Int {
+    func getIdleTime() async -> Int {
         /// Get user's idle time
         let usbInfoAsString = IORegistryEntryCreateCFProperty(usbInfoRaw, kIOHIDIdleTimeKey as CFString, kCFAllocatorDefault, 0)
         if let usbInfoVal: CFTypeRef = usbInfoAsString?.takeUnretainedValue() {
@@ -306,10 +308,10 @@ class StopWatchHelper {
         return 0
     }
     
-    func checkUserIdle() {
+    func checkUserIdle() async {
         /// Check if user is idle
         let selectedIdle = idleLimit * 60
-        let idleTimeSecs = getIdleTime()
+        let idleTimeSecs = await getIdleTime()
         
         // Find out if user is idle or back from being idle
         if idleTimeSecs < selectedIdle, idleTimeReached, !idleNotified {
@@ -354,7 +356,9 @@ class StopWatchHelper {
     func setOneMinuteTimer() {
         DispatchQueue.main.async {
             self.oneMinuteTimer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
-                Autosave().write()
+                Task {
+                    await Autosave().write()
+                }
             }
         }
     }
@@ -363,15 +367,15 @@ class StopWatchHelper {
         if idleDetect || showIconBadge {
             DispatchQueue.main.async {
                 self.oneSecondTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-                    if self.idleDetect, !self.pomodoroOnBreak {
-                        self.checkUserIdle()
-                    }
-                    
-                    if self.showIconBadge, !self.showingPomodoroEndedAlert {
-                        if self.pomodoro {
-                            NSApp.dockTile.badgeLabel = self.dockBadgeFormatter.string(from: abs(Date.now.timeIntervalSince(self.stopTime)))
-                        } else {
-                            NSApp.dockTile.badgeLabel = self.dockBadgeFormatter.string(from: Date.now.timeIntervalSince(self.startTime))
+                    Task {
+                        if await self.idleDetect, await !self.pomodoroOnBreak {
+                            await self.checkUserIdle()
+                        }
+                        
+                        if await self.showIconBadge, await !self.showingPomodoroEndedAlert {
+                            Task {
+                                await self.updateDockTile()
+                            }
                         }
                     }
                 }
@@ -379,12 +383,20 @@ class StopWatchHelper {
         }
     }
     
-    @objc private func sleepListener(_ aNotification: Notification) {
+    private func updateDockTile() {
+        if self.pomodoro {
+            NSApp.dockTile.badgeLabel = self.dockBadgeFormatter.string(from: abs(Date.now.timeIntervalSince(self.stopTime)))
+        } else {
+            NSApp.dockTile.badgeLabel = self.dockBadgeFormatter.string(from: Date.now.timeIntervalSince(self.startTime))
+        }
+    }
+    
+    @objc private func sleepListener(_ aNotification: Notification) async {
         /// Check if the computer is going to sleep
         if idleDetect {
             if aNotification.name == NSWorkspace.willSleepNotification {
                 timeAtSleep = Date.now
-                idleAtSleep = getIdleTime()
+                idleAtSleep = await getIdleTime()
                 idleStartTime = timeAtSleep.addingTimeInterval(Double(-idleAtSleep))
             } else if aNotification.name == NSWorkspace.didWakeNotification {
                 let selectedIdle = idleLimit * 60

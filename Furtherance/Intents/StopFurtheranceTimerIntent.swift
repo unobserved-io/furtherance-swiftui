@@ -9,8 +9,8 @@ import AppIntents
 import SwiftUI
 
 struct StopFurtheranceTimerIntent: AppIntent {
-    static var title: LocalizedStringResource = "Stop Furtherance Timer"
-    static var openAppWhenRun: Bool = false
+    static let title: LocalizedStringResource = "Stop Furtherance Timer"
+    static let openAppWhenRun: Bool = false
 
     @Parameter(title: "Ask for confirmation?", description: "Test description", requestValueDialog: "Stop the Furtherance timer?")
     var confirmTimer: ShouldIAsk

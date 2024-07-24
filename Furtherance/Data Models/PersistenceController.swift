@@ -10,7 +10,7 @@ import CoreData
 struct PersistenceController {
     static let shared = PersistenceController()
 
-    static var preview: PersistenceController = {
+    static let preview: PersistenceController = {
         let result = PersistenceController(inMemory: true)
         let viewContext = result.container.viewContext
         for _ in 0 ..< 10 {
@@ -51,7 +51,7 @@ struct PersistenceController {
             fatalError("Failed to initialize persistent container")
         }
         description.setOption(true as NSNumber, forKey: NSPersistentHistoryTrackingKey)
-        container.viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        container.viewContext.mergePolicy = NSMergePolicyType.mergeByPropertyObjectTrumpMergePolicyType
         container.viewContext.automaticallyMergesChangesFromParent = true
 
         container.loadPersistentStores(completionHandler: { _, error in

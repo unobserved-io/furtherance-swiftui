@@ -9,8 +9,8 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct CSVFile: FileDocument {
-    static var readableContentTypes = [UTType.commaSeparatedText]
-    static var writableContentTypes = [UTType.commaSeparatedText]
+    static let readableContentTypes = [UTType.commaSeparatedText]
+    static let writableContentTypes = [UTType.commaSeparatedText]
     var text = ""
 
     init(initialText: String = "") {

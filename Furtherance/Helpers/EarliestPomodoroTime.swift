@@ -21,10 +21,9 @@ class EarliestPomodoroTime {
     func setTimer() {
         invalidateTimer()
         self.minDate = Calendar.current.date(byAdding: .minute, value: -(self.pomodoroTime - 1), to: .now) ?? StopWatchHelper.shared.startTime
-        DispatchQueue.main.async {
-            self.timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
-                self.minDate = Calendar.current.date(byAdding: .minute, value: -(self.pomodoroTime - 1), to: .now) ?? StopWatchHelper.shared.startTime
-                self.minLength = (Int(Date.now.timeIntervalSince1970 - StopWatchHelper.shared.startTime.timeIntervalSince1970) / 60) + 1
+        self.timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+            Task {
+                await self.updateMinimums()
             }
         }
     }
@@ -34,9 +33,14 @@ class EarliestPomodoroTime {
         self.minLength = 1
     }
     
+    private func updateMinimums() {
+        self.minDate = Calendar.current.date(byAdding: .minute, value: -(self.pomodoroTime - 1), to: .now) ?? StopWatchHelper.shared.startTime
+        self.minLength = (Int(Date.now.timeIntervalSince1970 - StopWatchHelper.shared.startTime.timeIntervalSince1970) / 60) + 1
+    }
+    
     deinit {
-        DispatchQueue.main.async {
-            self.invalidateTimer()
+        Task {
+            await self.invalidateTimer()
         }
     }
 }

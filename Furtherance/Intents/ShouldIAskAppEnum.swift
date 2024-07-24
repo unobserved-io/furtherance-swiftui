@@ -14,9 +14,9 @@ enum ShouldIAsk: String {
 }
 
 extension ShouldIAsk: AppEnum {
-    static var typeDisplayRepresentation: TypeDisplayRepresentation = "Ask"
+    static let typeDisplayRepresentation: TypeDisplayRepresentation = "Ask"
 
-    static var caseDisplayRepresentations: [ShouldIAsk: DisplayRepresentation] = [
+    static let caseDisplayRepresentations: [ShouldIAsk: DisplayRepresentation] = [
         .ask: "Ask",
         .dontAsk: "Don't Ask",
     ]
