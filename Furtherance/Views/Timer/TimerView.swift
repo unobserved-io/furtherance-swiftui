@@ -421,7 +421,7 @@ struct TimerView: View {
                                 taskTextBuilder += " \(taskToRepeat.tags ?? "")"
                             }
                             if taskToRepeat.rate ?? 0.0 > 0.0 {
-                                taskTextBuilder += " \(chosenCurrency)\(taskToRepeat.rate ?? 0.0)"
+                                taskTextBuilder += " \(chosenCurrency)\(String(format: "%.2f", taskToRepeat.rate ?? 0.0))"
                             }
 
                             TaskTagsInput.shared.text = taskTextBuilder

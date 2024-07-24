@@ -141,7 +141,7 @@ struct MacHistoryList: View {
                                     taskTextBuilder += " \(taskGroup.tags)"
                                 }
                                 if taskGroup.rate > 0.0 {
-                                    taskTextBuilder += " \(chosenCurrency)\(taskGroup.rate)"
+                                    taskTextBuilder += " \(chosenCurrency)\(String(format: "%.2f", taskGroup.rate))"
                                 }
 
                                 TaskTagsInput.shared.text = taskTextBuilder

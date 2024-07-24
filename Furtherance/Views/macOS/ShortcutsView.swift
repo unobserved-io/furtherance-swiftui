@@ -138,7 +138,7 @@ struct ShortcutsView: View {
                     taskTextBuilder += " \(shortcut.tags)"
                 }
                 if shortcut.rate > 0.0 {
-                    taskTextBuilder += " \(chosenCurrency)\(shortcut.rate)"
+                    taskTextBuilder += " \(chosenCurrency)\(String(format: "%.2f", shortcut.rate))"
                 }
                 
                 taskTagsInput.text = taskTextBuilder
