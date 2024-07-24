@@ -26,7 +26,7 @@ class Autosave: ObservableObject {
         let convertedStart = convertToRFC3339(dateIn: timerHelper.startTime)
         let convertedStop = convertToRFC3339(dateIn: Date.now)
         
-        let text = "\(timerHelper.taskName)$FUR$\(convertedStart)$FUR$\(convertedStop)$FUR$\(timerHelper.taskTags)"
+        let text = "\(timerHelper.taskName)$FUR$\(convertedStart)$FUR$\(convertedStop)$FUR$\(timerHelper.taskProject)$FUR$\(timerHelper.taskTags)$FUR$\(timerHelper.taskRate)"
         
         do {
             try text.write(to: await getAutosaveUrl(), atomically: false, encoding: .utf8)
@@ -48,7 +48,9 @@ class Autosave: ObservableObject {
             task.name = inputSplit[0]
             task.startTime = convertedStart
             task.stopTime = convertedStop
-            task.tags = inputSplit[3]
+            task.project = inputSplit[3]
+            task.tags = inputSplit[4]
+            task.rate = Double(inputSplit[5]) ?? 0.0
             do {
                 try viewContext.save()
             }
