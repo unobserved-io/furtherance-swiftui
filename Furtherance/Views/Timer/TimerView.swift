@@ -53,6 +53,13 @@ struct TimerView: View {
     )
     var tasksByDay: SectionedFetchResults<String, FurTask>
     
+//    @FetchRequest(
+//        entity: FurTask.entity(),
+//        sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
+//        predicate: NSPredicate(format: "date = %@", dateFormatter.string(from: .now)),
+//        animation: .default
+//    )
+    
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
     @State private var showTaskEditSheet = false
@@ -400,6 +407,35 @@ struct TimerView: View {
         } message: {
             Text("Time to get back to work.")
         }
+        #if os(macOS)
+        .toolbar {
+            ToolbarItem {
+                Button {
+                    if let taskToRepeat = tasksByDay.first?.first {
+                        if !stopWatchHelper.isRunning, taskToRepeat.name != nil {
+                            var taskTextBuilder = "\(taskToRepeat.name ?? "Unknown")"
+                            if !(taskToRepeat.project?.isEmpty ?? true) {
+                                taskTextBuilder += " @\(taskToRepeat.project ?? "")"
+                            }
+                            if !(taskToRepeat.tags?.isEmpty ?? true) {
+                                taskTextBuilder += " \(taskToRepeat.tags ?? "")"
+                            }
+                            if taskToRepeat.rate ?? 0.0 > 0.0 {
+                                taskTextBuilder += " \(chosenCurrency)\(taskToRepeat.rate ?? 0.0)"
+                            }
+
+                            TaskTagsInput.shared.text = taskTextBuilder
+                            TimerHelper.shared.start()
+                        }
+                    }
+                } label: {
+                    Label("Repeat Last", systemImage: "arrow.counterclockwise")
+                }
+                .help("Repeat last")
+                .disabled(tasksByDay.first?.first == nil || stopWatchHelper.isRunning)
+            }
+        }
+        #endif
     }
         
     private func startStopPress() {
