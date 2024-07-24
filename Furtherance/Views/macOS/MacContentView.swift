@@ -10,18 +10,20 @@ import SwiftUI
 struct MacContentView: View {
     @Binding var tasksCount: Int
     @Binding var showExportCSV: Bool
+    
+    @Environment(\.managedObjectContext) private var viewContext
 
     @ObservedObject var storeModel = StoreModel.shared
 
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
     @StateObject var clickedShortcut = ClickedShortcut(shortcut: nil)
+    @StateObject var autosave = Autosave()
 
     @AppStorage("defaultView") private var defaultView: NavItems = .timer
 
     @State(initialValue: false) var showInspector: Bool
     @State(initialValue: .editTask) var inspectorView: SelectedInspectorView
-
     @State private var navSelection: NavItems? = .timer
 
     // TODO: Create one observable object for everything here that needs to be changed by multiple views
@@ -92,8 +94,23 @@ struct MacContentView: View {
                     .environmentObject(clickedShortcut)
             }
         }
+        .alert("Autosave Restored", isPresented: $autosave.showAlert) {
+            Button("OK") { Task { await autosave.read(viewContext: viewContext) } }
+        } message: {
+            Text("Furtherance shut down improperly. An autosave was restored.")
+        }
         .onAppear {
             navSelection = defaultView
+            
+            Task {
+                await checkForAutosave()
+            }
+        }
+    }
+    
+    private func checkForAutosave() async {
+        if await autosave.exists() {
+            autosave.asAlert()
         }
     }
 }

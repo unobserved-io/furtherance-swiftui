@@ -53,7 +53,6 @@ struct TimerView: View {
     )
     var tasksByDay: SectionedFetchResults<String, FurTask>
     
-    @StateObject var autosave = Autosave()
     @StateObject var clickedGroup = ClickedGroup(taskGroup: nil)
     @StateObject var clickedTask = ClickedTask(task: nil)
     @State private var showTaskEditSheet = false
@@ -283,12 +282,6 @@ struct TimerView: View {
                 #if os(iOS)
                     resumeOngoingTimer()
                 #endif
-                
-                #if os(macOS)
-                    Task {
-                        await checkForAutosave()
-                    }
-                #endif
             }
             .onReceive(willBecomeActive) { _ in
                 #if os(iOS)
@@ -314,11 +307,6 @@ struct TimerView: View {
                     .presentationDetents([.taskBar])
             }
             #endif
-            .alert("Autosave Restored", isPresented: $autosave.showAlert) {
-                Button("OK") { Task { await autosave.read(viewContext: viewContext) } }
-            } message: {
-                Text("Furtherance shut down improperly. An autosave was restored.")
-            }
             .alert("Improper Task Name", isPresented: $navigator.showTaskBeginsWithHashtagAlert) {
                 Button("OK") {}
             } message: {
@@ -479,12 +467,6 @@ struct TimerView: View {
             }
         }
         return newGroups
-    }
-    
-    private func checkForAutosave() async {
-        if await autosave.exists() {
-            autosave.asAlert()
-        }
     }
     
     private func dataAsCSV() -> String {
