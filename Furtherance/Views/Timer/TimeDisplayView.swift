@@ -20,7 +20,9 @@ struct TimeDisplayView: View {
                 timerInterval: stopWatchHelper.startTime ... stopWatchHelper.stopTime,
                 countsDown: pomodoro
             )
-            .font(Font.monospacedDigit(.system(size: 80.0))())
+            .font(.system(size: 500))
+            .minimumScaleFactor(0.01)
+            .monospacedDigit()
             .lineLimit(1)
             .lineSpacing(0)
             .allowsTightening(false)
@@ -29,7 +31,9 @@ struct TimeDisplayView: View {
             .foregroundStyle(stopWatchHelper.pomodoroOnBreak ? .red : .primary)
         } else {
             Text(pomodoro ? (DateComponentsFormatter().string(from: Double(pomodoroTime * 60)) ?? "0:00") : "0:00")
-                .font(Font.monospacedDigit(.system(size: 80.0))())
+                .font(.system(size: 500))
+                .minimumScaleFactor(0.01)
+                .monospacedDigit()
                 .lineLimit(1)
                 .lineSpacing(0)
                 .allowsTightening(false)

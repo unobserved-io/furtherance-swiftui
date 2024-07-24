@@ -32,6 +32,10 @@ struct MacContentView: View {
                     .badge(navItem == .report && storeModel.purchasedIds.isEmpty ? "PRO" : nil)
             }
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
+            Spacer()
+            if StopWatchHelper.shared.isRunning && navSelection != .timer {
+                TimeDisplayView()
+            }
         } detail: {
             if let selectedItem = navSelection {
                 switch selectedItem {
