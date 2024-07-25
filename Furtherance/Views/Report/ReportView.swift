@@ -57,16 +57,18 @@ struct ReportView: View {
 	@State private var rangeIsEmpty: Bool = false
 	@State private var groupingType: GroupStatsBy = .days
 	@State private var groupedTaskData: [GroupOfTasksByTime] = []
-	@State private var groupedSelectedTasksForTime: [GroupOfTasksByTime] = []
+	@State private var groupedSelectedTaskData: [GroupOfTasksByTime] = []
 	@State private var selectedEarningsDate: String?
 	@State private var selectedEarningsAmount: Double = 0.0
 	@State private var selectedTimeDate: String?
 	@State private var selectedTimeAmount: Int = 0
-	@State private var selectedTimeDateForSelectedTask: String?
-	@State private var selectedTimeAmountForSelectedTask: Int = 0
-	@State private var selectedAttributeForTime: TaskAttributes = .title
-	@State private var selectedTaskForTime: String = ""
-	@State private var matchingAttributesForTime: Set<String> = []
+	@State private var timeDateForSelectedTask: String?
+	@State private var timeForSelectedTask: Int = 0
+	@State private var earningsDateForSelectedTask: String?
+	@State private var earningsForSelectedTask: Double = 0
+	@State private var selectedTaskAttribute: TaskAttributes = .title
+	@State private var selectedTask: String = ""
+	@State private var matchingTasksByAttribute: Set<String> = []
 
 	var body: some View {
 		ScrollView {
@@ -200,7 +202,7 @@ struct ReportView: View {
 							AxisMarks(position: .leading) {
 								let value = $0.as(Int.self)! // Using Int removes cents
 								AxisValueLabel {
-									Text("$\(value)")
+									Text("\(chosenCurrency)\(value)")
 								}
 								AxisGridLine()
 							}
@@ -287,35 +289,35 @@ struct ReportView: View {
 						HStack {
 							Picker(
 								"Time by selection",
-								selection: $selectedAttributeForTime
+								selection: $selectedTaskAttribute
 							) {
 								ForEach(TaskAttributes.allCases) { taskAttribute in
 									Text(taskAttribute.rawValue.capitalized)
 								}
 							}
 							.labelsHidden()
-							.onChange(of: selectedAttributeForTime) {
+							.onChange(of: selectedTaskAttribute) {
 								getAllMatchingAttributesForTime()
 							}
 
 							Picker(
 								"Time by selection",
-								selection: $selectedTaskForTime
+								selection: $selectedTask
 							) {
-								ForEach(Array(matchingAttributesForTime), id: \.self) { attribute in
+								ForEach(Array(matchingTasksByAttribute), id: \.self) { attribute in
 									Text(attribute)
 								}
 							}
 							.labelsHidden()
-							.onChange(of: selectedTaskForTime) {
+							.onChange(of: selectedTask) {
 								getDataForSelectedTaskForTime()
 							}
 						}
 
 						Chart {
-							ForEach(groupedSelectedTasksForTime) { taskGroup in
+							ForEach(groupedSelectedTaskData) { taskGroup in
 								// Use a bar chart when there isn't enough data for a good line chart
-								if groupedSelectedTasksForTime.count > 2 {
+								if groupedSelectedTaskData.count > 2 {
 									LineMark(
 										x: .value("Date", taskGroup.readableDate),
 										y: .value("Minutes", taskGroup.time)
@@ -327,19 +329,19 @@ struct ReportView: View {
 									)
 								}
 							}
-							if let selectedTimeDateForSelectedTask {
+							if let timeDateForSelectedTask {
 								RectangleMark(
 									x:
 											.value(
 												"Date",
-												selectedTimeDateForSelectedTask
+												timeDateForSelectedTask
 											)
 								)
 									.foregroundStyle(.accent.opacity(0.2))
 									.annotation(position: .overlay, alignment: .center, spacing: 0) {
 										Text(
 											formatTimeShort(
-												selectedTimeAmountForSelectedTask
+												timeForSelectedTask
 											)
 										)
 											.rotationEffect(.degrees(-90))
@@ -366,7 +368,7 @@ struct ReportView: View {
 											case .active(let hoverLocation):
 												updateSelectedTimeForSelectedTaskOnHover(at: hoverLocation.x, proxy: proxy)
 											case .ended:
-												selectedTimeDateForSelectedTask = nil
+												timeDateForSelectedTask = nil
 											}
 										}
 									#else
@@ -378,6 +380,82 @@ struct ReportView: View {
 							}
 						}
 						.frame(height: Self.chartFrameHeight)
+
+						if groupedSelectedTaskData
+							.contains(where: { $0.earnings > 0 }) {
+							Text("Earnings by selection")
+
+							Chart {
+								ForEach(groupedSelectedTaskData) { taskGroup in
+									// Use a bar chart when there isn't enough data for a good line chart
+									if groupedSelectedTaskData.count > 2 {
+										LineMark(
+											x: .value("Date", taskGroup.readableDate),
+											y: .value("Minutes", taskGroup.earnings)
+										)
+									} else {
+										BarMark(
+											x: .value("Date", taskGroup.readableDate),
+											y: .value("Minutes", taskGroup.earnings)
+										)
+									}
+								}
+								if let earningsDateForSelectedTask {
+									RectangleMark(
+										x:
+												.value(
+													"Date",
+													earningsDateForSelectedTask
+												)
+									)
+									.foregroundStyle(.accent.opacity(0.2))
+									.annotation(position: .overlay, alignment: .center, spacing: 0) {
+											Text(
+												earningsForSelectedTask,
+												format:
+														.currency(
+															code: getCurrencyCode(
+																for: chosenCurrency
+															)
+														)
+											)
+										.rotationEffect(.degrees(-90))
+										.frame(width: Self.chartFrameHeight)
+									}
+								}
+							}
+							.chartYAxis {
+								AxisMarks(position: .leading) {
+									let value = $0.as(Int.self)! // Using Int removes cents
+									AxisValueLabel {
+										Text("\(chosenCurrency)\(value)")
+									}
+									AxisGridLine()
+								}
+							}
+							.chartOverlay { proxy in
+								GeometryReader { geometry in
+									ZStack(alignment: .top) {
+										Rectangle().fill(.clear).contentShape(Rectangle())
+	#if os(macOS)
+											.onContinuousHover { hoverPhase in
+												switch hoverPhase {
+												case .active(let hoverLocation):
+													updateEarningsForSelectedTaskOnHover(at: hoverLocation.x, proxy: proxy)
+												case .ended:
+													earningsDateForSelectedTask = nil
+												}
+											}
+	#else
+											.onTapGesture { location in
+												updateEarningsForSelectedTaskOnHover(at: location, proxy: proxy, geometry: geometry)
+											}
+	#endif
+									}
+								}
+							}
+							.frame(height: Self.chartFrameHeight)
+						}
 					}
 					.task(id: tasksInTimeframe.count) {
 						processAllData()
@@ -590,41 +668,54 @@ struct ReportView: View {
 		guard let userDateSelection: String = proxy.value(atX: location, as: String.self) else {
 			return
 		}
-		if let selectedDayData = groupedSelectedTasksForTime.first(
+		if let selectedDayData = groupedSelectedTaskData.first(
 			where: { String($0.readableDate) == userDateSelection
 			})
 		{
-			selectedTimeAmountForSelectedTask = selectedDayData.time
+			timeForSelectedTask = selectedDayData.time
 		}
-		selectedTimeDateForSelectedTask = userDateSelection
+		timeDateForSelectedTask = userDateSelection
+	}
+
+	private func updateEarningsForSelectedTaskOnHover(at location: CGFloat, proxy: ChartProxy) {
+		guard let userDateSelection: String = proxy.value(atX: location, as: String.self) else {
+			return
+		}
+		if let selectedDayData = groupedSelectedTaskData.first(
+			where: { String($0.readableDate) == userDateSelection
+			})
+		{
+			earningsForSelectedTask = selectedDayData.earnings
+		}
+		earningsDateForSelectedTask = userDateSelection
 	}
 
 	private func getAllMatchingAttributesForTime() {
-		switch selectedAttributeForTime {
+		switch selectedTaskAttribute {
 		case .title:
-			matchingAttributesForTime = Set(tasksInTimeframe.map { $0.name ?? "" }).filter { !$0.isEmpty }
+			matchingTasksByAttribute = Set(tasksInTimeframe.map { $0.name ?? "" }).filter { !$0.isEmpty }
 		case .project:
-			matchingAttributesForTime = Set(tasksInTimeframe.map { $0.project ?? "" }).filter { !$0.isEmpty }
+			matchingTasksByAttribute = Set(tasksInTimeframe.map { $0.project ?? "" }).filter { !$0.isEmpty }
 		case .tags:
-			matchingAttributesForTime = Set(tasksInTimeframe.map { $0.tags ?? "" }).filter { !$0.isEmpty }
+			matchingTasksByAttribute = Set(tasksInTimeframe.map { $0.tags ?? "" }).filter { !$0.isEmpty }
 		case .rate:
-			matchingAttributesForTime = Set(tasksInTimeframe.map { String($0.rate) }).filter { !$0.isEmpty }
+			matchingTasksByAttribute = Set(tasksInTimeframe.map { String($0.rate) }).filter { !$0.isEmpty }
 		}
-		selectedTaskForTime = matchingAttributesForTime.first ?? ""
+		selectedTask = matchingTasksByAttribute.first ?? ""
 	}
 
 	private func getDataForSelectedTaskForTime() {
-		groupedSelectedTasksForTime = groupTaskData(
+		groupedSelectedTaskData = groupTaskData(
 			from: tasksInTimeframe.filter {
-				switch selectedAttributeForTime {
+				switch selectedTaskAttribute {
 				case .title:
-					$0.name == selectedTaskForTime
+					$0.name == selectedTask
 				case .project:
-					$0.project == selectedTaskForTime
+					$0.project == selectedTask
 				case .tags:
-					$0.tags == selectedTaskForTime
+					$0.tags == selectedTask
 				case .rate:
-					String($0.rate) == selectedTaskForTime
+					String($0.rate) == selectedTask
 				}
 			})
 	}
