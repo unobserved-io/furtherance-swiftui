@@ -57,10 +57,13 @@ struct ReportView: View {
 	@State private var rangeIsEmpty: Bool = false
 	@State private var groupingType: GroupStatsBy = .days
 	@State private var groupedTaskData: [GroupOfTasksByTime] = []
+	@State private var groupedSelectedTasksForTime: [GroupOfTasksByTime] = []
 	@State private var selectedEarningsDate: String?
 	@State private var selectedEarningsAmount: Double = 0.0
 	@State private var selectedTimeDate: String?
 	@State private var selectedTimeAmount: Int = 0
+	@State private var selectedTimeDateForSelectedTask: String?
+	@State private var selectedTimeAmountForSelectedTask: Int = 0
 	@State private var selectedAttributeForTime: TaskAttributes = .title
 	@State private var selectedTaskForTime: String = ""
 	@State private var matchingAttributesForTime: Set<String> = []
@@ -304,20 +307,41 @@ struct ReportView: View {
 								}
 							}
 							.labelsHidden()
+							.onChange(of: selectedTaskForTime) {
+								getDataForSelectedTaskForTime()
+							}
 						}
 
 						Chart {
-							ForEach(groupedTaskData) { taskGroup in
-								LineMark(
-									x: .value("Date", taskGroup.readableDate),
-									y: .value("Minutes", taskGroup.time)
-								)
+							ForEach(groupedSelectedTasksForTime) { taskGroup in
+								// Use a bar chart when there isn't enough data for a good line chart
+								if groupedSelectedTasksForTime.count > 2 {
+									LineMark(
+										x: .value("Date", taskGroup.readableDate),
+										y: .value("Minutes", taskGroup.time)
+									)
+								} else {
+									BarMark(
+										x: .value("Date", taskGroup.readableDate),
+										y: .value("Minutes", taskGroup.time)
+									)
+								}
 							}
-							if let selectedTimeDate {
-								RectangleMark(x: .value("Date", selectedTimeDate))
+							if let selectedTimeDateForSelectedTask {
+								RectangleMark(
+									x:
+											.value(
+												"Date",
+												selectedTimeDateForSelectedTask
+											)
+								)
 									.foregroundStyle(.accent.opacity(0.2))
 									.annotation(position: .overlay, alignment: .center, spacing: 0) {
-										Text(formatTimeShort(selectedTimeAmount))
+										Text(
+											formatTimeShort(
+												selectedTimeAmountForSelectedTask
+											)
+										)
 											.rotationEffect(.degrees(-90))
 											.frame(width: Self.chartFrameHeight)
 									}
@@ -340,9 +364,9 @@ struct ReportView: View {
 										.onContinuousHover { hoverPhase in
 											switch hoverPhase {
 											case .active(let hoverLocation):
-												updateSelectedTimeOnHover(at: hoverLocation.x, proxy: proxy)
+												updateSelectedTimeForSelectedTaskOnHover(at: hoverLocation.x, proxy: proxy)
 											case .ended:
-												selectedTimeDate = nil
+												selectedTimeDateForSelectedTask = nil
 											}
 										}
 									#else
@@ -387,7 +411,7 @@ struct ReportView: View {
 	private func processAllData() {
 		groupedTaskData = []
 		groupingType = decideGroupingType()
-		groupedTaskData = groupTaskData()
+		groupedTaskData = groupTaskData(from: Array(tasksInTimeframe))
 	}
 
 	private func decideGroupingType() -> GroupStatsBy {
@@ -412,9 +436,9 @@ struct ReportView: View {
 		}
 	}
 
-	private func groupTaskData() -> [GroupOfTasksByTime] {
+	private func groupTaskData(from tasksToGroup: [FurTask]) -> [GroupOfTasksByTime] {
 		var timeGroups: [GroupOfTasksByTime] = []
-		for task in tasksInTimeframe {
+		for task in tasksToGroup {
 			switch groupingType {
 			case .days:
 				if let matchingGroup = timeGroups
@@ -562,6 +586,19 @@ struct ReportView: View {
 		selectedTimeDate = userDateSelection
 	}
 
+	private func updateSelectedTimeForSelectedTaskOnHover(at location: CGFloat, proxy: ChartProxy) {
+		guard let userDateSelection: String = proxy.value(atX: location, as: String.self) else {
+			return
+		}
+		if let selectedDayData = groupedSelectedTasksForTime.first(
+			where: { String($0.readableDate) == userDateSelection
+			})
+		{
+			selectedTimeAmountForSelectedTask = selectedDayData.time
+		}
+		selectedTimeDateForSelectedTask = userDateSelection
+	}
+
 	private func getAllMatchingAttributesForTime() {
 		switch selectedAttributeForTime {
 		case .title:
@@ -574,6 +611,22 @@ struct ReportView: View {
 			matchingAttributesForTime = Set(tasksInTimeframe.map { String($0.rate) }).filter { !$0.isEmpty }
 		}
 		selectedTaskForTime = matchingAttributesForTime.first ?? ""
+	}
+
+	private func getDataForSelectedTaskForTime() {
+		groupedSelectedTasksForTime = groupTaskData(
+			from: tasksInTimeframe.filter {
+				switch selectedAttributeForTime {
+				case .title:
+					$0.name == selectedTaskForTime
+				case .project:
+					$0.project == selectedTaskForTime
+				case .tags:
+					$0.tags == selectedTaskForTime
+				case .rate:
+					String($0.rate) == selectedTaskForTime
+				}
+			})
 	}
 }
 
