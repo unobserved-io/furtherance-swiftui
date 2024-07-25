@@ -208,6 +208,7 @@ struct ChartsView: View {
 
 						VStack(spacing: Self.titleToChartSpacing) {
 							Text("Earnings")
+								.font(.title)
 							Chart {
 								ForEach(groupedTaskData) { taskGroup in
 									LineMark(
@@ -270,6 +271,7 @@ struct ChartsView: View {
 
 					VStack(spacing: Self.titleToChartSpacing) {
 						Text("Time")
+							.font(.title)
 						Chart {
 							ForEach(groupedTaskData) { taskGroup in
 								LineMark(
@@ -324,6 +326,7 @@ struct ChartsView: View {
 
 					VStack(spacing: Self.titleToChartSpacing) {
 						Text("Average earned per task")
+							.font(.title)
 						Chart {
 							ForEach(groupedTaskData) { taskGroup in
 								LineMark(
@@ -389,6 +392,7 @@ struct ChartsView: View {
 
 					VStack(spacing: Self.titleToChartSpacing) {
 						Text("Average time per task")
+							.font(.title)
 						Chart {
 							ForEach(groupedTaskData) { taskGroup in
 								LineMark(
@@ -445,8 +449,11 @@ struct ChartsView: View {
 
 					// MARK: Charts by selection
 
+					Divider()
+
 					VStack(spacing: Self.titleToChartSpacing) {
-						Text("Time by selection")
+						Text("Breakdown By Selection")
+							.font(.largeTitle)
 
 						HStack {
 							Picker(
@@ -476,6 +483,8 @@ struct ChartsView: View {
 							}
 						}
 
+						Text("Selection By Time")
+							.font(.title)
 						Chart {
 							ForEach(groupedSelectedTaskData) { taskGroup in
 								// Use a bar chart when there isn't enough data for a good line chart
@@ -546,7 +555,7 @@ struct ChartsView: View {
 						if groupedSelectedTaskData
 							.contains(where: { $0.earnings > 0 })
 						{
-							Text("Earnings by selection")
+							Text("Selection By Earnings")
 
 							Chart {
 								ForEach(groupedSelectedTaskData) { taskGroup in
