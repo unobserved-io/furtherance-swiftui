@@ -8,13 +8,6 @@
 import Charts
 import SwiftUI
 
-private enum GroupStatsBy {
-	case days
-	case weeks
-	case months
-	case years
-}
-
 struct ReportView: View {
 	static let titleToChartSpacing: CGFloat? = 20
 	static let chartFrameHeight: CGFloat? = 300
@@ -40,6 +33,22 @@ struct ReportView: View {
 		case custom
 	}
 
+	private enum GroupStatsBy {
+		case days
+		case weeks
+		case months
+		case years
+	}
+
+	private enum TaskAttributes: String, Hashable, CaseIterable, Identifiable {
+		case title
+		case project
+		case tags
+		case rate
+
+		var id: Self { self }
+	}
+
 	@AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
 
 	@State var rangeStartDate: Date = Calendar.current.date(byAdding: .day, value: -6, to: Date.now.startOfDay) ?? Date.now
@@ -52,225 +61,310 @@ struct ReportView: View {
 	@State private var selectedEarningsAmount: Double = 0.0
 	@State private var selectedTimeDate: String?
 	@State private var selectedTimeAmount: Int = 0
+	@State private var selectedAttributeForTime: TaskAttributes = .title
+	@State private var selectedTaskForTime: String = ""
+	@State private var matchingAttributesForTime: Set<String> = []
 
 	var body: some View {
-		VStack(spacing: 5) {
-			VStack {
-				Picker("Timeframe", selection: $timeframe) {
-					Text("This week").tag(Timeframe.thisWeek)
-					Text("Last week").tag(Timeframe.lastWeek)
-					Text("Past 7 days").tag(Timeframe.past7Days)
-					Text("This month").tag(Timeframe.thisMonth)
-					Text("Last month").tag(Timeframe.lastMonth)
-					Text("Past 30 days").tag(Timeframe.thirtyDays)
-					Text("Past 180 days").tag(Timeframe.oneEightyDays)
-					Text("Past year").tag(Timeframe.year)
-					Text("All time").tag(Timeframe.allTime)
-					Text("Date range").tag(Timeframe.custom)
-				}
-				.onChange(of: timeframe) { _, newTimeframe in
-					var newStartDate = Calendar.current.startOfDay(for: Date.now)
-					var newStopDate = Date.now
-					switch newTimeframe {
-					case .thisWeek:
-						newStartDate = newStartDate.startOfWeek
-					case .lastWeek:
-						newStartDate = Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: Calendar.current.date(byAdding: .weekOfYear, value: -1, to: newStartDate) ?? Date.now).date ?? Date.now
-						newStopDate = newStartDate.endOfWeek
-					case .past7Days:
-						newStartDate = Calendar.current.date(byAdding: .day, value: -6, to: newStartDate) ?? Date.now
-					case .thisMonth:
-						newStartDate = Date.now.startOfMonth
-					case .lastMonth:
-						let endOfLastMonth = Calendar.current.date(byAdding: .day, value: -1, to: Date.now.startOfMonth) ?? Date.now
-						newStartDate = endOfLastMonth.startOfMonth
-						newStopDate = newStartDate.endOfMonth
-					case .thirtyDays:
-						newStartDate = Calendar.current.date(byAdding: .day, value: -29, to: newStartDate) ?? Date.now
-					case .oneEightyDays:
-						newStartDate = Calendar.current.date(byAdding: .day, value: -179, to: newStartDate) ?? Date.now
-					case .year:
-						newStartDate = Calendar.current.date(byAdding: .day, value: -364, to: newStartDate) ?? Date.now
-					case .allTime:
-						newStartDate = Date(timeIntervalSince1970: 0)
-					case .custom:
-						newStartDate = rangeStartDate
-						newStopDate = rangeEndDate
+		ScrollView {
+			VStack(spacing: 5) {
+				VStack {
+					Picker("Timeframe", selection: $timeframe) {
+						Text("This week").tag(Timeframe.thisWeek)
+						Text("Last week").tag(Timeframe.lastWeek)
+						Text("Past 7 days").tag(Timeframe.past7Days)
+						Text("This month").tag(Timeframe.thisMonth)
+						Text("Last month").tag(Timeframe.lastMonth)
+						Text("Past 30 days").tag(Timeframe.thirtyDays)
+						Text("Past 180 days").tag(Timeframe.oneEightyDays)
+						Text("Past year").tag(Timeframe.year)
+						Text("All time").tag(Timeframe.allTime)
+						Text("Date range").tag(Timeframe.custom)
 					}
-					tasksInTimeframe.nsPredicate = NSPredicate(format: "(startTime >= %@) AND (startTime <= %@)", newStartDate as NSDate, newStopDate as NSDate)
-					rangeStartDate = newStartDate
-					rangeEndDate = newStopDate
-				}
-
-				if timeframe == .custom {
-					HStack {
-						DatePicker(
-							selection: $rangeStartDate,
-							in: Date(
-								timeIntervalSinceReferenceDate: 0
-							) ... rangeEndDate,
-							displayedComponents: [.date],
-							label: {}
-						)
-						.labelsHidden()
-						.onChange(of: rangeStartDate) { _, newStartDate in
-							rangeStartDate = newStartDate.startOfDay
-							tasksInTimeframe.nsPredicate = NSPredicate(format: "(startTime >= %@) AND (startTime <= %@)", rangeStartDate as NSDate, rangeEndDate as NSDate)
+					.onChange(of: timeframe) { _, newTimeframe in
+						var newStartDate = Calendar.current.startOfDay(for: Date.now)
+						var newStopDate = Date.now
+						switch newTimeframe {
+						case .thisWeek:
+							newStartDate = newStartDate.startOfWeek
+						case .lastWeek:
+							newStartDate = Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: Calendar.current.date(byAdding: .weekOfYear, value: -1, to: newStartDate) ?? Date.now).date ?? Date.now
+							newStopDate = newStartDate.endOfWeek
+						case .past7Days:
+							newStartDate = Calendar.current.date(byAdding: .day, value: -6, to: newStartDate) ?? Date.now
+						case .thisMonth:
+							newStartDate = Date.now.startOfMonth
+						case .lastMonth:
+							let endOfLastMonth = Calendar.current.date(byAdding: .day, value: -1, to: Date.now.startOfMonth) ?? Date.now
+							newStartDate = endOfLastMonth.startOfMonth
+							newStopDate = newStartDate.endOfMonth
+						case .thirtyDays:
+							newStartDate = Calendar.current.date(byAdding: .day, value: -29, to: newStartDate) ?? Date.now
+						case .oneEightyDays:
+							newStartDate = Calendar.current.date(byAdding: .day, value: -179, to: newStartDate) ?? Date.now
+						case .year:
+							newStartDate = Calendar.current.date(byAdding: .day, value: -364, to: newStartDate) ?? Date.now
+						case .allTime:
+							newStartDate = Date(timeIntervalSince1970: 0)
+						case .custom:
+							newStartDate = rangeStartDate
+							newStopDate = rangeEndDate
 						}
-						Text("to")
-						DatePicker(
-							selection: $rangeEndDate,
-							in: rangeStartDate ... Date.now.endOfDay,
-							displayedComponents: [.date],
-							label: {}
-						)
-						.frame(minHeight: 35)
-						.labelsHidden()
-						.onChange(of: rangeEndDate) { _, newStopDate in
-							rangeEndDate = newStopDate.endOfDay
-							tasksInTimeframe.nsPredicate = NSPredicate(
-								format: "(startTime >= %@) AND (startTime <= %@)",
-								rangeStartDate as NSDate,
-								rangeEndDate as NSDate
+						tasksInTimeframe.nsPredicate = NSPredicate(format: "(startTime >= %@) AND (startTime <= %@)", newStartDate as NSDate, newStopDate as NSDate)
+						rangeStartDate = newStartDate
+						rangeEndDate = newStopDate
+					}
+
+					if timeframe == .custom {
+						HStack {
+							DatePicker(
+								selection: $rangeStartDate,
+								in: Date(
+									timeIntervalSinceReferenceDate: 0
+								) ... rangeEndDate,
+								displayedComponents: [.date],
+								label: {}
 							)
+							.labelsHidden()
+							.onChange(of: rangeStartDate) { _, newStartDate in
+								rangeStartDate = newStartDate.startOfDay
+								tasksInTimeframe.nsPredicate = NSPredicate(format: "(startTime >= %@) AND (startTime <= %@)", rangeStartDate as NSDate, rangeEndDate as NSDate)
+							}
+							Text("to")
+							DatePicker(
+								selection: $rangeEndDate,
+								in: rangeStartDate ... Date.now.endOfDay,
+								displayedComponents: [.date],
+								label: {}
+							)
+							.frame(minHeight: 35)
+							.labelsHidden()
+							.onChange(of: rangeEndDate) { _, newStopDate in
+								rangeEndDate = newStopDate.endOfDay
+								tasksInTimeframe.nsPredicate = NSPredicate(
+									format: "(startTime >= %@) AND (startTime <= %@)",
+									rangeStartDate as NSDate,
+									rangeEndDate as NSDate
+								)
+							}
 						}
 					}
 				}
-			}
-			.padding()
+				.padding()
 
-			Divider().padding(.bottom)
+				Divider().padding(.bottom)
 
-			if !tasksInTimeframe.isEmpty {
-				HStack {
-					Text("Total time: \(formatTimeLong(getTotalTime()))")
-						.font(Font.monospacedDigit(.system(.body))())
-						.bold()
+				if !tasksInTimeframe.isEmpty {
 					HStack {
-						Text("Total earnings: ")
+						Text("Total time: \(formatTimeLong(getTotalTime()))")
 							.font(Font.monospacedDigit(.system(.body))())
 							.bold()
-						Text(getTotalEarnings(), format: .currency(code: getCurrencyCode(for: chosenCurrency)))
-					}
-				}
-
-				VStack(spacing: Self.titleToChartSpacing) {
-					Text("Earnings")
-					Chart {
-						ForEach(groupedTaskData) { taskGroup in
-							LineMark(
-								x: .value("Date", taskGroup.readableDate),
-								y: .value("Earnings", taskGroup.earnings)
-							)
+						HStack {
+							Text("Total earnings: ")
+								.font(Font.monospacedDigit(.system(.body))())
+								.bold()
+							Text(getTotalEarnings(), format: .currency(code: getCurrencyCode(for: chosenCurrency)))
 						}
-						if let selectedEarningsDate {
-							RectangleMark(x: .value("Date", selectedEarningsDate))
-								.foregroundStyle(.accent.opacity(0.2))
-								.annotation(position: .overlay, alignment: .center, spacing: 0) {
-									Text(
-										selectedEarningsAmount, format:
-												.currency(
-													code: getCurrencyCode(
-														for: chosenCurrency
-													)
+					}
+
+					VStack(spacing: Self.titleToChartSpacing) {
+						Text("Earnings")
+						Chart {
+							ForEach(groupedTaskData) { taskGroup in
+								LineMark(
+									x: .value("Date", taskGroup.readableDate),
+									y: .value("Earnings", taskGroup.earnings)
+								)
+							}
+							if let selectedEarningsDate {
+								RectangleMark(x: .value("Date", selectedEarningsDate))
+									.foregroundStyle(.accent.opacity(0.2))
+									.annotation(position: .overlay, alignment: .center, spacing: 0) {
+										Text(
+											selectedEarningsAmount, format:
+											.currency(
+												code: getCurrencyCode(
+													for: chosenCurrency
 												)
-									)
+											)
+										)
 										.rotationEffect(.degrees(-90))
 										.frame(width: Self.chartFrameHeight)
+									}
+							}
+						}
+						.chartYAxis {
+							AxisMarks(position: .leading) {
+								let value = $0.as(Int.self)! // Using Int removes cents
+								AxisValueLabel {
+									Text("$\(value)")
 								}
-						}
-					}
-					.chartYAxis {
-						AxisMarks(position: .leading) {
-							let value = $0.as(Int.self)! // Using Int removes cents
-							AxisValueLabel {
-								Text("$\(value)")
+								AxisGridLine()
 							}
-							AxisGridLine()
 						}
-					}
-					.chartOverlay { proxy in
-						GeometryReader { geometry in
-							ZStack(alignment: .top) {
-								Rectangle().fill(.clear).contentShape(Rectangle())
-#if os(macOS)
-									.onContinuousHover { hoverPhase in
-										switch hoverPhase {
-										case .active(let hoverLocation):
-											updateSelectedEarningsOnHover(at: hoverLocation.x, proxy: proxy)
-										case .ended:
-											selectedEarningsDate = nil
+						.chartOverlay { proxy in
+							GeometryReader { geometry in
+								ZStack(alignment: .top) {
+									Rectangle().fill(.clear).contentShape(Rectangle())
+									#if os(macOS)
+										.onContinuousHover { hoverPhase in
+											switch hoverPhase {
+											case .active(let hoverLocation):
+												updateSelectedEarningsOnHover(at: hoverLocation.x, proxy: proxy)
+											case .ended:
+												selectedEarningsDate = nil
+											}
 										}
-									}
-#else
-									.onTapGesture { location in
-										updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
-									}
-#endif
+									#else
+										.onTapGesture { location in
+												updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+											}
+									#endif
+								}
 							}
 						}
+						.frame(height: Self.chartFrameHeight)
 					}
-					.frame(height: Self.chartFrameHeight)
-				}
 
-				VStack(spacing: Self.titleToChartSpacing) {
-					Text("Time")
-					Chart {
-						ForEach(groupedTaskData) { taskGroup in
-							LineMark(
-								x: .value("Date", taskGroup.readableDate),
-								y: .value("Minutes", taskGroup.time)
-							)
+					VStack(spacing: Self.titleToChartSpacing) {
+						Text("Time")
+						Chart {
+							ForEach(groupedTaskData) { taskGroup in
+								LineMark(
+									x: .value("Date", taskGroup.readableDate),
+									y: .value("Minutes", taskGroup.time)
+								)
+							}
+							if let selectedTimeDate {
+								RectangleMark(x: .value("Date", selectedTimeDate))
+									.foregroundStyle(.accent.opacity(0.2))
+									.annotation(position: .overlay, alignment: .center, spacing: 0) {
+										Text(formatTimeShort(selectedTimeAmount))
+											.rotationEffect(.degrees(-90))
+											.frame(width: Self.chartFrameHeight)
+									}
+							}
 						}
-						if let selectedTimeDate {
-							RectangleMark(x: .value("Date", selectedTimeDate))
-								.foregroundStyle(.accent.opacity(0.2))
-								.annotation(position: .overlay, alignment: .center, spacing: 0) {
-									Text(formatTimeShort(selectedTimeAmount))
-									.rotationEffect(.degrees(-90))
-									.frame(width: Self.chartFrameHeight)
+						.chartYAxis {
+							AxisMarks(position: .leading) {
+								let value = $0.as(Int.self)!
+								AxisValueLabel {
+									Text("\(formatTimeShort(value))")
 								}
-						}
-					}
-					.chartYAxis {
-						AxisMarks(position: .leading) {
-							let value = $0.as(Int.self)!
-							AxisValueLabel {
-								Text("\(formatTimeShort(value))")
+								AxisGridLine()
 							}
-							AxisGridLine()
 						}
-					}
-					.chartOverlay { proxy in
-						GeometryReader { geometry in
-							ZStack(alignment: .top) {
-								Rectangle().fill(.clear).contentShape(Rectangle())
-#if os(macOS)
-									.onContinuousHover { hoverPhase in
-										switch hoverPhase {
-										case .active(let hoverLocation):
-											updateSelectedTimeOnHover(at: hoverLocation.x, proxy: proxy)
-										case .ended:
-											selectedTimeDate = nil
+						.chartOverlay { proxy in
+							GeometryReader { geometry in
+								ZStack(alignment: .top) {
+									Rectangle().fill(.clear).contentShape(Rectangle())
+									#if os(macOS)
+										.onContinuousHover { hoverPhase in
+											switch hoverPhase {
+											case .active(let hoverLocation):
+												updateSelectedTimeOnHover(at: hoverLocation.x, proxy: proxy)
+											case .ended:
+												selectedTimeDate = nil
+											}
 										}
-									}
-#else
-									.onTapGesture { location in
-										updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
-									}
-#endif
+									#else
+										.onTapGesture { location in
+												updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+											}
+									#endif
+								}
 							}
 						}
+						.frame(height: Self.chartFrameHeight)
 					}
-					.frame(height: Self.chartFrameHeight)
-				}
-				.task(id: tasksInTimeframe.count) {
-					processAllData()
-				}
-				.onAppear {
-					processAllData()
+
+					VStack(spacing: Self.titleToChartSpacing) {
+						Text("Time by selection")
+
+						HStack {
+							Picker(
+								"Time by selection",
+								selection: $selectedAttributeForTime
+							) {
+								ForEach(TaskAttributes.allCases) { taskAttribute in
+									Text(taskAttribute.rawValue.capitalized)
+								}
+							}
+							.labelsHidden()
+							.onChange(of: selectedAttributeForTime) {
+								getAllMatchingAttributesForTime()
+							}
+
+							Picker(
+								"Time by selection",
+								selection: $selectedTaskForTime
+							) {
+								ForEach(Array(matchingAttributesForTime), id: \.self) { attribute in
+									Text(attribute)
+								}
+							}
+							.labelsHidden()
+						}
+
+						Chart {
+							ForEach(groupedTaskData) { taskGroup in
+								LineMark(
+									x: .value("Date", taskGroup.readableDate),
+									y: .value("Minutes", taskGroup.time)
+								)
+							}
+							if let selectedTimeDate {
+								RectangleMark(x: .value("Date", selectedTimeDate))
+									.foregroundStyle(.accent.opacity(0.2))
+									.annotation(position: .overlay, alignment: .center, spacing: 0) {
+										Text(formatTimeShort(selectedTimeAmount))
+											.rotationEffect(.degrees(-90))
+											.frame(width: Self.chartFrameHeight)
+									}
+							}
+						}
+						.chartYAxis {
+							AxisMarks(position: .leading) {
+								let value = $0.as(Int.self)!
+								AxisValueLabel {
+									Text("\(formatTimeShort(value))")
+								}
+								AxisGridLine()
+							}
+						}
+						.chartOverlay { proxy in
+							GeometryReader { geometry in
+								ZStack(alignment: .top) {
+									Rectangle().fill(.clear).contentShape(Rectangle())
+									#if os(macOS)
+										.onContinuousHover { hoverPhase in
+											switch hoverPhase {
+											case .active(let hoverLocation):
+												updateSelectedTimeOnHover(at: hoverLocation.x, proxy: proxy)
+											case .ended:
+												selectedTimeDate = nil
+											}
+										}
+									#else
+										.onTapGesture { location in
+												updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+											}
+									#endif
+								}
+							}
+						}
+						.frame(height: Self.chartFrameHeight)
+					}
+					.task(id: tasksInTimeframe.count) {
+						processAllData()
+					}
+					.onAppear {
+						processAllData()
+						getAllMatchingAttributesForTime()
+					}
 				}
 			}
+			.padding(10)
 		}
 	}
 
@@ -466,6 +560,20 @@ struct ReportView: View {
 			selectedTimeAmount = selectedDayData.time
 		}
 		selectedTimeDate = userDateSelection
+	}
+
+	private func getAllMatchingAttributesForTime() {
+		switch selectedAttributeForTime {
+		case .title:
+			matchingAttributesForTime = Set(tasksInTimeframe.map { $0.name ?? "" }).filter { !$0.isEmpty }
+		case .project:
+			matchingAttributesForTime = Set(tasksInTimeframe.map { $0.project ?? "" }).filter { !$0.isEmpty }
+		case .tags:
+			matchingAttributesForTime = Set(tasksInTimeframe.map { $0.tags ?? "" }).filter { !$0.isEmpty }
+		case .rate:
+			matchingAttributesForTime = Set(tasksInTimeframe.map { String($0.rate) }).filter { !$0.isEmpty }
+		}
+		selectedTaskForTime = matchingAttributesForTime.first ?? ""
 	}
 }
 
