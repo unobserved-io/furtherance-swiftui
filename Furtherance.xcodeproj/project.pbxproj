@@ -13,6 +13,7 @@
 		9C1026672A361B5000FB95D8 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1026662A361B5000FB95D8 /* AddTaskView.swift */; };
 		9C108A452A5ADF4A00BD60D3 /* IOSReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C108A442A5ADF4A00BD60D3 /* IOSReportsView.swift */; platformFilter = ios; };
 		9C18F3B92B9B344C00201168 /* MacContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C18F3B82B9B344C00201168 /* MacContentView.swift */; };
+		9C1B39742C52C1F0001EEAE6 /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1B39732C52C1F0001EEAE6 /* ReportView.swift */; };
 		9C27D34629A8B2630012C274 /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C27D34529A8B2630012C274 /* GroupView.swift */; };
 		9C27D34829A8B5460012C274 /* ClickedGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C27D34729A8B5460012C274 /* ClickedGroup.swift */; };
 		9C2CD6E22BA85E4600965528 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2CD6E12BA85E4600965528 /* Enums.swift */; };
@@ -74,6 +75,7 @@
 		9C1026662A361B5000FB95D8 /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
 		9C108A442A5ADF4A00BD60D3 /* IOSReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSReportsView.swift; sourceTree = "<group>"; };
 		9C18F3B82B9B344C00201168 /* MacContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacContentView.swift; sourceTree = "<group>"; };
+		9C1B39732C52C1F0001EEAE6 /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
 		9C27D34529A8B2630012C274 /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
 		9C27D34729A8B5460012C274 /* ClickedGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickedGroup.swift; sourceTree = "<group>"; };
 		9C2CD6E12BA85E4600965528 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 			children = (
 				9C3BD94729BE808A00637D36 /* ReportListView.swift */,
 				9C3649DB2C4EB99900ABD778 /* ChartsView.swift */,
+				9C1B39732C52C1F0001EEAE6 /* ReportView.swift */,
 			);
 			path = Report;
 			sourceTree = "<group>";
@@ -476,6 +479,7 @@
 				9C3649DC2C4EB9AC00ABD778 /* ChartsView.swift in Sources */,
 				9C632F2D2C48DCBC004ADEA9 /* Shortcut.swift in Sources */,
 				9C4683EA2A502F7C006D1B7A /* AdvancedSettingsView.swift in Sources */,
+				9C1B39742C52C1F0001EEAE6 /* ReportView.swift in Sources */,
 				9C94FF3C2B6EC5F7007EC064 /* TaskInputView.swift in Sources */,
 				9C9F8EB32B99E7620064BF69 /* TextWithBadge.swift in Sources */,
 				9C4B2C772B6512530099CB9A /* StartFurtheranceTimerIntent.swift in Sources */,
