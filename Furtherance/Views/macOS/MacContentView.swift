@@ -55,7 +55,7 @@ struct MacContentView: View {
                     )
                     .environmentObject(clickedGroup)
                     .environmentObject(clickedTask)
-                case .report: ReportView()
+                case .report: ChartsView()
                 }
             } else {
                 TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)

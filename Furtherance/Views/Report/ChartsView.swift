@@ -8,7 +8,7 @@
 import Charts
 import SwiftUI
 
-struct ReportView: View {
+struct ChartsView: View {
 	static let titleToChartSpacing: CGFloat? = 20
 	static let chartFrameHeight: CGFloat? = 300
 
@@ -917,5 +917,5 @@ class GroupOfTasksByTime: Identifiable {
 }
 
 #Preview {
-	ReportView()
+	ChartsView()
 }

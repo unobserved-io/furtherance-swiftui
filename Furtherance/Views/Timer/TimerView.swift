@@ -267,7 +267,7 @@ struct TimerView: View {
                     GroupView()
                 } else if path == .reports {
                     #if os(macOS)
-                        ReportView()
+                        ChartsView()
                             .navigationTitle("Time Reports")
                     #else
                         IOSReportsView()
