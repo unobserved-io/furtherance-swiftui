@@ -139,13 +139,12 @@ struct ReportListView: View {
                     Picker("Filter by:", selection: $filterBy) {
                         Text("None").tag(FilterBy.none)
                         Text("Task").tag(FilterBy.task)
-                        Text("Project").tag(FilterBy.task)
+						Text("Project").tag(FilterBy.project)
                         Text("Tag").tag(FilterBy.tags)
                     }
                     TextField("", text: Binding(
                         get: { filterInput },
                         set: { newValue in
-							// TODO: Add projects
                             if filterBy == .task {
                                 filterInput = newValue.trimmingCharacters(in: ["#"])
                             } else {
@@ -253,7 +252,19 @@ struct ReportListView: View {
                         match = true
                     }
                 }
-            } else {
+			} else if filterBy == .project && !filterInput.isEmpty {
+				// Breakdown tags to see if they match one of the filter input
+				if exactMatch {
+					if task.project?.lowercased() == filterInput.lowercased() {
+						match = true
+					}
+				} else {
+					if task.project?.lowercased()
+						.contains(filterInput.lowercased()) ?? false {
+						match = true
+					}
+				}
+			} else {
                 match = true
             }
             
@@ -296,6 +307,18 @@ struct ReportListView: View {
 					}
 				} else {
 					if task.tags?.contains(filterInput.lowercased()) ?? false {
+						match = true
+					}
+				}
+			}  else if filterBy == .project && !filterInput.isEmpty {
+				// Breakdown tags to see if they match one of the filter input
+				if exactMatch {
+					if task.project?.lowercased() == filterInput.lowercased() {
+						match = true
+					}
+				} else {
+					if task.project?.lowercased()
+						.contains(filterInput.lowercased()) ?? false {
 						match = true
 					}
 				}
@@ -346,7 +369,19 @@ struct ReportListView: View {
                         match = true
                     }
                 }
-            } else {
+			} else if filterBy == .project && !filterInput.isEmpty {
+				// Breakdown tags to see if they match one of the filter input
+				if exactMatch {
+					if task.project?.lowercased() == filterInput.lowercased() {
+						match = true
+					}
+				} else {
+					if task.project?.lowercased()
+						.contains(filterInput.lowercased()) ?? false {
+						match = true
+					}
+				}
+			} else {
                 match = true
             }
             
@@ -478,7 +513,6 @@ struct ReportByProject: Identifiable {
 	var taskNames: [(String, Int)] = []
 
 	init(_ task: FurTask) {
-		print(task.project)
 		if task.project?.isEmpty ?? true {
 			heading = "No project"
 		} else {
