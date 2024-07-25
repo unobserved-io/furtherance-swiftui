@@ -544,7 +544,7 @@ struct ReportView: View {
 				}
 			}
 		}
-		return timeGroups
+		return timeGroups.reversed()
 	}
 
 	private func getComponentType() -> Calendar.Component {
