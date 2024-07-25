@@ -98,10 +98,11 @@ final class TimerHelper {
         updateTaskAndTagsIfChanged()
         saveTask()
         taskTagsInput.text = ""
+		resetAll()
         refreshAfterMidnight()
         resetPersistentTimer()
     }
-    
+
     func updatePersistentTimerTaskName() {
         #if os(iOS)
             ptTaskName = taskName
@@ -277,6 +278,13 @@ final class TimerHelper {
             ptNameAndTags = ""
         #endif
     }
+
+	private func resetAll() {
+		taskName = ""
+		taskProject = ""
+		taskTags = ""
+		taskRate = 0.0
+	}
 }
 
 extension Sequence where Element: Hashable {

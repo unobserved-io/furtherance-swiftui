@@ -15,6 +15,7 @@ struct ReportListView: View {
         animation: .default
     )
     var allTasks: FetchedResults<FurTask>
+
     private enum Timeframe {
         case thisWeek
         case lastWeek
@@ -27,14 +28,22 @@ struct ReportListView: View {
         case allTime
         case custom
     }
+
     private enum FilterBy {
         case none
         case task
+		case project
         case tags
     }
-    
+
+	private enum SortBy {
+		case task
+		case project
+		case tags
+	}
+
     @State private var timeframe: Timeframe = .thirtyDays
-    @State private var sortByTask: Bool = true
+	@State private var sortByTask: SortBy = .task
     @State private var filterBy: FilterBy = .none
     @State private var filter: Bool = false
     @State private var exactMatch: Bool = false
@@ -120,8 +129,9 @@ struct ReportListView: View {
                 }
 
                 Picker("Sort by", selection: $sortByTask) {
-                    Text("Task").tag(true)
-                    Text("Tag").tag(false)
+					Text("Task").tag(SortBy.task)
+					Text("Project").tag(SortBy.project)
+					Text("Tag").tag(SortBy.tags)
                 }
                 .pickerStyle(.segmented)
 
@@ -129,11 +139,13 @@ struct ReportListView: View {
                     Picker("Filter by:", selection: $filterBy) {
                         Text("None").tag(FilterBy.none)
                         Text("Task").tag(FilterBy.task)
+                        Text("Project").tag(FilterBy.task)
                         Text("Tag").tag(FilterBy.tags)
                     }
                     TextField("", text: Binding(
                         get: { filterInput },
                         set: { newValue in
+							// TODO: Add projects
                             if filterBy == .task {
                                 filterInput = newValue.trimmingCharacters(in: ["#"])
                             } else {
@@ -157,7 +169,7 @@ struct ReportListView: View {
                 .font(Font.monospacedDigit(.system(.body))())
                 .bold()
             
-            if sortByTask {
+			if sortByTask == .task {
                 List {
                     ForEach(sortedByTask()) { reportedTask in
                         Section(header: sectionHeader(heading: reportedTask.heading, totalSeconds: reportedTask.totalSeconds)) {
@@ -174,7 +186,7 @@ struct ReportListView: View {
                     }
                 }
                     
-            } else {
+			} else if sortByTask == .tags {
                 // Sorted by tag
                 List {
                     ForEach(sortedByTag()) { reportedTag in
@@ -191,7 +203,25 @@ struct ReportListView: View {
                         }
                     }
                 }
-            }
+			} else {
+				// TODO: Sorted by project
+				List {
+					ForEach(sortedByProject()) { reportedProject in
+						Section(header: sectionHeader(heading: reportedProject.heading, totalSeconds: reportedProject.totalSeconds)) {
+							ForEach(reportedProject.taskNames, id:\.0) { taskKey, taskInt in
+								HStack {
+									Text(taskKey)
+									Spacer()
+									Text(formatTimeLong(taskInt))
+										.font(Font.monospacedDigit(.system(.body))())
+								}
+								.listRowInsets(EdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24))
+							}
+						}
+					}
+				}
+
+			}
         }
         .frame(minWidth: 360, idealWidth: 400, minHeight: 170, idealHeight: 600)
     }
@@ -241,7 +271,54 @@ struct ReportListView: View {
         
         return uniqueList
     }
-    
+
+	private func sortedByProject() -> [ReportByProject] {
+		var uniqueList: [ReportByProject] = []
+
+		for task in allTasks {
+			var match = false
+
+			if filterBy == .task && !filterInput.isEmpty {
+				if exactMatch {
+					if task.name?.lowercased() == filterInput.lowercased() {
+						match = true
+					}
+				} else {
+					if task.name?.lowercased().contains(filterInput.lowercased()) ?? false {
+						match = true
+					}
+				}
+			} else if filterBy == .tags && !filterInput.isEmpty {
+				// Breakdown tags to see if they match one of the filter input
+				if exactMatch {
+					if task.tags == filterInput.lowercased() {
+						match = true
+					}
+				} else {
+					if task.tags?.contains(filterInput.lowercased()) ?? false {
+						match = true
+					}
+				}
+			} else {
+				match = true
+			}
+
+			if match {
+				if let index = uniqueList.firstIndex(
+					where: { $0.heading.uppercased() == task.project?.uppercased()
+					}) {
+					// Task was found
+					uniqueList[index].addTask(task)
+				} else {
+					// Task not found
+					uniqueList.append(ReportByProject(task))
+				}
+			}
+		}
+
+		return uniqueList
+	}
+
     private func sortedByTag() -> [ReportByTags] {
         var uniqueList: [ReportByTags] = []
         
@@ -392,6 +469,36 @@ struct ReportByTags: Identifiable {
             taskNames.append((task.name ?? "Unknown", Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0))
         }
     }
+}
+
+struct ReportByProject: Identifiable {
+	var id = UUID()
+	let heading: String
+	var totalSeconds: Int = 0
+	var taskNames: [(String, Int)] = []
+
+	init(_ task: FurTask) {
+		print(task.project)
+		if task.project?.isEmpty ?? true {
+			heading = "No project"
+		} else {
+			heading = task.project ?? "No project"
+		}
+		addTask(task)
+	}
+
+	mutating func addTask(_ task: FurTask) {
+		// add total time to total seconds
+		totalSeconds = totalSeconds + (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+
+		// check if tags contains tags. Either way, add time
+		let index = taskNames.firstIndex { $0.0 == task.name }
+		if let index {
+			taskNames[index].1 += (Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0)
+		} else {
+			taskNames.append((task.name ?? "Unknown", Calendar.current.dateComponents([.second], from: task.startTime!, to: task.stopTime!).second ?? 0))
+		}
+	}
 }
 
 struct ReportsView_Previews: PreviewProvider {
