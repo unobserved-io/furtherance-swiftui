@@ -78,6 +78,7 @@ struct ReportView: View {
 		ScrollView {
 			VStack(spacing: 5) {
 				// MARK: Date range selector
+
 				VStack {
 					Picker("Timeframe", selection: $timeframe) {
 						Text("This week").tag(Timeframe.thisWeek)
@@ -166,6 +167,7 @@ struct ReportView: View {
 
 				if !tasksInTimeframe.isEmpty {
 					// MARK: Total time and earnings in range
+
 					HStack {
 						Text("Total time: \(formatTimeLong(getTotalTime()))")
 							.font(Font.monospacedDigit(.system(.body))())
@@ -180,6 +182,7 @@ struct ReportView: View {
 
 					if groupedTaskData.contains(where: { $0.earnings > 0 }) {
 						// MARK: Total earnings chart
+
 						VStack(spacing: Self.titleToChartSpacing) {
 							Text("Earnings")
 							Chart {
@@ -241,6 +244,7 @@ struct ReportView: View {
 					}
 
 					// MARK: Total time chart
+
 					VStack(spacing: Self.titleToChartSpacing) {
 						Text("Time")
 						Chart {
@@ -293,7 +297,8 @@ struct ReportView: View {
 						.frame(height: Self.chartFrameHeight)
 					}
 
-					// MARK: Average time spent on each task
+					// MARK: Average earnings per task
+
 					VStack(spacing: Self.titleToChartSpacing) {
 						Text("Average earned per task")
 						Chart {
@@ -301,10 +306,10 @@ struct ReportView: View {
 								LineMark(
 									x: .value("Date", taskGroup.readableDate),
 									y:
-											.value(
-												"Earnings",
-												taskGroup.earnings / Double(taskGroup.numberOfTasks)
-											)
+									.value(
+										"Earnings",
+										taskGroup.earnings / Double(taskGroup.numberOfTasks)
+									)
 								)
 							}
 							if let averageEarningsDate {
@@ -313,14 +318,14 @@ struct ReportView: View {
 									.annotation(position: .overlay, alignment: .center, spacing: 0) {
 										Text(
 											averageEarningsAmount, format:
-													.currency(
-														code: getCurrencyCode(
-															for: chosenCurrency
-														)
-													)
+											.currency(
+												code: getCurrencyCode(
+													for: chosenCurrency
+												)
+											)
 										)
-											.rotationEffect(.degrees(-90))
-											.frame(width: Self.chartFrameHeight)
+										.rotationEffect(.degrees(-90))
+										.frame(width: Self.chartFrameHeight)
 									}
 							}
 						}
@@ -337,7 +342,7 @@ struct ReportView: View {
 							GeometryReader { geometry in
 								ZStack(alignment: .top) {
 									Rectangle().fill(.clear).contentShape(Rectangle())
-#if os(macOS)
+									#if os(macOS)
 										.onContinuousHover { hoverPhase in
 											switch hoverPhase {
 											case .active(let hoverLocation):
@@ -346,18 +351,19 @@ struct ReportView: View {
 												averageEarningsDate = nil
 											}
 										}
-#else
+									#else
 										.onTapGesture { location in
-											updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
-										}
-#endif
+												updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+											}
+									#endif
 								}
 							}
 						}
 						.frame(height: Self.chartFrameHeight)
 					}
 
-					// MARK: Average earnings per task
+					// MARK: Average time per task
+
 					VStack(spacing: Self.titleToChartSpacing) {
 						Text("Average time per task")
 						Chart {
@@ -365,14 +371,14 @@ struct ReportView: View {
 								LineMark(
 									x: .value("Date", taskGroup.readableDate),
 									y:
-											.value(
-												"Minutes",
-												taskGroup.time / taskGroup.numberOfTasks
-											)
+									.value(
+										"Minutes",
+										taskGroup.time / taskGroup.numberOfTasks
+									)
 								)
 							}
-							if let selectedTimeDate {
-								RectangleMark(x: .value("Date", selectedTimeDate))
+							if let averageTimeDate {
+								RectangleMark(x: .value("Date", averageTimeDate))
 									.foregroundStyle(.accent.opacity(0.2))
 									.annotation(position: .overlay, alignment: .center, spacing: 0) {
 										Text(formatTimeShort(averageTimeAmount))
@@ -394,7 +400,7 @@ struct ReportView: View {
 							GeometryReader { geometry in
 								ZStack(alignment: .top) {
 									Rectangle().fill(.clear).contentShape(Rectangle())
-#if os(macOS)
+									#if os(macOS)
 										.onContinuousHover { hoverPhase in
 											switch hoverPhase {
 											case .active(let hoverLocation):
@@ -403,11 +409,11 @@ struct ReportView: View {
 												averageTimeDate = nil
 											}
 										}
-#else
+									#else
 										.onTapGesture { location in
-											updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
-										}
-#endif
+												updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+											}
+									#endif
 								}
 							}
 						}
@@ -415,6 +421,7 @@ struct ReportView: View {
 					}
 
 					// MARK: Charts by selection
+
 					VStack(spacing: Self.titleToChartSpacing) {
 						Text("Time by selection")
 
