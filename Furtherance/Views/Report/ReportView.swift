@@ -19,122 +19,124 @@ struct ReportView: View {
 	static let titleToChartSpacing: CGFloat? = 20
 	static let chartFrameHeight: CGFloat? = 300
 
-    @FetchRequest(
-        entity: FurTask.entity(),
-        sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
-        predicate: NSPredicate(format: "(startTime >= %@) AND (startTime <= %@)", (Calendar.current.date(byAdding: .day, value: -29, to: Calendar.current.startOfDay(for: Date.now)) ?? Date.now) as NSDate, Date.now as NSDate),
-        animation: .default
-    )
-    var tasksInTimeframe: FetchedResults<FurTask>
+	@FetchRequest(
+		entity: FurTask.entity(),
+		sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
+		predicate: NSPredicate(format: "(startTime >= %@) AND (startTime <= %@)", (Calendar.current.date(byAdding: .day, value: -29, to: Calendar.current.startOfDay(for: Date.now)) ?? Date.now) as NSDate, Date.now as NSDate),
+		animation: .default
+	)
+	var tasksInTimeframe: FetchedResults<FurTask>
 
-    private enum Timeframe {
-        case thisWeek
-        case lastWeek
-        case past7Days
-        case thisMonth
-        case lastMonth
-        case thirtyDays
-        case oneEightyDays
-        case year
-        case allTime
-        case custom
-    }
+	private enum Timeframe {
+		case thisWeek
+		case lastWeek
+		case past7Days
+		case thisMonth
+		case lastMonth
+		case thirtyDays
+		case oneEightyDays
+		case year
+		case allTime
+		case custom
+	}
 
 	@AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
 
 	@State var rangeStartDate: Date = Calendar.current.date(byAdding: .day, value: -6, to: Date.now.startOfDay) ?? Date.now
 	@State var rangeEndDate: Date = .now.endOfDay
-    @State private var timeframe: Timeframe = .thirtyDays
+	@State private var timeframe: Timeframe = .thirtyDays
 	@State private var rangeIsEmpty: Bool = false
 	@State private var groupingType: GroupStatsBy = .days
 	@State private var groupedTaskData: [GroupOfTasksByTime] = []
+	@State private var selectedEarningsDate: String?
+	@State private var selectedEarningsAmount: Double = 0.0
 
-    var body: some View {
-        VStack(spacing: 5) {
-            VStack {
-                Picker("Timeframe", selection: $timeframe) {
-                    Text("This week").tag(Timeframe.thisWeek)
-                    Text("Last week").tag(Timeframe.lastWeek)
-                    Text("Past 7 days").tag(Timeframe.past7Days)
-                    Text("This month").tag(Timeframe.thisMonth)
-                    Text("Last month").tag(Timeframe.lastMonth)
-                    Text("Past 30 days").tag(Timeframe.thirtyDays)
-                    Text("Past 180 days").tag(Timeframe.oneEightyDays)
-                    Text("Past year").tag(Timeframe.year)
-                    Text("All time").tag(Timeframe.allTime)
-                    Text("Date range").tag(Timeframe.custom)
-                }
-                .onChange(of: timeframe) { _, newTimeframe in
-                    var newStartDate = Calendar.current.startOfDay(for: Date.now)
-                    var newStopDate = Date.now
-                    switch newTimeframe {
-                    case .thisWeek:
-                        newStartDate = newStartDate.startOfWeek
-                    case .lastWeek:
-                        newStartDate = Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: (Calendar.current.date(byAdding: .weekOfYear, value: -1, to: newStartDate) ?? Date.now)).date ?? Date.now
-                        newStopDate = newStartDate.endOfWeek
-                    case .past7Days:
-                        newStartDate = Calendar.current.date(byAdding: .day, value: -6, to: newStartDate) ?? Date.now
-                    case .thisMonth:
-                        newStartDate = Date.now.startOfMonth
-                    case .lastMonth:
-                        let endOfLastMonth = Calendar.current.date(byAdding: .day, value: -1, to: Date.now.startOfMonth) ?? Date.now
-                        newStartDate = endOfLastMonth.startOfMonth
-                        newStopDate = newStartDate.endOfMonth
-                    case .thirtyDays:
-                        newStartDate = Calendar.current.date(byAdding: .day, value: -29, to: newStartDate) ?? Date.now
-                    case .oneEightyDays:
-                        newStartDate = Calendar.current.date(byAdding: .day, value: -179, to: newStartDate) ?? Date.now
-                    case .year:
-                        newStartDate = Calendar.current.date(byAdding: .day, value: -364, to: newStartDate) ?? Date.now
-                    case .allTime:
-                        newStartDate = Date(timeIntervalSince1970: 0)
-                    case .custom:
+	var body: some View {
+		VStack(spacing: 5) {
+			VStack {
+				Picker("Timeframe", selection: $timeframe) {
+					Text("This week").tag(Timeframe.thisWeek)
+					Text("Last week").tag(Timeframe.lastWeek)
+					Text("Past 7 days").tag(Timeframe.past7Days)
+					Text("This month").tag(Timeframe.thisMonth)
+					Text("Last month").tag(Timeframe.lastMonth)
+					Text("Past 30 days").tag(Timeframe.thirtyDays)
+					Text("Past 180 days").tag(Timeframe.oneEightyDays)
+					Text("Past year").tag(Timeframe.year)
+					Text("All time").tag(Timeframe.allTime)
+					Text("Date range").tag(Timeframe.custom)
+				}
+				.onChange(of: timeframe) { _, newTimeframe in
+					var newStartDate = Calendar.current.startOfDay(for: Date.now)
+					var newStopDate = Date.now
+					switch newTimeframe {
+					case .thisWeek:
+						newStartDate = newStartDate.startOfWeek
+					case .lastWeek:
+						newStartDate = Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: Calendar.current.date(byAdding: .weekOfYear, value: -1, to: newStartDate) ?? Date.now).date ?? Date.now
+						newStopDate = newStartDate.endOfWeek
+					case .past7Days:
+						newStartDate = Calendar.current.date(byAdding: .day, value: -6, to: newStartDate) ?? Date.now
+					case .thisMonth:
+						newStartDate = Date.now.startOfMonth
+					case .lastMonth:
+						let endOfLastMonth = Calendar.current.date(byAdding: .day, value: -1, to: Date.now.startOfMonth) ?? Date.now
+						newStartDate = endOfLastMonth.startOfMonth
+						newStopDate = newStartDate.endOfMonth
+					case .thirtyDays:
+						newStartDate = Calendar.current.date(byAdding: .day, value: -29, to: newStartDate) ?? Date.now
+					case .oneEightyDays:
+						newStartDate = Calendar.current.date(byAdding: .day, value: -179, to: newStartDate) ?? Date.now
+					case .year:
+						newStartDate = Calendar.current.date(byAdding: .day, value: -364, to: newStartDate) ?? Date.now
+					case .allTime:
+						newStartDate = Date(timeIntervalSince1970: 0)
+					case .custom:
 						newStartDate = rangeStartDate
 						newStopDate = rangeEndDate
-                    }
+					}
 					tasksInTimeframe.nsPredicate = NSPredicate(format: "(startTime >= %@) AND (startTime <= %@)", newStartDate as NSDate, newStopDate as NSDate)
 					rangeStartDate = newStartDate
 					rangeEndDate = newStopDate
-                }
-                
-                if timeframe == .custom {
-                    HStack {
-                        DatePicker(
-                            selection: $rangeStartDate,
+				}
+
+				if timeframe == .custom {
+					HStack {
+						DatePicker(
+							selection: $rangeStartDate,
 							in: Date(
 								timeIntervalSinceReferenceDate: 0
 							) ... rangeEndDate,
-                            displayedComponents: [.date],
-                            label: {}
-                        )
-                        .labelsHidden()
-                        .onChange(of: rangeStartDate) { _, newStartDate in
+							displayedComponents: [.date],
+							label: {}
+						)
+						.labelsHidden()
+						.onChange(of: rangeStartDate) { _, newStartDate in
 							rangeStartDate = newStartDate.startOfDay
 							tasksInTimeframe.nsPredicate = NSPredicate(format: "(startTime >= %@) AND (startTime <= %@)", rangeStartDate as NSDate, rangeEndDate as NSDate)
-                        }
-                        Text("to")
-                        DatePicker(
-                            selection: $rangeEndDate,
-                            in: rangeStartDate ... Date.now.endOfDay,
-                            displayedComponents: [.date],
-                            label: {}
-                        )
-                        .frame(minHeight: 35)
-                        .labelsHidden()
-                        .onChange(of: rangeEndDate) { _, newStopDate in
+						}
+						Text("to")
+						DatePicker(
+							selection: $rangeEndDate,
+							in: rangeStartDate ... Date.now.endOfDay,
+							displayedComponents: [.date],
+							label: {}
+						)
+						.frame(minHeight: 35)
+						.labelsHidden()
+						.onChange(of: rangeEndDate) { _, newStopDate in
 							rangeEndDate = newStopDate.endOfDay
 							tasksInTimeframe.nsPredicate = NSPredicate(
 								format: "(startTime >= %@) AND (startTime <= %@)",
 								rangeStartDate as NSDate,
 								rangeEndDate as NSDate
 							)
-                        }
-                    }
-                }
-            }
-            .padding()
-			
+						}
+					}
+				}
+			}
+			.padding()
+
 			Divider().padding(.bottom)
 
 			if !tasksInTimeframe.isEmpty {
@@ -159,15 +161,22 @@ struct ReportView: View {
 								y: .value("Earnings", taskGroup.earnings)
 							)
 						}
-						//				if let selectedEarningsDate {
-						//					RectangleMark(x: .value("Date", selectedEarningsDate))
-						//						.foregroundStyle(.blue.opacity(0.2))
-						//						.annotation(position: .overlay, alignment: .center, spacing: 0) {
-						//							Text(selectedEarningsAmount, format: .currency(code: "USD"))
-						//								.rotationEffect(.degrees(-90))
-						//								.frame(width: chartFrameHeight)
-						//						}
-						//				}
+						if let selectedEarningsDate {
+							RectangleMark(x: .value("Date", selectedEarningsDate))
+								.foregroundStyle(.accent.opacity(0.2))
+								.annotation(position: .overlay, alignment: .center, spacing: 0) {
+									Text(
+										selectedEarningsAmount, format: 
+												.currency(
+													code: getCurrencyCode(
+														for: chosenCurrency
+													)
+												)
+									)
+										.rotationEffect(.degrees(-90))
+										.frame(width: Self.chartFrameHeight)
+								}
+						}
 					}
 					.chartYAxis {
 						AxisMarks(position: .leading) {
@@ -178,27 +187,27 @@ struct ReportView: View {
 							AxisGridLine()
 						}
 					}
-					//			.chartOverlay { proxy in
-					//				GeometryReader { geometry in
-					//					ZStack(alignment: .top) {
-					//						Rectangle().fill(.clear).contentShape(Rectangle())
-					//#if os(macOS)
-					//							.onContinuousHover { hoverPhase in
-					//								switch hoverPhase {
-					//								case .active(let hoverLocation):
-					//									updateSelectedEarningsOnHover(at: hoverLocation.x, proxy: proxy)
-					//								case .ended:
-					//									selectedEarningsDate = nil
-					//								}
-					//							}
-					//#else
-					//							.onTapGesture { location in
-					//								updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
-					//							}
-					//#endif
-					//					}
-					//				}
-					//			}
+					.chartOverlay { proxy in
+						GeometryReader { geometry in
+							ZStack(alignment: .top) {
+								Rectangle().fill(.clear).contentShape(Rectangle())
+#if os(macOS)
+									.onContinuousHover { hoverPhase in
+										switch hoverPhase {
+										case .active(let hoverLocation):
+											updateSelectedEarningsOnHover(at: hoverLocation.x, proxy: proxy)
+										case .ended:
+											selectedEarningsDate = nil
+										}
+									}
+#else
+									.onTapGesture { location in
+										updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+									}
+#endif
+							}
+						}
+					}
 					.frame(height: Self.chartFrameHeight)
 				}
 				.task(id: tasksInTimeframe.count) {
@@ -209,7 +218,7 @@ struct ReportView: View {
 				}
 			}
 		}
-    }
+	}
 
 	private func getTotalTime() -> Int {
 		var totalTaskTime = 0
@@ -220,7 +229,7 @@ struct ReportView: View {
 	}
 
 	private func getTotalEarnings() -> Double {
-		var totalEarnings: Double = 0.0
+		var totalEarnings = 0.0
 		totalEarnings += tasksInTimeframe.map {
 			($0.rate / 3600.0) * Double(Calendar.current.dateComponents([.second], from: $0.startTime ?? .distantPast, to: $0.stopTime ?? .distantFuture).second ?? 0)
 		}.reduce(0,+)
@@ -379,15 +388,18 @@ struct ReportView: View {
 		}
 	}
 
-	//	private func updateSelectedEarningsOnHover(at location: CGFloat, proxy: ChartProxy) {
-	//		guard let userDateSelection: String = proxy.value(atX: location, as: String.self) else {
-	//			return
-	//		}
-	//		if let selectedDayData = dayDataInRange.first(where: { String($0.grouping) == userDateSelection }) {
-	//			selectedEarningsAmount = selectedDayData.earned
-	//		}
-	//		selectedEarningsDate = userDateSelection
-	//	}
+	private func updateSelectedEarningsOnHover(at location: CGFloat, proxy: ChartProxy) {
+		guard let userDateSelection: String = proxy.value(atX: location, as: String.self) else {
+			return
+		}
+		if let selectedDayData = groupedTaskData.first(
+			where: { String($0.readableDate) == userDateSelection
+			})
+		{
+			selectedEarningsAmount = selectedDayData.earnings
+		}
+		selectedEarningsDate = userDateSelection
+	}
 }
 
 class GroupOfTasksByTime: Identifiable {
@@ -401,7 +413,7 @@ class GroupOfTasksByTime: Identifiable {
 	init(from task: FurTask, readableDate: String) {
 		self.time = (Calendar.current.dateComponents([.second], from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now).second ?? 0)
 		if task.rate > 0 {
-			self.earnings = (task.rate / 3600.0) * Double(self.time)
+			self.earnings = (task.rate / 3600.0) * Double(time)
 		} else {
 			self.earnings = 0.0
 		}
@@ -420,5 +432,5 @@ class GroupOfTasksByTime: Identifiable {
 }
 
 #Preview {
-    ReportView()
+	ReportView()
 }
