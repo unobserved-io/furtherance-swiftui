@@ -9,7 +9,7 @@ import Charts
 import SwiftUI
 
 struct ChartsView: View {
-	static let titleToChartSpacing: CGFloat? = 20
+	static let titleToChartSpacing: CGFloat? = 30
 	static let chartFrameHeight: CGFloat? = 300
 
 	@FetchRequest(
@@ -76,7 +76,7 @@ struct ChartsView: View {
 
 	var body: some View {
 		ScrollView {
-			VStack(spacing: 5) {
+			VStack(spacing: 20) {
 				// MARK: Date range selector
 
 				VStack {
@@ -167,17 +167,40 @@ struct ChartsView: View {
 
 				if !tasksInTimeframe.isEmpty {
 					// MARK: Total time and earnings in range
-
 					HStack {
-						Text("Total time: \(formatTimeLong(getTotalTime()))")
-							.font(Font.monospacedDigit(.system(.body))())
-							.bold()
-						HStack {
-							Text("Total earnings: ")
-								.font(Font.monospacedDigit(.system(.body))())
-								.bold()
-							Text(getTotalEarnings(), format: .currency(code: getCurrencyCode(for: chosenCurrency)))
+						VStack {
+							VStack {
+								HStack(alignment: .lastTextBaseline) {
+									Text(formatTimeLong(getTotalTime()))
+										.font(.system(size: 55))
+										.foregroundStyle(.accent)
+								}
+								Text("Total time")
+									.font(.title2)
+							}
+							.frame(maxWidth: .infinity)
+							.padding()
 						}
+						.background(.accent.opacity(0.2))
+						.clipShape(RoundedRectangle(cornerRadius: 15))
+						.frame(alignment: .center)
+
+						VStack {
+							VStack {
+								HStack(alignment: .lastTextBaseline) {
+									Text(getTotalEarnings(), format: .currency(code: getCurrencyCode(for: chosenCurrency)))
+										.font(.system(size: 55))
+										.foregroundStyle(.accent)
+								}
+								Text("Earned")
+									.font(.title2)
+							}
+							.frame(maxWidth: .infinity)
+							.padding()
+						}
+						.background(.accent.opacity(0.2))
+						.clipShape(RoundedRectangle(cornerRadius: 15))
+						.frame(alignment: .center)
 					}
 
 					if groupedTaskData.contains(where: { $0.earnings > 0 }) {
