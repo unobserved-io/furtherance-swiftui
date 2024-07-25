@@ -64,6 +64,8 @@ struct ReportView: View {
 	@State private var selectedTimeAmount: Int = 0
 	@State private var averageTimeDate: String?
 	@State private var averageTimeAmount: Int = 0
+	@State private var averageEarningsDate: String?
+	@State private var averageEarningsAmount: Double = 0.0
 	@State private var timeDateForSelectedTask: String?
 	@State private var timeForSelectedTask: Int = 0
 	@State private var earningsDateForSelectedTask: String?
@@ -75,6 +77,7 @@ struct ReportView: View {
 	var body: some View {
 		ScrollView {
 			VStack(spacing: 5) {
+				// MARK: Date range selector
 				VStack {
 					Picker("Timeframe", selection: $timeframe) {
 						Text("This week").tag(Timeframe.thisWeek)
@@ -162,6 +165,7 @@ struct ReportView: View {
 				Divider().padding(.bottom)
 
 				if !tasksInTimeframe.isEmpty {
+					// MARK: Total time and earnings in range
 					HStack {
 						Text("Total time: \(formatTimeLong(getTotalTime()))")
 							.font(Font.monospacedDigit(.system(.body))())
@@ -175,6 +179,7 @@ struct ReportView: View {
 					}
 
 					if groupedTaskData.contains(where: { $0.earnings > 0 }) {
+						// MARK: Total earnings chart
 						VStack(spacing: Self.titleToChartSpacing) {
 							Text("Earnings")
 							Chart {
@@ -235,6 +240,7 @@ struct ReportView: View {
 						}
 					}
 
+					// MARK: Total time chart
 					VStack(spacing: Self.titleToChartSpacing) {
 						Text("Time")
 						Chart {
@@ -287,7 +293,71 @@ struct ReportView: View {
 						.frame(height: Self.chartFrameHeight)
 					}
 
-					// Average time spent on each task
+					// MARK: Average time spent on each task
+					VStack(spacing: Self.titleToChartSpacing) {
+						Text("Average earned per task")
+						Chart {
+							ForEach(groupedTaskData) { taskGroup in
+								LineMark(
+									x: .value("Date", taskGroup.readableDate),
+									y:
+											.value(
+												"Earnings",
+												taskGroup.earnings / Double(taskGroup.numberOfTasks)
+											)
+								)
+							}
+							if let averageEarningsDate {
+								RectangleMark(x: .value("Date", averageEarningsDate))
+									.foregroundStyle(.accent.opacity(0.2))
+									.annotation(position: .overlay, alignment: .center, spacing: 0) {
+										Text(
+											averageEarningsAmount, format:
+													.currency(
+														code: getCurrencyCode(
+															for: chosenCurrency
+														)
+													)
+										)
+											.rotationEffect(.degrees(-90))
+											.frame(width: Self.chartFrameHeight)
+									}
+							}
+						}
+						.chartYAxis {
+							AxisMarks(position: .leading) {
+								let value = $0.as(Int.self)!
+								AxisValueLabel {
+									Text("\(chosenCurrency)\(value)")
+								}
+								AxisGridLine()
+							}
+						}
+						.chartOverlay { proxy in
+							GeometryReader { geometry in
+								ZStack(alignment: .top) {
+									Rectangle().fill(.clear).contentShape(Rectangle())
+#if os(macOS)
+										.onContinuousHover { hoverPhase in
+											switch hoverPhase {
+											case .active(let hoverLocation):
+												updateAverageEarningsOnHover(at: hoverLocation.x, proxy: proxy)
+											case .ended:
+												averageEarningsDate = nil
+											}
+										}
+#else
+										.onTapGesture { location in
+											updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+										}
+#endif
+								}
+							}
+						}
+						.frame(height: Self.chartFrameHeight)
+					}
+
+					// MARK: Average earnings per task
 					VStack(spacing: Self.titleToChartSpacing) {
 						Text("Average time per task")
 						Chart {
@@ -344,6 +414,7 @@ struct ReportView: View {
 						.frame(height: Self.chartFrameHeight)
 					}
 
+					// MARK: Charts by selection
 					VStack(spacing: Self.titleToChartSpacing) {
 						Text("Time by selection")
 
@@ -737,6 +808,19 @@ struct ReportView: View {
 			averageTimeAmount = selectedDayData.time / selectedDayData.numberOfTasks
 		}
 		averageTimeDate = userDateSelection
+	}
+
+	private func updateAverageEarningsOnHover(at location: CGFloat, proxy: ChartProxy) {
+		guard let userDateSelection: String = proxy.value(atX: location, as: String.self) else {
+			return
+		}
+		if let selectedDayData = groupedTaskData.first(
+			where: { String($0.readableDate) == userDateSelection
+			})
+		{
+			averageEarningsAmount = selectedDayData.earnings / Double(selectedDayData.numberOfTasks)
+		}
+		averageEarningsDate = userDateSelection
 	}
 
 	private func updateSelectedTimeForSelectedTaskOnHover(at location: CGFloat, proxy: ChartProxy) {
