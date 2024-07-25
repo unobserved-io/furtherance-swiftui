@@ -395,6 +395,7 @@ class GroupOfTasksByTime: Identifiable {
 	var earnings: Double
 	var date: Date
 	var readableDate: String
+	var numberOfTasks: Int = 1
 	var id = UUID()
 
 	init(from task: FurTask, readableDate: String) {
@@ -414,6 +415,7 @@ class GroupOfTasksByTime: Identifiable {
 		if task.rate > 0 {
 			earnings += (task.rate / 3600.0) * Double(totalTaskTime)
 		}
+		numberOfTasks += 1
 	}
 }
 
