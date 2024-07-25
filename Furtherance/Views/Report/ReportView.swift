@@ -50,6 +50,8 @@ struct ReportView: View {
 	@State private var groupedTaskData: [GroupOfTasksByTime] = []
 	@State private var selectedEarningsDate: String?
 	@State private var selectedEarningsAmount: Double = 0.0
+	@State private var selectedTimeDate: String?
+	@State private var selectedTimeAmount: Int = 0
 
 	var body: some View {
 		VStack(spacing: 5) {
@@ -166,7 +168,7 @@ struct ReportView: View {
 								.foregroundStyle(.accent.opacity(0.2))
 								.annotation(position: .overlay, alignment: .center, spacing: 0) {
 									Text(
-										selectedEarningsAmount, format: 
+										selectedEarningsAmount, format:
 												.currency(
 													code: getCurrencyCode(
 														for: chosenCurrency
@@ -198,6 +200,58 @@ struct ReportView: View {
 											updateSelectedEarningsOnHover(at: hoverLocation.x, proxy: proxy)
 										case .ended:
 											selectedEarningsDate = nil
+										}
+									}
+#else
+									.onTapGesture { location in
+										updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+									}
+#endif
+							}
+						}
+					}
+					.frame(height: Self.chartFrameHeight)
+				}
+
+				VStack(spacing: Self.titleToChartSpacing) {
+					Text("Time")
+					Chart {
+						ForEach(groupedTaskData) { taskGroup in
+							LineMark(
+								x: .value("Date", taskGroup.readableDate),
+								y: .value("Minutes", taskGroup.time)
+							)
+						}
+						if let selectedTimeDate {
+							RectangleMark(x: .value("Date", selectedTimeDate))
+								.foregroundStyle(.accent.opacity(0.2))
+								.annotation(position: .overlay, alignment: .center, spacing: 0) {
+									Text(formatTimeShort(selectedTimeAmount))
+									.rotationEffect(.degrees(-90))
+									.frame(width: Self.chartFrameHeight)
+								}
+						}
+					}
+					.chartYAxis {
+						AxisMarks(position: .leading) {
+							let value = $0.as(Int.self)!
+							AxisValueLabel {
+								Text("\(formatTimeShort(value))")
+							}
+							AxisGridLine()
+						}
+					}
+					.chartOverlay { proxy in
+						GeometryReader { geometry in
+							ZStack(alignment: .top) {
+								Rectangle().fill(.clear).contentShape(Rectangle())
+#if os(macOS)
+									.onContinuousHover { hoverPhase in
+										switch hoverPhase {
+										case .active(let hoverLocation):
+											updateSelectedTimeOnHover(at: hoverLocation.x, proxy: proxy)
+										case .ended:
+											selectedTimeDate = nil
 										}
 									}
 #else
@@ -399,6 +453,19 @@ struct ReportView: View {
 			selectedEarningsAmount = selectedDayData.earnings
 		}
 		selectedEarningsDate = userDateSelection
+	}
+
+	private func updateSelectedTimeOnHover(at location: CGFloat, proxy: ChartProxy) {
+		guard let userDateSelection: String = proxy.value(atX: location, as: String.self) else {
+			return
+		}
+		if let selectedDayData = groupedTaskData.first(
+			where: { String($0.readableDate) == userDateSelection
+			})
+		{
+			selectedTimeAmount = selectedDayData.time
+		}
+		selectedTimeDate = userDateSelection
 	}
 }
 
