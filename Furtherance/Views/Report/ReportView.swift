@@ -62,6 +62,8 @@ struct ReportView: View {
 	@State private var selectedEarningsAmount: Double = 0.0
 	@State private var selectedTimeDate: String?
 	@State private var selectedTimeAmount: Int = 0
+	@State private var averageTimeDate: String?
+	@State private var averageTimeAmount: Int = 0
 	@State private var timeDateForSelectedTask: String?
 	@State private var timeForSelectedTask: Int = 0
 	@State private var earningsDateForSelectedTask: String?
@@ -172,63 +174,65 @@ struct ReportView: View {
 						}
 					}
 
-					VStack(spacing: Self.titleToChartSpacing) {
-						Text("Earnings")
-						Chart {
-							ForEach(groupedTaskData) { taskGroup in
-								LineMark(
-									x: .value("Date", taskGroup.readableDate),
-									y: .value("Earnings", taskGroup.earnings)
-								)
-							}
-							if let selectedEarningsDate {
-								RectangleMark(x: .value("Date", selectedEarningsDate))
-									.foregroundStyle(.accent.opacity(0.2))
-									.annotation(position: .overlay, alignment: .center, spacing: 0) {
-										Text(
-											selectedEarningsAmount, format:
-											.currency(
-												code: getCurrencyCode(
-													for: chosenCurrency
+					if groupedTaskData.contains(where: { $0.earnings > 0 }) {
+						VStack(spacing: Self.titleToChartSpacing) {
+							Text("Earnings")
+							Chart {
+								ForEach(groupedTaskData) { taskGroup in
+									LineMark(
+										x: .value("Date", taskGroup.readableDate),
+										y: .value("Earnings", taskGroup.earnings)
+									)
+								}
+								if let selectedEarningsDate {
+									RectangleMark(x: .value("Date", selectedEarningsDate))
+										.foregroundStyle(.accent.opacity(0.2))
+										.annotation(position: .overlay, alignment: .center, spacing: 0) {
+											Text(
+												selectedEarningsAmount, format:
+												.currency(
+													code: getCurrencyCode(
+														for: chosenCurrency
+													)
 												)
 											)
-										)
-										.rotationEffect(.degrees(-90))
-										.frame(width: Self.chartFrameHeight)
-									}
-							}
-						}
-						.chartYAxis {
-							AxisMarks(position: .leading) {
-								let value = $0.as(Int.self)! // Using Int removes cents
-								AxisValueLabel {
-									Text("\(chosenCurrency)\(value)")
-								}
-								AxisGridLine()
-							}
-						}
-						.chartOverlay { proxy in
-							GeometryReader { geometry in
-								ZStack(alignment: .top) {
-									Rectangle().fill(.clear).contentShape(Rectangle())
-									#if os(macOS)
-										.onContinuousHover { hoverPhase in
-											switch hoverPhase {
-											case .active(let hoverLocation):
-												updateSelectedEarningsOnHover(at: hoverLocation.x, proxy: proxy)
-											case .ended:
-												selectedEarningsDate = nil
-											}
+											.rotationEffect(.degrees(-90))
+											.frame(width: Self.chartFrameHeight)
 										}
-									#else
-										.onTapGesture { location in
-												updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
-											}
-									#endif
 								}
 							}
+							.chartYAxis {
+								AxisMarks(position: .leading) {
+									let value = $0.as(Int.self)! // Using Int removes cents
+									AxisValueLabel {
+										Text("\(chosenCurrency)\(value)")
+									}
+									AxisGridLine()
+								}
+							}
+							.chartOverlay { proxy in
+								GeometryReader { geometry in
+									ZStack(alignment: .top) {
+										Rectangle().fill(.clear).contentShape(Rectangle())
+										#if os(macOS)
+											.onContinuousHover { hoverPhase in
+												switch hoverPhase {
+												case .active(let hoverLocation):
+													updateSelectedEarningsOnHover(at: hoverLocation.x, proxy: proxy)
+												case .ended:
+													selectedEarningsDate = nil
+												}
+											}
+										#else
+											.onTapGesture { location in
+													updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+												}
+										#endif
+									}
+								}
+							}
+							.frame(height: Self.chartFrameHeight)
 						}
-						.frame(height: Self.chartFrameHeight)
 					}
 
 					VStack(spacing: Self.titleToChartSpacing) {
@@ -277,6 +281,63 @@ struct ReportView: View {
 												updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
 											}
 									#endif
+								}
+							}
+						}
+						.frame(height: Self.chartFrameHeight)
+					}
+
+					// Average time spent on each task
+					VStack(spacing: Self.titleToChartSpacing) {
+						Text("Average time per task")
+						Chart {
+							ForEach(groupedTaskData) { taskGroup in
+								LineMark(
+									x: .value("Date", taskGroup.readableDate),
+									y:
+											.value(
+												"Minutes",
+												taskGroup.time / taskGroup.numberOfTasks
+											)
+								)
+							}
+							if let selectedTimeDate {
+								RectangleMark(x: .value("Date", selectedTimeDate))
+									.foregroundStyle(.accent.opacity(0.2))
+									.annotation(position: .overlay, alignment: .center, spacing: 0) {
+										Text(formatTimeShort(averageTimeAmount))
+											.rotationEffect(.degrees(-90))
+											.frame(width: Self.chartFrameHeight)
+									}
+							}
+						}
+						.chartYAxis {
+							AxisMarks(position: .leading) {
+								let value = $0.as(Int.self)!
+								AxisValueLabel {
+									Text("\(formatTimeShort(value))")
+								}
+								AxisGridLine()
+							}
+						}
+						.chartOverlay { proxy in
+							GeometryReader { geometry in
+								ZStack(alignment: .top) {
+									Rectangle().fill(.clear).contentShape(Rectangle())
+#if os(macOS)
+										.onContinuousHover { hoverPhase in
+											switch hoverPhase {
+											case .active(let hoverLocation):
+												updateAverageTimeOnHover(at: hoverLocation.x, proxy: proxy)
+											case .ended:
+												averageTimeDate = nil
+											}
+										}
+#else
+										.onTapGesture { location in
+											updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+										}
+#endif
 								}
 							}
 						}
@@ -332,21 +393,21 @@ struct ReportView: View {
 							if let timeDateForSelectedTask {
 								RectangleMark(
 									x:
-											.value(
-												"Date",
-												timeDateForSelectedTask
-											)
+									.value(
+										"Date",
+										timeDateForSelectedTask
+									)
 								)
-									.foregroundStyle(.accent.opacity(0.2))
-									.annotation(position: .overlay, alignment: .center, spacing: 0) {
-										Text(
-											formatTimeShort(
-												timeForSelectedTask
-											)
+								.foregroundStyle(.accent.opacity(0.2))
+								.annotation(position: .overlay, alignment: .center, spacing: 0) {
+									Text(
+										formatTimeShort(
+											timeForSelectedTask
 										)
-											.rotationEffect(.degrees(-90))
-											.frame(width: Self.chartFrameHeight)
-									}
+									)
+									.rotationEffect(.degrees(-90))
+									.frame(width: Self.chartFrameHeight)
+								}
 							}
 						}
 						.chartYAxis {
@@ -382,7 +443,8 @@ struct ReportView: View {
 						.frame(height: Self.chartFrameHeight)
 
 						if groupedSelectedTaskData
-							.contains(where: { $0.earnings > 0 }) {
+							.contains(where: { $0.earnings > 0 })
+						{
 							Text("Earnings by selection")
 
 							Chart {
@@ -403,22 +465,22 @@ struct ReportView: View {
 								if let earningsDateForSelectedTask {
 									RectangleMark(
 										x:
-												.value(
-													"Date",
-													earningsDateForSelectedTask
-												)
+										.value(
+											"Date",
+											earningsDateForSelectedTask
+										)
 									)
 									.foregroundStyle(.accent.opacity(0.2))
 									.annotation(position: .overlay, alignment: .center, spacing: 0) {
-											Text(
-												earningsForSelectedTask,
-												format:
-														.currency(
-															code: getCurrencyCode(
-																for: chosenCurrency
-															)
-														)
+										Text(
+											earningsForSelectedTask,
+											format:
+											.currency(
+												code: getCurrencyCode(
+													for: chosenCurrency
+												)
 											)
+										)
 										.rotationEffect(.degrees(-90))
 										.frame(width: Self.chartFrameHeight)
 									}
@@ -437,7 +499,7 @@ struct ReportView: View {
 								GeometryReader { geometry in
 									ZStack(alignment: .top) {
 										Rectangle().fill(.clear).contentShape(Rectangle())
-	#if os(macOS)
+										#if os(macOS)
 											.onContinuousHover { hoverPhase in
 												switch hoverPhase {
 												case .active(let hoverLocation):
@@ -446,11 +508,11 @@ struct ReportView: View {
 													earningsDateForSelectedTask = nil
 												}
 											}
-	#else
+										#else
 											.onTapGesture { location in
-												updateEarningsForSelectedTaskOnHover(at: location, proxy: proxy, geometry: geometry)
-											}
-	#endif
+													updateEarningsForSelectedTaskOnHover(at: location, proxy: proxy, geometry: geometry)
+												}
+										#endif
 									}
 								}
 							}
@@ -662,6 +724,19 @@ struct ReportView: View {
 			selectedTimeAmount = selectedDayData.time
 		}
 		selectedTimeDate = userDateSelection
+	}
+
+	private func updateAverageTimeOnHover(at location: CGFloat, proxy: ChartProxy) {
+		guard let userDateSelection: String = proxy.value(atX: location, as: String.self) else {
+			return
+		}
+		if let selectedDayData = groupedTaskData.first(
+			where: { String($0.readableDate) == userDateSelection
+			})
+		{
+			averageTimeAmount = selectedDayData.time / selectedDayData.numberOfTasks
+		}
+		averageTimeDate = userDateSelection
 	}
 
 	private func updateSelectedTimeForSelectedTaskOnHover(at location: CGFloat, proxy: ChartProxy) {
