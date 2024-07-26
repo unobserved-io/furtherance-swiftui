@@ -14,6 +14,7 @@
 		9C108A452A5ADF4A00BD60D3 /* IOSReportsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C108A442A5ADF4A00BD60D3 /* IOSReportsView.swift */; platformFilter = ios; };
 		9C18F3B92B9B344C00201168 /* MacContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C18F3B82B9B344C00201168 /* MacContentView.swift */; };
 		9C1B39742C52C1F0001EEAE6 /* ReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1B39732C52C1F0001EEAE6 /* ReportView.swift */; };
+		9C1B39762C537981001EEAE6 /* ReportSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1B39752C537981001EEAE6 /* ReportSettingsView.swift */; };
 		9C27D34629A8B2630012C274 /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C27D34529A8B2630012C274 /* GroupView.swift */; };
 		9C27D34829A8B5460012C274 /* ClickedGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C27D34729A8B5460012C274 /* ClickedGroup.swift */; };
 		9C2CD6E22BA85E4600965528 /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C2CD6E12BA85E4600965528 /* Enums.swift */; };
@@ -76,6 +77,7 @@
 		9C108A442A5ADF4A00BD60D3 /* IOSReportsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSReportsView.swift; sourceTree = "<group>"; };
 		9C18F3B82B9B344C00201168 /* MacContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MacContentView.swift; sourceTree = "<group>"; };
 		9C1B39732C52C1F0001EEAE6 /* ReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportView.swift; sourceTree = "<group>"; };
+		9C1B39752C537981001EEAE6 /* ReportSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSettingsView.swift; sourceTree = "<group>"; };
 		9C27D34529A8B2630012C274 /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
 		9C27D34729A8B5460012C274 /* ClickedGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClickedGroup.swift; sourceTree = "<group>"; };
 		9C2CD6E12BA85E4600965528 /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
@@ -197,6 +199,7 @@
 				9C4683EC2A503015006D1B7A /* PomodoroSettingsView.swift */,
 				9C4683EE2A503059006D1B7A /* BuyProView.swift */,
 				9C9F8EB22B99E7620064BF69 /* TextWithBadge.swift */,
+				9C1B39752C537981001EEAE6 /* ReportSettingsView.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -441,6 +444,7 @@
 				9CDA71822B4E694A00758CE2 /* TimeDisplayView.swift in Sources */,
 				9C4683ED2A503015006D1B7A /* PomodoroSettingsView.swift in Sources */,
 				9CA84E2729A7767500A28FDA /* TaskTagsInput.swift in Sources */,
+				9C1B39762C537981001EEAE6 /* ReportSettingsView.swift in Sources */,
 				9C3649E02C502BC100ABD778 /* RuntimeError.swift in Sources */,
 				9C27D34829A8B5460012C274 /* ClickedGroup.swift in Sources */,
 				9CA84E3629A7AE0600A28FDA /* TimerHelper.swift in Sources */,
