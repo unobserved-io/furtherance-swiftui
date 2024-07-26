@@ -211,10 +211,17 @@ struct ChartsView: View {
 								.font(.title)
 							Chart {
 								ForEach(groupedTaskData) { taskGroup in
-									LineMark(
-										x: .value("Date", taskGroup.readableDate),
-										y: .value("Earnings", taskGroup.earnings)
-									)
+									if groupedTaskData.count > 1 {
+										LineMark(
+											x: .value("Date", taskGroup.readableDate),
+											y: .value("Earnings", taskGroup.earnings)
+										)
+									} else {
+										BarMark(
+											x: .value("Date", taskGroup.readableDate),
+											y: .value("Earnings", taskGroup.earnings)
+										)
+									}
 								}
 								if let selectedEarningsDate {
 									RectangleMark(x: .value("Date", selectedEarningsDate))
@@ -274,10 +281,17 @@ struct ChartsView: View {
 							.font(.title)
 						Chart {
 							ForEach(groupedTaskData) { taskGroup in
-								LineMark(
-									x: .value("Date", taskGroup.readableDate),
-									y: .value("Minutes", taskGroup.time)
-								)
+								if groupedTaskData.count > 1 {
+									LineMark(
+										x: .value("Date", taskGroup.readableDate),
+										y: .value("Minutes", taskGroup.time)
+									)
+								} else {
+									BarMark(
+										x: .value("Date", taskGroup.readableDate),
+										y: .value("Minutes", taskGroup.time)
+									)
+								}
 							}
 							if let selectedTimeDate {
 								RectangleMark(x: .value("Date", selectedTimeDate))
@@ -324,68 +338,81 @@ struct ChartsView: View {
 
 					// MARK: Average earnings per task
 
-					VStack(spacing: Self.titleToChartSpacing) {
-						Text("Average earned per task")
-							.font(.title)
-						Chart {
-							ForEach(groupedTaskData) { taskGroup in
-								LineMark(
-									x: .value("Date", taskGroup.readableDate),
-									y:
-									.value(
-										"Earnings",
-										taskGroup.earnings / Double(taskGroup.numberOfTasks)
-									)
-								)
-							}
-							if let averageEarningsDate {
-								RectangleMark(x: .value("Date", averageEarningsDate))
-									.foregroundStyle(.accent.opacity(0.2))
-									.annotation(position: .overlay, alignment: .center, spacing: 0) {
-										Text(
-											averageEarningsAmount, format:
-											.currency(
-												code: getCurrencyCode(
-													for: chosenCurrency
-												)
+					if groupedTaskData.contains(where: { $0.earnings > 0 }) {
+						VStack(spacing: Self.titleToChartSpacing) {
+							Text("Average earned per task")
+								.font(.title)
+							Chart {
+								ForEach(groupedTaskData) { taskGroup in
+									if groupedTaskData.count > 1 {
+										LineMark(
+											x: .value("Date", taskGroup.readableDate),
+											y:
+											.value(
+												"Earnings",
+												taskGroup.earnings / Double(taskGroup.numberOfTasks)
 											)
 										)
-										.rotationEffect(.degrees(-90))
-										.frame(width: Self.chartFrameHeight)
+									} else {
+										BarMark(
+											x: .value("Date", taskGroup.readableDate),
+											y:
+													.value(
+														"Earnings",
+														taskGroup.earnings / Double(taskGroup.numberOfTasks)
+													)
+										)
 									}
-							}
-						}
-						.chartYAxis {
-							AxisMarks(position: .leading) {
-								let value = $0.as(Int.self)!
-								AxisValueLabel {
-									Text("\(chosenCurrency)\(value)")
 								}
-								AxisGridLine()
-							}
-						}
-						.chartOverlay { proxy in
-							GeometryReader { geometry in
-								ZStack(alignment: .top) {
-									Rectangle().fill(.clear).contentShape(Rectangle())
-									#if os(macOS)
-										.onContinuousHover { hoverPhase in
-											switch hoverPhase {
-											case .active(let hoverLocation):
-												updateAverageEarningsOnHover(at: hoverLocation.x, proxy: proxy)
-											case .ended:
-												averageEarningsDate = nil
-											}
+								if let averageEarningsDate {
+									RectangleMark(x: .value("Date", averageEarningsDate))
+										.foregroundStyle(.accent.opacity(0.2))
+										.annotation(position: .overlay, alignment: .center, spacing: 0) {
+											Text(
+												averageEarningsAmount, format:
+												.currency(
+													code: getCurrencyCode(
+														for: chosenCurrency
+													)
+												)
+											)
+											.rotationEffect(.degrees(-90))
+											.frame(width: Self.chartFrameHeight)
 										}
-									#else
-										.onTapGesture { location in
-												updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
-											}
-									#endif
 								}
 							}
+							.chartYAxis {
+								AxisMarks(position: .leading) {
+									let value = $0.as(Int.self)!
+									AxisValueLabel {
+										Text("\(chosenCurrency)\(value)")
+									}
+									AxisGridLine()
+								}
+							}
+							.chartOverlay { proxy in
+								GeometryReader { geometry in
+									ZStack(alignment: .top) {
+										Rectangle().fill(.clear).contentShape(Rectangle())
+										#if os(macOS)
+											.onContinuousHover { hoverPhase in
+												switch hoverPhase {
+												case .active(let hoverLocation):
+													updateAverageEarningsOnHover(at: hoverLocation.x, proxy: proxy)
+												case .ended:
+													averageEarningsDate = nil
+												}
+											}
+										#else
+											.onTapGesture { location in
+													updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+												}
+										#endif
+									}
+								}
+							}
+							.frame(height: Self.chartFrameHeight)
 						}
-						.frame(height: Self.chartFrameHeight)
 					}
 
 					// MARK: Average time per task
@@ -395,14 +422,25 @@ struct ChartsView: View {
 							.font(.title)
 						Chart {
 							ForEach(groupedTaskData) { taskGroup in
-								LineMark(
-									x: .value("Date", taskGroup.readableDate),
-									y:
-									.value(
-										"Minutes",
-										taskGroup.time / taskGroup.numberOfTasks
+								if groupedTaskData.count > 1 {
+									LineMark(
+										x: .value("Date", taskGroup.readableDate),
+										y:
+										.value(
+											"Minutes",
+											taskGroup.time / taskGroup.numberOfTasks
+										)
 									)
-								)
+								} else {
+									BarMark(
+										x: .value("Date", taskGroup.readableDate),
+										y:
+												.value(
+													"Minutes",
+													taskGroup.time / taskGroup.numberOfTasks
+												)
+									)
+								}
 							}
 							if let averageTimeDate {
 								RectangleMark(x: .value("Date", averageTimeDate))
