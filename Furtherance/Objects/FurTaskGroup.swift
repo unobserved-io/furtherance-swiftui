@@ -38,7 +38,7 @@ class FurTaskGroup: Identifiable, ObservableObject {
     
     func isEqual(to task: FurTask) -> Bool {
         if name == task.name,
-		   project.lowercased() == task.project?.lowercased(),
+		   project.lowercased() == task.project?.lowercased() ?? "",
            tags == task.tags,
            rate == task.rate {
             return true
