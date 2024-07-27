@@ -203,10 +203,9 @@ struct ReportListView: View {
                     }
                 }
 			} else {
-				// TODO: Sorted by project
 				List {
 					ForEach(sortedByProject()) { reportedProject in
-						Section(header: sectionHeader(heading: reportedProject.heading, totalSeconds: reportedProject.totalSeconds)) {
+						Section(header: sectionHeader(heading: reportedProject.heading.localizedCapitalized, totalSeconds: reportedProject.totalSeconds)) {
 							ForEach(reportedProject.taskNames, id:\.0) { taskKey, taskInt in
 								HStack {
 									Text(taskKey)

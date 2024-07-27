@@ -532,7 +532,8 @@ struct ChartsView: View {
 										selection: $selectedTask
 									) {
 										ForEach(Array(matchingTasksByAttribute), id: \.self) { attribute in
-											Text(attribute)
+											Text(
+												selectedTaskAttribute == .project ? attribute.localizedCapitalized : attribute)
 										}
 									}
 									.labelsHidden()
@@ -963,7 +964,10 @@ struct ChartsView: View {
 		case .title:
 			matchingTasksByAttribute = Set(tasksInTimeframe.map { $0.name ?? "" }).filter { !$0.isEmpty }
 		case .project:
-			matchingTasksByAttribute = Set(tasksInTimeframe.map { $0.project ?? "" }).filter { !$0.isEmpty }
+			matchingTasksByAttribute = Set(
+				tasksInTimeframe.map { $0.project?.lowercased() ?? ""
+				})
+			.filter { !$0.isEmpty }
 		case .tags:
 			matchingTasksByAttribute = Set(tasksInTimeframe.map { $0.tags ?? "" }).filter { !$0.isEmpty }
 		case .rate:
@@ -979,7 +983,7 @@ struct ChartsView: View {
 				case .title:
 					$0.name == selectedTask
 				case .project:
-					$0.project == selectedTask
+					$0.project == selectedTask.lowercased()
 				case .tags:
 					$0.tags == selectedTask
 				case .rate:
