@@ -220,7 +220,6 @@ struct ChartsView: View {
 
 						if groupedTaskData.contains(where: { $0.earnings > 0 }) && showTotalEarningsChart {
 							// MARK: Total earnings chart
-
 							VStack(spacing: Self.titleToChartSpacing) {
 								Text("Earnings")
 									.font(.title)
