@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct MacHistoryList: View {
+	@Environment(\.modelContext) private var modelContext
     @Environment(\.managedObjectContext) private var viewContext
+
     @EnvironmentObject var clickedGroup: ClickedGroup
     @EnvironmentObject var clickedTask: ClickedTask
     
@@ -161,7 +163,19 @@ struct MacHistoryList: View {
                                 showInspector = true
                             }
                         }
-                        
+
+						Button("Create shortcut") {
+							let newShortcut = Shortcut(
+								name: taskGroup.name,
+								tags: taskGroup.tags,
+								project: taskGroup.project,
+								color: Color.random.hex ?? "A97BEAFF",
+								rate: taskGroup.rate
+							)
+							modelContext.insert(newShortcut)
+							navSelection = .shortcuts
+						}
+
                         Button("Delete") {
                             if taskGroup.tasks.count > 1 {
                                 if showDeleteConfirmation {
