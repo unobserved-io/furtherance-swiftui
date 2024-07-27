@@ -362,7 +362,8 @@ class StopWatchHelper {
             }
         }
     }
-    
+
+	// TODO: Redo as async function
     func setOneSecondTimer() {
         if idleDetect || showIconBadge {
             DispatchQueue.main.async {
