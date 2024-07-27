@@ -12,6 +12,8 @@ struct ChartsView: View {
 	static let titleToChartSpacing: CGFloat? = 30
 	static let chartFrameHeight: CGFloat? = 300
 
+	@ObservedObject var storeModel = StoreModel.shared
+
 	@FetchRequest(
 		entity: FurTask.entity(),
 		sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
@@ -84,126 +86,109 @@ struct ChartsView: View {
 	@State private var matchingTasksByAttribute: Set<String> = []
 
 	var body: some View {
-		ScrollView {
-			VStack(spacing: 20) {
-				// MARK: Date range selector
+		if !storeModel.purchasedIds.isEmpty {
+			ScrollView {
+				VStack(spacing: 20) {
+					// MARK: Date range selector
 
-				VStack {
-					Picker("Timeframe", selection: $timeframe) {
-						Text("This week").tag(Timeframe.thisWeek)
-						Text("Last week").tag(Timeframe.lastWeek)
-						Text("Past 7 days").tag(Timeframe.past7Days)
-						Text("This month").tag(Timeframe.thisMonth)
-						Text("Last month").tag(Timeframe.lastMonth)
-						Text("Past 30 days").tag(Timeframe.thirtyDays)
-						Text("Past 180 days").tag(Timeframe.oneEightyDays)
-						Text("Past year").tag(Timeframe.year)
-						Text("All time").tag(Timeframe.allTime)
-						Text("Date range").tag(Timeframe.custom)
-					}
-					.onChange(of: timeframe) { _, newTimeframe in
-						var newStartDate = Calendar.current.startOfDay(for: Date.now)
-						var newStopDate = Date.now
-						switch newTimeframe {
-						case .thisWeek:
-							newStartDate = newStartDate.startOfWeek
-						case .lastWeek:
-							newStartDate = Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: Calendar.current.date(byAdding: .weekOfYear, value: -1, to: newStartDate) ?? Date.now).date ?? Date.now
-							newStopDate = newStartDate.endOfWeek
-						case .past7Days:
-							newStartDate = Calendar.current.date(byAdding: .day, value: -6, to: newStartDate) ?? Date.now
-						case .thisMonth:
-							newStartDate = Date.now.startOfMonth
-						case .lastMonth:
-							let endOfLastMonth = Calendar.current.date(byAdding: .day, value: -1, to: Date.now.startOfMonth) ?? Date.now
-							newStartDate = endOfLastMonth.startOfMonth
-							newStopDate = newStartDate.endOfMonth
-						case .thirtyDays:
-							newStartDate = Calendar.current.date(byAdding: .day, value: -29, to: newStartDate) ?? Date.now
-						case .oneEightyDays:
-							newStartDate = Calendar.current.date(byAdding: .day, value: -179, to: newStartDate) ?? Date.now
-						case .year:
-							newStartDate = Calendar.current.date(byAdding: .day, value: -364, to: newStartDate) ?? Date.now
-						case .allTime:
-							newStartDate = Date(timeIntervalSince1970: 0)
-						case .custom:
-							newStartDate = rangeStartDate
-							newStopDate = rangeEndDate
+					VStack {
+						Picker("Timeframe", selection: $timeframe) {
+							Text("This week").tag(Timeframe.thisWeek)
+							Text("Last week").tag(Timeframe.lastWeek)
+							Text("Past 7 days").tag(Timeframe.past7Days)
+							Text("This month").tag(Timeframe.thisMonth)
+							Text("Last month").tag(Timeframe.lastMonth)
+							Text("Past 30 days").tag(Timeframe.thirtyDays)
+							Text("Past 180 days").tag(Timeframe.oneEightyDays)
+							Text("Past year").tag(Timeframe.year)
+							Text("All time").tag(Timeframe.allTime)
+							Text("Date range").tag(Timeframe.custom)
 						}
-						tasksInTimeframe.nsPredicate = NSPredicate(format: "(startTime >= %@) AND (startTime <= %@)", newStartDate as NSDate, newStopDate as NSDate)
-						rangeStartDate = newStartDate
-						rangeEndDate = newStopDate
-					}
-
-					if timeframe == .custom {
-						HStack {
-							DatePicker(
-								selection: $rangeStartDate,
-								in: Date(
-									timeIntervalSinceReferenceDate: 0
-								) ... rangeEndDate,
-								displayedComponents: [.date],
-								label: {}
-							)
-							.labelsHidden()
-							.onChange(of: rangeStartDate) { _, newStartDate in
-								rangeStartDate = newStartDate.startOfDay
-								tasksInTimeframe.nsPredicate = NSPredicate(format: "(startTime >= %@) AND (startTime <= %@)", rangeStartDate as NSDate, rangeEndDate as NSDate)
+						.onChange(of: timeframe) { _, newTimeframe in
+							var newStartDate = Calendar.current.startOfDay(for: Date.now)
+							var newStopDate = Date.now
+							switch newTimeframe {
+							case .thisWeek:
+								newStartDate = newStartDate.startOfWeek
+							case .lastWeek:
+								newStartDate = Calendar.current.dateComponents([.calendar, .yearForWeekOfYear, .weekOfYear], from: Calendar.current.date(byAdding: .weekOfYear, value: -1, to: newStartDate) ?? Date.now).date ?? Date.now
+								newStopDate = newStartDate.endOfWeek
+							case .past7Days:
+								newStartDate = Calendar.current.date(byAdding: .day, value: -6, to: newStartDate) ?? Date.now
+							case .thisMonth:
+								newStartDate = Date.now.startOfMonth
+							case .lastMonth:
+								let endOfLastMonth = Calendar.current.date(byAdding: .day, value: -1, to: Date.now.startOfMonth) ?? Date.now
+								newStartDate = endOfLastMonth.startOfMonth
+								newStopDate = newStartDate.endOfMonth
+							case .thirtyDays:
+								newStartDate = Calendar.current.date(byAdding: .day, value: -29, to: newStartDate) ?? Date.now
+							case .oneEightyDays:
+								newStartDate = Calendar.current.date(byAdding: .day, value: -179, to: newStartDate) ?? Date.now
+							case .year:
+								newStartDate = Calendar.current.date(byAdding: .day, value: -364, to: newStartDate) ?? Date.now
+							case .allTime:
+								newStartDate = Date(timeIntervalSince1970: 0)
+							case .custom:
+								newStartDate = rangeStartDate
+								newStopDate = rangeEndDate
 							}
-							Text("to")
-							DatePicker(
-								selection: $rangeEndDate,
-								in: rangeStartDate ... Date.now.endOfDay,
-								displayedComponents: [.date],
-								label: {}
-							)
-							.frame(minHeight: 35)
-							.labelsHidden()
-							.onChange(of: rangeEndDate) { _, newStopDate in
-								rangeEndDate = newStopDate.endOfDay
-								tasksInTimeframe.nsPredicate = NSPredicate(
-									format: "(startTime >= %@) AND (startTime <= %@)",
-									rangeStartDate as NSDate,
-									rangeEndDate as NSDate
+							tasksInTimeframe.nsPredicate = NSPredicate(format: "(startTime >= %@) AND (startTime <= %@)", newStartDate as NSDate, newStopDate as NSDate)
+							rangeStartDate = newStartDate
+							rangeEndDate = newStopDate
+						}
+
+						if timeframe == .custom {
+							HStack {
+								DatePicker(
+									selection: $rangeStartDate,
+									in: Date(
+										timeIntervalSinceReferenceDate: 0
+									) ... rangeEndDate,
+									displayedComponents: [.date],
+									label: {}
 								)
+								.labelsHidden()
+								.onChange(of: rangeStartDate) { _, newStartDate in
+									rangeStartDate = newStartDate.startOfDay
+									tasksInTimeframe.nsPredicate = NSPredicate(format: "(startTime >= %@) AND (startTime <= %@)", rangeStartDate as NSDate, rangeEndDate as NSDate)
+								}
+								Text("to")
+								DatePicker(
+									selection: $rangeEndDate,
+									in: rangeStartDate ... Date.now.endOfDay,
+									displayedComponents: [.date],
+									label: {}
+								)
+								.frame(minHeight: 35)
+								.labelsHidden()
+								.onChange(of: rangeEndDate) { _, newStopDate in
+									rangeEndDate = newStopDate.endOfDay
+									tasksInTimeframe.nsPredicate = NSPredicate(
+										format: "(startTime >= %@) AND (startTime <= %@)",
+										rangeStartDate as NSDate,
+										rangeEndDate as NSDate
+									)
+								}
 							}
 						}
 					}
-				}
-				.padding()
+					.padding()
 
-				Divider().padding(.bottom)
+					Divider().padding(.bottom)
 
-				if !tasksInTimeframe.isEmpty {
-					// MARK: Total time and earnings in range
+					if !tasksInTimeframe.isEmpty {
+						// MARK: Total time and earnings in range
 
-					HStack {
-						VStack {
-							VStack {
-								HStack(alignment: .lastTextBaseline) {
-									Text(formatTimeLong(getTotalTime()))
-										.font(.system(size: 55))
-										.foregroundStyle(.accent)
-								}
-								Text("Total time")
-									.font(.title2)
-							}
-							.frame(maxWidth: .infinity)
-							.padding()
-						}
-						.background(.accent.opacity(0.2))
-						.clipShape(RoundedRectangle(cornerRadius: 15))
-						.frame(alignment: .center)
-
-						if showTotalEarnings {
+						HStack {
 							VStack {
 								VStack {
 									HStack(alignment: .lastTextBaseline) {
-										Text(getTotalEarnings(), format: .currency(code: getCurrencyCode(for: chosenCurrency)))
+										Text(formatTimeLong(getTotalTime()))
 											.font(.system(size: 55))
 											.foregroundStyle(.accent)
 									}
-									Text("Earned")
+									Text("Total time")
 										.font(.title2)
 								}
 								.frame(maxWidth: .infinity)
@@ -212,445 +197,62 @@ struct ChartsView: View {
 							.background(.accent.opacity(0.2))
 							.clipShape(RoundedRectangle(cornerRadius: 15))
 							.frame(alignment: .center)
-						}
-					}
 
-					if groupedTaskData.contains(where: { $0.earnings > 0 }) && showTotalEarningsChart {
-						// MARK: Total earnings chart
-
-						VStack(spacing: Self.titleToChartSpacing) {
-							Text("Earnings")
-								.font(.title)
-							Chart {
-								ForEach(groupedTaskData) { taskGroup in
-									if groupedTaskData.count > 1 {
-										LineMark(
-											x: .value("Date", taskGroup.readableDate),
-											y: .value("Earnings", taskGroup.earnings)
-										)
-									} else {
-										BarMark(
-											x: .value("Date", taskGroup.readableDate),
-											y: .value("Earnings", taskGroup.earnings)
-										)
-									}
-								}
-								if let selectedEarningsDate {
-									RectangleMark(x: .value("Date", selectedEarningsDate))
-										.foregroundStyle(.accent.opacity(0.2))
-										.annotation(position: .overlay, alignment: .center, spacing: 0) {
-											Text(
-												selectedEarningsAmount, format:
-												.currency(
-													code: getCurrencyCode(
-														for: chosenCurrency
-													)
-												)
-											)
-											.rotationEffect(.degrees(-90))
-											.frame(width: Self.chartFrameHeight)
+							if showTotalEarnings {
+								VStack {
+									VStack {
+										HStack(alignment: .lastTextBaseline) {
+											Text(getTotalEarnings(), format: .currency(code: getCurrencyCode(for: chosenCurrency)))
+												.font(.system(size: 55))
+												.foregroundStyle(.accent)
 										}
-								}
-							}
-							.chartYAxis {
-								AxisMarks(position: .leading) {
-									let value = $0.as(Int.self)! // Using Int removes cents
-									AxisValueLabel {
-										Text("\(chosenCurrency)\(value)")
+										Text("Earned")
+											.font(.title2)
 									}
-									AxisGridLine()
+									.frame(maxWidth: .infinity)
+									.padding()
 								}
+								.background(.accent.opacity(0.2))
+								.clipShape(RoundedRectangle(cornerRadius: 15))
+								.frame(alignment: .center)
 							}
-							.chartOverlay { proxy in
-								GeometryReader { geometry in
-									ZStack(alignment: .top) {
-										Rectangle().fill(.clear).contentShape(Rectangle())
-										#if os(macOS)
-											.onContinuousHover { hoverPhase in
-												switch hoverPhase {
-												case .active(let hoverLocation):
-													updateSelectedEarningsOnHover(at: hoverLocation.x, proxy: proxy)
-												case .ended:
-													selectedEarningsDate = nil
-												}
-											}
-										#else
-											.onTapGesture { location in
-													updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
-												}
-										#endif
-									}
-								}
-							}
-							.frame(height: Self.chartFrameHeight)
 						}
-					}
 
-					// MARK: Total time chart
+						if groupedTaskData.contains(where: { $0.earnings > 0 }) && showTotalEarningsChart {
+							// MARK: Total earnings chart
 
-					if showTotalTimeChart {
-						VStack(spacing: Self.titleToChartSpacing) {
-							Text("Time")
-								.font(.title)
-							Chart {
-								ForEach(groupedTaskData) { taskGroup in
-									if groupedTaskData.count > 1 {
-										LineMark(
-											x: .value("Date", taskGroup.readableDate),
-											y: .value("Minutes", taskGroup.time)
-										)
-									} else {
-										BarMark(
-											x: .value("Date", taskGroup.readableDate),
-											y: .value("Minutes", taskGroup.time)
-										)
-									}
-								}
-								if let selectedTimeDate {
-									RectangleMark(x: .value("Date", selectedTimeDate))
-										.foregroundStyle(.accent.opacity(0.2))
-										.annotation(position: .overlay, alignment: .center, spacing: 0) {
-											Text(formatTimeShort(selectedTimeAmount))
-												.rotationEffect(.degrees(-90))
-												.frame(width: Self.chartFrameHeight)
-										}
-								}
-							}
-							.chartYAxis {
-								AxisMarks(position: .leading) {
-									let value = $0.as(Int.self)!
-									AxisValueLabel {
-										Text("\(formatTimeShort(value))")
-									}
-									AxisGridLine()
-								}
-							}
-							.chartOverlay { proxy in
-								GeometryReader { geometry in
-									ZStack(alignment: .top) {
-										Rectangle().fill(.clear).contentShape(Rectangle())
-										#if os(macOS)
-											.onContinuousHover { hoverPhase in
-												switch hoverPhase {
-												case .active(let hoverLocation):
-													updateSelectedTimeOnHover(at: hoverLocation.x, proxy: proxy)
-												case .ended:
-													selectedTimeDate = nil
-												}
-											}
-										#else
-											.onTapGesture { location in
-													updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
-												}
-										#endif
-									}
-								}
-							}
-							.frame(height: Self.chartFrameHeight)
-						}
-					}
-
-					// MARK: Average earnings per task
-
-					if groupedTaskData.contains(where: { $0.earnings > 0 }) && showAvgEarnedPerTaskChart {
-						VStack(spacing: Self.titleToChartSpacing) {
-							Text("Average earned per task")
-								.font(.title)
-							Chart {
-								ForEach(groupedTaskData) { taskGroup in
-									if groupedTaskData.count > 1 {
-										LineMark(
-											x: .value("Date", taskGroup.readableDate),
-											y:
-											.value(
-												"Earnings",
-												taskGroup.earnings / Double(taskGroup.numberOfTasks)
-											)
-										)
-									} else {
-										BarMark(
-											x: .value("Date", taskGroup.readableDate),
-											y:
-											.value(
-												"Earnings",
-												taskGroup.earnings / Double(taskGroup.numberOfTasks)
-											)
-										)
-									}
-								}
-								if let averageEarningsDate {
-									RectangleMark(x: .value("Date", averageEarningsDate))
-										.foregroundStyle(.accent.opacity(0.2))
-										.annotation(position: .overlay, alignment: .center, spacing: 0) {
-											Text(
-												averageEarningsAmount, format:
-												.currency(
-													code: getCurrencyCode(
-														for: chosenCurrency
-													)
-												)
-											)
-											.rotationEffect(.degrees(-90))
-											.frame(width: Self.chartFrameHeight)
-										}
-								}
-							}
-							.chartYAxis {
-								AxisMarks(position: .leading) {
-									let value = $0.as(Int.self)!
-									AxisValueLabel {
-										Text("\(chosenCurrency)\(value)")
-									}
-									AxisGridLine()
-								}
-							}
-							.chartOverlay { proxy in
-								GeometryReader { geometry in
-									ZStack(alignment: .top) {
-										Rectangle().fill(.clear).contentShape(Rectangle())
-										#if os(macOS)
-											.onContinuousHover { hoverPhase in
-												switch hoverPhase {
-												case .active(let hoverLocation):
-													updateAverageEarningsOnHover(at: hoverLocation.x, proxy: proxy)
-												case .ended:
-													averageEarningsDate = nil
-												}
-											}
-										#else
-											.onTapGesture { location in
-													updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
-												}
-										#endif
-									}
-								}
-							}
-							.frame(height: Self.chartFrameHeight)
-						}
-					}
-
-					// MARK: Average time per task
-
-					if showAvgTimePerTaskChart {
-						VStack(spacing: Self.titleToChartSpacing) {
-							Text("Average time per task")
-								.font(.title)
-							Chart {
-								ForEach(groupedTaskData) { taskGroup in
-									if groupedTaskData.count > 1 {
-										LineMark(
-											x: .value("Date", taskGroup.readableDate),
-											y:
-											.value(
-												"Minutes",
-												taskGroup.time / taskGroup.numberOfTasks
-											)
-										)
-									} else {
-										BarMark(
-											x: .value("Date", taskGroup.readableDate),
-											y:
-											.value(
-												"Minutes",
-												taskGroup.time / taskGroup.numberOfTasks
-											)
-										)
-									}
-								}
-								if let averageTimeDate {
-									RectangleMark(x: .value("Date", averageTimeDate))
-										.foregroundStyle(.accent.opacity(0.2))
-										.annotation(position: .overlay, alignment: .center, spacing: 0) {
-											Text(formatTimeShort(averageTimeAmount))
-												.rotationEffect(.degrees(-90))
-												.frame(width: Self.chartFrameHeight)
-										}
-								}
-							}
-							.chartYAxis {
-								AxisMarks(position: .leading) {
-									let value = $0.as(Int.self)!
-									AxisValueLabel {
-										Text("\(formatTimeShort(value))")
-									}
-									AxisGridLine()
-								}
-							}
-							.chartOverlay { proxy in
-								GeometryReader { geometry in
-									ZStack(alignment: .top) {
-										Rectangle().fill(.clear).contentShape(Rectangle())
-										#if os(macOS)
-											.onContinuousHover { hoverPhase in
-												switch hoverPhase {
-												case .active(let hoverLocation):
-													updateAverageTimeOnHover(at: hoverLocation.x, proxy: proxy)
-												case .ended:
-													averageTimeDate = nil
-												}
-											}
-										#else
-											.onTapGesture { location in
-													updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
-												}
-										#endif
-									}
-								}
-							}
-							.frame(height: Self.chartFrameHeight)
-						}
-					}
-
-					if showBreakdownBySelection && (showSelectionByTimeChart || showSelectionByEarningsChart) {
-						// MARK: Charts by selection
-
-						Divider()
-
-						VStack(spacing: Self.titleToChartSpacing) {
-							Text("Breakdown By Selection")
-								.font(.largeTitle)
-
-							HStack {
-								Picker(
-									"Time by selection",
-									selection: $selectedTaskAttribute
-								) {
-									ForEach(TaskAttributes.allCases) { taskAttribute in
-										Text(taskAttribute.rawValue.capitalized)
-									}
-								}
-								.labelsHidden()
-								.onChange(of: selectedTaskAttribute) {
-									getAllMatchingAttributesForTime()
-								}
-
-								Picker(
-									"Time by selection",
-									selection: $selectedTask
-								) {
-									ForEach(Array(matchingTasksByAttribute), id: \.self) { attribute in
-										Text(attribute)
-									}
-								}
-								.labelsHidden()
-								.onChange(of: selectedTask) {
-									getDataForSelectedTaskForTime()
-								}
-							}
-
-							if showSelectionByTimeChart {
-								Text("Selection By Time")
+							VStack(spacing: Self.titleToChartSpacing) {
+								Text("Earnings")
 									.font(.title)
 								Chart {
-									ForEach(groupedSelectedTaskData) { taskGroup in
-										// Use a bar chart when there isn't enough data for a good line chart
-										if groupedSelectedTaskData.count > 2 {
+									ForEach(groupedTaskData) { taskGroup in
+										if groupedTaskData.count > 1 {
 											LineMark(
 												x: .value("Date", taskGroup.readableDate),
-												y: .value("Minutes", taskGroup.time)
+												y: .value("Earnings", taskGroup.earnings)
 											)
 										} else {
 											BarMark(
 												x: .value("Date", taskGroup.readableDate),
-												y: .value("Minutes", taskGroup.time)
+												y: .value("Earnings", taskGroup.earnings)
 											)
 										}
 									}
-									if let timeDateForSelectedTask {
-										RectangleMark(
-											x:
-											.value(
-												"Date",
-												timeDateForSelectedTask
-											)
-										)
-										.foregroundStyle(.accent.opacity(0.2))
-										.annotation(position: .overlay, alignment: .center, spacing: 0) {
-											Text(
-												formatTimeShort(
-													timeForSelectedTask
-												)
-											)
-											.rotationEffect(.degrees(-90))
-											.frame(width: Self.chartFrameHeight)
-										}
-									}
-								}
-								.chartYAxis {
-									AxisMarks(position: .leading) {
-										let value = $0.as(Int.self)!
-										AxisValueLabel {
-											Text("\(formatTimeShort(value))")
-										}
-										AxisGridLine()
-									}
-								}
-								.chartOverlay { proxy in
-									GeometryReader { geometry in
-										ZStack(alignment: .top) {
-											Rectangle().fill(.clear).contentShape(Rectangle())
-											#if os(macOS)
-												.onContinuousHover { hoverPhase in
-													switch hoverPhase {
-													case .active(let hoverLocation):
-														updateSelectedTimeForSelectedTaskOnHover(at: hoverLocation.x, proxy: proxy)
-													case .ended:
-														timeDateForSelectedTask = nil
-													}
-												}
-											#else
-												.onTapGesture { location in
-														updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
-													}
-											#endif
-										}
-									}
-								}
-								.frame(height: Self.chartFrameHeight)
-							}
-
-							if groupedSelectedTaskData
-								.contains(where: { $0.earnings > 0 }) && showSelectionByEarningsChart
-							{
-								Text("Selection By Earnings")
-									.font(.title)
-								Chart {
-									ForEach(groupedSelectedTaskData) { taskGroup in
-										// Use a bar chart when there isn't enough data for a good line chart
-										if groupedSelectedTaskData.count > 2 {
-											LineMark(
-												x: .value("Date", taskGroup.readableDate),
-												y: .value("Minutes", taskGroup.earnings)
-											)
-										} else {
-											BarMark(
-												x: .value("Date", taskGroup.readableDate),
-												y: .value("Minutes", taskGroup.earnings)
-											)
-										}
-									}
-									if let earningsDateForSelectedTask {
-										RectangleMark(
-											x:
-											.value(
-												"Date",
-												earningsDateForSelectedTask
-											)
-										)
-										.foregroundStyle(.accent.opacity(0.2))
-										.annotation(position: .overlay, alignment: .center, spacing: 0) {
-											Text(
-												earningsForSelectedTask,
-												format:
-												.currency(
-													code: getCurrencyCode(
-														for: chosenCurrency
+									if let selectedEarningsDate {
+										RectangleMark(x: .value("Date", selectedEarningsDate))
+											.foregroundStyle(.accent.opacity(0.2))
+											.annotation(position: .overlay, alignment: .center, spacing: 0) {
+												Text(
+													selectedEarningsAmount, format:
+													.currency(
+														code: getCurrencyCode(
+															for: chosenCurrency
+														)
 													)
 												)
-											)
-											.rotationEffect(.degrees(-90))
-											.frame(width: Self.chartFrameHeight)
-										}
+												.rotationEffect(.degrees(-90))
+												.frame(width: Self.chartFrameHeight)
+											}
 									}
 								}
 								.chartYAxis {
@@ -670,14 +272,14 @@ struct ChartsView: View {
 												.onContinuousHover { hoverPhase in
 													switch hoverPhase {
 													case .active(let hoverLocation):
-														updateEarningsForSelectedTaskOnHover(at: hoverLocation.x, proxy: proxy)
+														updateSelectedEarningsOnHover(at: hoverLocation.x, proxy: proxy)
 													case .ended:
-														earningsDateForSelectedTask = nil
+														selectedEarningsDate = nil
 													}
 												}
 											#else
 												.onTapGesture { location in
-														updateEarningsForSelectedTaskOnHover(at: location, proxy: proxy, geometry: geometry)
+														updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
 													}
 											#endif
 										}
@@ -686,17 +288,427 @@ struct ChartsView: View {
 								.frame(height: Self.chartFrameHeight)
 							}
 						}
+
+						// MARK: Total time chart
+
+						if showTotalTimeChart {
+							VStack(spacing: Self.titleToChartSpacing) {
+								Text("Time")
+									.font(.title)
+								Chart {
+									ForEach(groupedTaskData) { taskGroup in
+										if groupedTaskData.count > 1 {
+											LineMark(
+												x: .value("Date", taskGroup.readableDate),
+												y: .value("Minutes", taskGroup.time)
+											)
+										} else {
+											BarMark(
+												x: .value("Date", taskGroup.readableDate),
+												y: .value("Minutes", taskGroup.time)
+											)
+										}
+									}
+									if let selectedTimeDate {
+										RectangleMark(x: .value("Date", selectedTimeDate))
+											.foregroundStyle(.accent.opacity(0.2))
+											.annotation(position: .overlay, alignment: .center, spacing: 0) {
+												Text(formatTimeShort(selectedTimeAmount))
+													.rotationEffect(.degrees(-90))
+													.frame(width: Self.chartFrameHeight)
+											}
+									}
+								}
+								.chartYAxis {
+									AxisMarks(position: .leading) {
+										let value = $0.as(Int.self)!
+										AxisValueLabel {
+											Text("\(formatTimeShort(value))")
+										}
+										AxisGridLine()
+									}
+								}
+								.chartOverlay { proxy in
+									GeometryReader { geometry in
+										ZStack(alignment: .top) {
+											Rectangle().fill(.clear).contentShape(Rectangle())
+											#if os(macOS)
+												.onContinuousHover { hoverPhase in
+													switch hoverPhase {
+													case .active(let hoverLocation):
+														updateSelectedTimeOnHover(at: hoverLocation.x, proxy: proxy)
+													case .ended:
+														selectedTimeDate = nil
+													}
+												}
+											#else
+												.onTapGesture { location in
+														updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+													}
+											#endif
+										}
+									}
+								}
+								.frame(height: Self.chartFrameHeight)
+							}
+						}
+
+						// MARK: Average earnings per task
+
+						if groupedTaskData.contains(where: { $0.earnings > 0 }) && showAvgEarnedPerTaskChart {
+							VStack(spacing: Self.titleToChartSpacing) {
+								Text("Average earned per task")
+									.font(.title)
+								Chart {
+									ForEach(groupedTaskData) { taskGroup in
+										if groupedTaskData.count > 1 {
+											LineMark(
+												x: .value("Date", taskGroup.readableDate),
+												y:
+												.value(
+													"Earnings",
+													taskGroup.earnings / Double(taskGroup.numberOfTasks)
+												)
+											)
+										} else {
+											BarMark(
+												x: .value("Date", taskGroup.readableDate),
+												y:
+												.value(
+													"Earnings",
+													taskGroup.earnings / Double(taskGroup.numberOfTasks)
+												)
+											)
+										}
+									}
+									if let averageEarningsDate {
+										RectangleMark(x: .value("Date", averageEarningsDate))
+											.foregroundStyle(.accent.opacity(0.2))
+											.annotation(position: .overlay, alignment: .center, spacing: 0) {
+												Text(
+													averageEarningsAmount, format:
+													.currency(
+														code: getCurrencyCode(
+															for: chosenCurrency
+														)
+													)
+												)
+												.rotationEffect(.degrees(-90))
+												.frame(width: Self.chartFrameHeight)
+											}
+									}
+								}
+								.chartYAxis {
+									AxisMarks(position: .leading) {
+										let value = $0.as(Int.self)!
+										AxisValueLabel {
+											Text("\(chosenCurrency)\(value)")
+										}
+										AxisGridLine()
+									}
+								}
+								.chartOverlay { proxy in
+									GeometryReader { geometry in
+										ZStack(alignment: .top) {
+											Rectangle().fill(.clear).contentShape(Rectangle())
+											#if os(macOS)
+												.onContinuousHover { hoverPhase in
+													switch hoverPhase {
+													case .active(let hoverLocation):
+														updateAverageEarningsOnHover(at: hoverLocation.x, proxy: proxy)
+													case .ended:
+														averageEarningsDate = nil
+													}
+												}
+											#else
+												.onTapGesture { location in
+														updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+													}
+											#endif
+										}
+									}
+								}
+								.frame(height: Self.chartFrameHeight)
+							}
+						}
+
+						// MARK: Average time per task
+
+						if showAvgTimePerTaskChart {
+							VStack(spacing: Self.titleToChartSpacing) {
+								Text("Average time per task")
+									.font(.title)
+								Chart {
+									ForEach(groupedTaskData) { taskGroup in
+										if groupedTaskData.count > 1 {
+											LineMark(
+												x: .value("Date", taskGroup.readableDate),
+												y:
+												.value(
+													"Minutes",
+													taskGroup.time / taskGroup.numberOfTasks
+												)
+											)
+										} else {
+											BarMark(
+												x: .value("Date", taskGroup.readableDate),
+												y:
+												.value(
+													"Minutes",
+													taskGroup.time / taskGroup.numberOfTasks
+												)
+											)
+										}
+									}
+									if let averageTimeDate {
+										RectangleMark(x: .value("Date", averageTimeDate))
+											.foregroundStyle(.accent.opacity(0.2))
+											.annotation(position: .overlay, alignment: .center, spacing: 0) {
+												Text(formatTimeShort(averageTimeAmount))
+													.rotationEffect(.degrees(-90))
+													.frame(width: Self.chartFrameHeight)
+											}
+									}
+								}
+								.chartYAxis {
+									AxisMarks(position: .leading) {
+										let value = $0.as(Int.self)!
+										AxisValueLabel {
+											Text("\(formatTimeShort(value))")
+										}
+										AxisGridLine()
+									}
+								}
+								.chartOverlay { proxy in
+									GeometryReader { geometry in
+										ZStack(alignment: .top) {
+											Rectangle().fill(.clear).contentShape(Rectangle())
+											#if os(macOS)
+												.onContinuousHover { hoverPhase in
+													switch hoverPhase {
+													case .active(let hoverLocation):
+														updateAverageTimeOnHover(at: hoverLocation.x, proxy: proxy)
+													case .ended:
+														averageTimeDate = nil
+													}
+												}
+											#else
+												.onTapGesture { location in
+														updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+													}
+											#endif
+										}
+									}
+								}
+								.frame(height: Self.chartFrameHeight)
+							}
+						}
+
+						if showBreakdownBySelection && (showSelectionByTimeChart || showSelectionByEarningsChart) {
+							// MARK: Charts by selection
+
+							Divider()
+
+							VStack(spacing: Self.titleToChartSpacing) {
+								Text("Breakdown By Selection")
+									.font(.largeTitle)
+
+								HStack {
+									Picker(
+										"Time by selection",
+										selection: $selectedTaskAttribute
+									) {
+										ForEach(TaskAttributes.allCases) { taskAttribute in
+											Text(taskAttribute.rawValue.capitalized)
+										}
+									}
+									.labelsHidden()
+									.onChange(of: selectedTaskAttribute) {
+										getAllMatchingAttributesForTime()
+									}
+
+									Picker(
+										"Time by selection",
+										selection: $selectedTask
+									) {
+										ForEach(Array(matchingTasksByAttribute), id: \.self) { attribute in
+											Text(attribute)
+										}
+									}
+									.labelsHidden()
+									.onChange(of: selectedTask) {
+										getDataForSelectedTaskForTime()
+									}
+								}
+
+								if showSelectionByTimeChart {
+									Text("Selection By Time")
+										.font(.title)
+									Chart {
+										ForEach(groupedSelectedTaskData) { taskGroup in
+											// Use a bar chart when there isn't enough data for a good line chart
+											if groupedSelectedTaskData.count > 2 {
+												LineMark(
+													x: .value("Date", taskGroup.readableDate),
+													y: .value("Minutes", taskGroup.time)
+												)
+											} else {
+												BarMark(
+													x: .value("Date", taskGroup.readableDate),
+													y: .value("Minutes", taskGroup.time)
+												)
+											}
+										}
+										if let timeDateForSelectedTask {
+											RectangleMark(
+												x:
+												.value(
+													"Date",
+													timeDateForSelectedTask
+												)
+											)
+											.foregroundStyle(.accent.opacity(0.2))
+											.annotation(position: .overlay, alignment: .center, spacing: 0) {
+												Text(
+													formatTimeShort(
+														timeForSelectedTask
+													)
+												)
+												.rotationEffect(.degrees(-90))
+												.frame(width: Self.chartFrameHeight)
+											}
+										}
+									}
+									.chartYAxis {
+										AxisMarks(position: .leading) {
+											let value = $0.as(Int.self)!
+											AxisValueLabel {
+												Text("\(formatTimeShort(value))")
+											}
+											AxisGridLine()
+										}
+									}
+									.chartOverlay { proxy in
+										GeometryReader { geometry in
+											ZStack(alignment: .top) {
+												Rectangle().fill(.clear).contentShape(Rectangle())
+												#if os(macOS)
+													.onContinuousHover { hoverPhase in
+														switch hoverPhase {
+														case .active(let hoverLocation):
+															updateSelectedTimeForSelectedTaskOnHover(at: hoverLocation.x, proxy: proxy)
+														case .ended:
+															timeDateForSelectedTask = nil
+														}
+													}
+												#else
+													.onTapGesture { location in
+															updateSelectedEarningsOnTap(at: location, proxy: proxy, geometry: geometry)
+														}
+												#endif
+											}
+										}
+									}
+									.frame(height: Self.chartFrameHeight)
+								}
+
+								if groupedSelectedTaskData
+									.contains(where: { $0.earnings > 0 }) && showSelectionByEarningsChart
+								{
+									Text("Selection By Earnings")
+										.font(.title)
+									Chart {
+										ForEach(groupedSelectedTaskData) { taskGroup in
+											// Use a bar chart when there isn't enough data for a good line chart
+											if groupedSelectedTaskData.count > 2 {
+												LineMark(
+													x: .value("Date", taskGroup.readableDate),
+													y: .value("Minutes", taskGroup.earnings)
+												)
+											} else {
+												BarMark(
+													x: .value("Date", taskGroup.readableDate),
+													y: .value("Minutes", taskGroup.earnings)
+												)
+											}
+										}
+										if let earningsDateForSelectedTask {
+											RectangleMark(
+												x:
+												.value(
+													"Date",
+													earningsDateForSelectedTask
+												)
+											)
+											.foregroundStyle(.accent.opacity(0.2))
+											.annotation(position: .overlay, alignment: .center, spacing: 0) {
+												Text(
+													earningsForSelectedTask,
+													format:
+													.currency(
+														code: getCurrencyCode(
+															for: chosenCurrency
+														)
+													)
+												)
+												.rotationEffect(.degrees(-90))
+												.frame(width: Self.chartFrameHeight)
+											}
+										}
+									}
+									.chartYAxis {
+										AxisMarks(position: .leading) {
+											let value = $0.as(Int.self)! // Using Int removes cents
+											AxisValueLabel {
+												Text("\(chosenCurrency)\(value)")
+											}
+											AxisGridLine()
+										}
+									}
+									.chartOverlay { proxy in
+										GeometryReader { geometry in
+											ZStack(alignment: .top) {
+												Rectangle().fill(.clear).contentShape(Rectangle())
+												#if os(macOS)
+													.onContinuousHover { hoverPhase in
+														switch hoverPhase {
+														case .active(let hoverLocation):
+															updateEarningsForSelectedTaskOnHover(at: hoverLocation.x, proxy: proxy)
+														case .ended:
+															earningsDateForSelectedTask = nil
+														}
+													}
+												#else
+													.onTapGesture { location in
+															updateEarningsForSelectedTaskOnHover(at: location, proxy: proxy, geometry: geometry)
+														}
+												#endif
+											}
+										}
+									}
+									.frame(height: Self.chartFrameHeight)
+								}
+							}
+						}
 					}
 				}
+				.padding(10)
 			}
-			.padding(10)
-		}
-		.task(id: tasksInTimeframe.count) {
-			processAllData()
-		}
-		.onAppear {
-			processAllData()
-			getAllMatchingAttributesForTime()
+			.task(id: tasksInTimeframe.count) {
+				processAllData()
+			}
+			.onAppear {
+				processAllData()
+				getAllMatchingAttributesForTime()
+			}
+		} else {
+			Spacer()
+			ContentUnavailableView {
+				Label("Pro Only", image: "chart.line.slash")
+			} description: {
+				Text("Charts are only available in the pro version. The \"List\" report is free.")
+			}
+			Spacer()
 		}
 	}
 

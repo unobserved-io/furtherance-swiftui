@@ -12,12 +12,15 @@ struct ReportView: View {
 		case charts
 		case list
 	}
-	
+
+	@ObservedObject var storeModel = StoreModel.shared
+
 	@State private var viewChoice: ViewChoice = .charts
 
 	var body: some View {
 			Picker("", selection: $viewChoice) {
-				Text("Charts").tag(ViewChoice.charts)
+				Text("Charts")
+					.tag(ViewChoice.charts)
 				Text("List").tag(ViewChoice.list)
 			}
 			.pickerStyle(.segmented)
@@ -31,12 +34,12 @@ struct ReportView: View {
 					ReportListView()
 				}
 			}
-#if os(iOS)
 		.onAppear {
+#if os(iOS)
 			// Reset segmented pickers to be even (Necessary for long languages)
 			UISegmentedControl.appearance().apportionsSegmentWidthsByContent = false
-		}
 #endif
+		}
 	}
 }
 
