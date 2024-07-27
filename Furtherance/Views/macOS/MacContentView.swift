@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import UniformTypeIdentifiers
+
 
 struct MacContentView: View {
     @Binding var tasksCount: Int
@@ -99,6 +101,16 @@ struct MacContentView: View {
         } message: {
             Text("Furtherance shut down improperly. An autosave was restored.")
         }
+		// CSV Export
+		.fileExporter(
+			isPresented: $showExportCSV,
+			document: CSVFile(initialText: dataAsCSV()),
+			contentType: UTType.commaSeparatedText,
+			defaultFilename: "Furtherance.csv"
+		) { _ in }
+#if os(macOS)
+			.frame(minWidth: 360, idealWidth: 400, minHeight: 170, idealHeight: 600)
+#endif
         .onAppear {
             navSelection = defaultView
             
@@ -113,6 +125,35 @@ struct MacContentView: View {
             autosave.asAlert()
         }
     }
+
+	private func dataAsCSV() -> String {
+		let allData: [FurTask] = fetchAllData()
+		var csvString = "Name,Tags,Start Time,Stop Time,Total Seconds\n"
+
+		for task in allData {
+			csvString += furTaskToString(task)
+		}
+
+		return csvString
+	}
+
+	private func fetchAllData() -> [FurTask] {
+		let fetchRequest: NSFetchRequest<FurTask> = FurTask.fetchRequest()
+		fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)]
+
+		do {
+			return try viewContext.fetch(fetchRequest)
+		} catch {
+			return []
+		}
+	}
+
+	private func furTaskToString(_ task: FurTask) -> String {
+		let totalSeconds = task.stopTime?.timeIntervalSince(task.startTime ?? Date.now)
+		let startString = localDateTimeFormatter.string(from: task.startTime ?? Date.now)
+		let stopString = localDateTimeFormatter.string(from: task.stopTime ?? Date.now)
+		return "\(task.name ?? "Unknown"),\(task.tags ?? ""),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
+	}
 }
 
 #Preview {
