@@ -32,7 +32,10 @@ struct EditShortcutView: View {
                     titleField = newValue.trimmingCharacters(in: ["#", "@"])
                 }
             ))
-            
+			.onChange(of: clickedShortcut.shortcut) {
+				resetChanges()
+			}
+
             TextField("Project", text: $projectField)
             
             TextField("#tags", text: $tagsField)

@@ -39,12 +39,6 @@ struct ShortcutsView: View {
             LazyVGrid(columns: columns, spacing: Self.itemSpacing / 2.0) {
                 ForEach(shortcuts) { shortcut in
                     shortcutTile(for: shortcut)
-                        .alert("Delete?", isPresented: $showDeleteAlert) {
-                            // Cancel is automatically shown when a button is 'destructive' on Mac
-                            Button("Delete", role: .destructive) { modelContext.delete(shortcut) }
-                        } message: {
-                            Text("Are you certain you want to delete this shortcut?")
-                        }
                 }
             }
             .padding(.vertical, Self.itemSpacing / 2.0)
@@ -146,6 +140,12 @@ struct ShortcutsView: View {
                 navSelection = .timer
             }
         }
+		.alert("Delete?", isPresented: $showDeleteAlert) {
+			// Cancel is automatically shown when a button is 'destructive' on Mac
+			Button("Delete", role: .destructive) { modelContext.delete(shortcut) }
+		} message: {
+			Text("Are you certain you want to delete this shortcut?")
+		}
     }
     
     private func calculateFontColor(bgColor: Color?) -> Color {
