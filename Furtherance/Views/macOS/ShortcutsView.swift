@@ -26,7 +26,8 @@ struct ShortcutsView: View {
     
     @State private var hovering: UUID? = nil
     @State private var showDeleteAlert: Bool = false
-    
+	@State private var shortcutToDelete: Shortcut? = nil
+
     @StateObject var taskTagsInput = TaskTagsInput.shared
     
     private let columns = [
@@ -60,6 +61,16 @@ struct ShortcutsView: View {
             }
             Spacer()
         }
+		.alert("Delete?", isPresented: $showDeleteAlert) {
+			// Cancel is automatically shown when a button is 'destructive' on Mac
+			Button("Delete", role: .destructive) {
+				if let shortcutToDelete {
+					modelContext.delete(shortcutToDelete)
+				}
+			}
+		} message: {
+			Text("Are you certain you want to delete this shortcut?")
+		}
     }
     
     private func shortcutTile(for shortcut: Shortcut) -> some View {
@@ -112,6 +123,7 @@ struct ShortcutsView: View {
             }
             
             Button("Delete") {
+				shortcutToDelete = shortcut
                 showDeleteAlert.toggle()
             }
         }
@@ -140,12 +152,6 @@ struct ShortcutsView: View {
                 navSelection = .timer
             }
         }
-		.alert("Delete?", isPresented: $showDeleteAlert) {
-			// Cancel is automatically shown when a button is 'destructive' on Mac
-			Button("Delete", role: .destructive) { modelContext.delete(shortcut) }
-		} message: {
-			Text("Are you certain you want to delete this shortcut?")
-		}
     }
     
     private func calculateFontColor(bgColor: Color?) -> Color {
