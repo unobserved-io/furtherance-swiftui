@@ -128,7 +128,7 @@ struct MacContentView: View {
 
 	private func dataAsCSV() -> String {
 		let allData: [FurTask] = fetchAllData()
-		var csvString = "Name,Tags,Start Time,Stop Time,Total Seconds\n"
+		var csvString = "Name,Project,Tags,Rate,Start Time,Stop Time,Total Seconds\n"
 
 		for task in allData {
 			csvString += furTaskToString(task)
@@ -152,7 +152,7 @@ struct MacContentView: View {
 		let totalSeconds = task.stopTime?.timeIntervalSince(task.startTime ?? Date.now)
 		let startString = localDateTimeFormatter.string(from: task.startTime ?? Date.now)
 		let stopString = localDateTimeFormatter.string(from: task.stopTime ?? Date.now)
-		return "\(task.name ?? "Unknown"),\(task.tags ?? ""),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
+		return "\(task.name ?? "Unknown"),\(task.project ?? ""),\(task.tags ?? ""),\(task.rate),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
 	}
 }
 
