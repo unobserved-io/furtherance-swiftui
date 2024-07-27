@@ -39,7 +39,6 @@ struct GeneralSettingsView: View {
                         .frame(width: 150)
                         .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                         .labelsHidden()
-                        .disabled(storeModel.purchasedIds.isEmpty)
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -52,6 +51,10 @@ struct GeneralSettingsView: View {
                     HStack {
                         VStack(alignment: .leading) {
                             TextWithBadge("Show Icon Badge")
+							Text("Show timer on app icon")
+								.font(.footnote)
+								.foregroundStyle(.secondary)
+								.multilineTextAlignment(.leading)
                         }
                         Spacer()
                         Toggle("Show Icon Badge", isOn: $showIconBadge)

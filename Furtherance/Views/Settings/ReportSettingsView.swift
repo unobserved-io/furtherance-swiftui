@@ -25,7 +25,7 @@ struct ReportSettingsView: View {
 			Form {
 				BuyProView()
 
-				Section("Toggle Charts") {
+				Section(header: TextWithBadge("Toggle Charts")) {
 					HStack {
 						Toggle("Total Earnings", isOn: $showTotalEarnings)
 							.disabled(storeModel.purchasedIds.isEmpty)
