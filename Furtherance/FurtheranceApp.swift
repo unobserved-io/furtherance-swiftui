@@ -88,7 +88,7 @@ struct FurtheranceApp: App {
                             // Split string into rows
                             var rows = data.components(separatedBy: "\n")
                             // Remove headers
-                            if rows[0] == "Name,Tags,Start Time,Stop Time,Total Seconds" {
+                            if rows[0] == "Name,Project,Tags,Rate,Start Time,Stop Time,Total Seconds" || rows[0] == "Name,Tags,Start Time,Stop Time,Total Seconds" {
                                 rows.removeFirst()
 
                                 // Split rows into columns
@@ -96,15 +96,27 @@ struct FurtheranceApp: App {
                                 for row in rows {
                                     let columns = row.components(separatedBy: ",")
 
-                                    if columns.count == 5 {
+                                    if columns.count == 7 {
                                         let task = FurTask(context: persistenceController.container.viewContext)
                                         task.id = UUID()
                                         task.name = columns[0]
-                                        task.tags = columns[1]
-                                        task.startTime = localDateTimeFormatter.date(from: columns[2])
-                                        task.stopTime = localDateTimeFormatter.date(from: columns[3])
+										task.project = columns[1]
+                                        task.tags = columns[2]
+										task.rate = Double(columns[3]) ?? 0.0
+                                        task.startTime = localDateTimeFormatter.date(from: columns[4])
+                                        task.stopTime = localDateTimeFormatter.date(from: columns[5])
                                         furTasks.append(task)
-                                    }
+									} else if columns.count == 5 {
+										let task = FurTask(context: persistenceController.container.viewContext)
+										task.id = UUID()
+										task.name = columns[0]
+										task.project = ""
+										task.tags = columns[1]
+										task.rate = 0.0
+										task.startTime = localDateTimeFormatter.date(from: columns[2])
+										task.stopTime = localDateTimeFormatter.date(from: columns[3])
+										furTasks.append(task)
+									}
                                 }
                                 try? persistenceController.container.viewContext.save()
                             } else {
