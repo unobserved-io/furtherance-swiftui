@@ -144,7 +144,6 @@ struct FurtheranceApp: App {
                     }
                 }
                 .badge(storeModel.purchasedIds.isEmpty ? "Pro" : nil)
-                .disabled(tasksCount == 0)
                 Button("Delete All") {
                     if showDeleteConfirmation {
                         showDeleteDialog = true

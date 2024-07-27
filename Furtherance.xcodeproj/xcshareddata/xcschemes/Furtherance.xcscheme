@@ -53,17 +53,17 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-com.apple.CoreData.Logging.stderr 0"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-com.apple.CoreData.CloudKitDebug 0"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "RUN_FROM_XCODE"
-            value = "false"
+            value = "true"
             isEnabled = "YES">
          </EnvironmentVariable>
       </EnvironmentVariables>
