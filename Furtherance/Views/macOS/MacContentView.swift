@@ -99,6 +99,13 @@ struct MacContentView: View {
 		} message: {
 			Text("Furtherance shut down improperly. An autosave was restored.")
 		}
+		.onAppear {
+			navSelection = defaultView
+
+			Task {
+				await checkForAutosave()
+			}
+		}
 		// CSV Export
 		.fileExporter(
 			isPresented: $showExportCSV,
@@ -107,15 +114,9 @@ struct MacContentView: View {
 			defaultFilename: "Furtherance.csv"
 		) { _ in }
 #if os(macOS)
-			.frame(minWidth: 360, idealWidth: 400, minHeight: 170, idealHeight: 600)
+			.frame(minWidth: 360, idealWidth: 450, minHeight: 170, idealHeight: 700)
 #endif
-			.onAppear {
-				navSelection = defaultView
 
-				Task {
-					await checkForAutosave()
-				}
-			}
 	}
 
 	private func checkForAutosave() async {
