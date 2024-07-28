@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct TimeDisplayView: View {
     @State private var stopWatchHelper = StopWatchHelper.shared
 

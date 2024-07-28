@@ -45,8 +45,8 @@ final class TimerHelper {
                taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "#",
                taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "@",
                taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != Character(chosenCurrency),
-               taskTagsInput.text.count(where: { $0 == "@" }) < 2,
-               taskTagsInput.text.count(where: { $0 == Character(chosenCurrency) }) < 2
+               taskTagsInput.text.filter({ $0 == "@" }).count < 2,
+			   taskTagsInput.text.filter({ $0 == Character(chosenCurrency) }).count < 2
             {
                 if taskTagsInput.text.contains(chosenCurrency) {
                     let rateRegex = Regex {
@@ -83,9 +83,9 @@ final class TimerHelper {
                 Navigator.shared.showTaskBeginsWithAtSymbolAlert = true
             } else if taskTagsInput.text.trimmingCharacters(in: .whitespaces).first == Character(chosenCurrency) {
                 Navigator.shared.showTaskBeginsWithCurrencySymbolAlert = true
-            } else if taskTagsInput.text.count(where: { $0 == "@" }) >= 2 {
+			} else if taskTagsInput.text.filter({ $0 == "@" }).count >= 2 {
                 Navigator.shared.showTaskContainsMoreThanOneAtSymbolAlert = true
-            } else if taskTagsInput.text.count(where: { $0 == Character(chosenCurrency) }) >= 2 {
+			} else if taskTagsInput.text.filter({ $0 == Character(chosenCurrency) }).count >= 2 {
                 Navigator.shared.showTaskContainsMoreThanOneCurrencySymbolAlert = true
             }
         }
@@ -122,7 +122,7 @@ final class TimerHelper {
             if !taskTagsInput.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
                taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "#",
                taskTagsInput.text.trimmingCharacters(in: .whitespaces).first != "@",
-               taskTagsInput.text.count(where: { $0 == "@" }) < 2
+			   taskTagsInput.text.filter({ $0 == "@" }).count < 2
             {
                 nameAndTags = taskTagsInput.text
                 separateTags()
@@ -130,7 +130,7 @@ final class TimerHelper {
                 Navigator.shared.showTaskBeginsWithHashtagAlert = true
             } else if taskTagsInput.text.trimmingCharacters(in: .whitespaces).first == "@" {
                 Navigator.shared.showTaskBeginsWithAtSymbolAlert = true
-            } else if taskTagsInput.text.count(where: { $0 == "@" }) >= 2 {
+			} else if taskTagsInput.text.filter({ $0 == "@" }).count >= 2 {
                 Navigator.shared.showTaskContainsMoreThanOneAtSymbolAlert = true
             }
         }

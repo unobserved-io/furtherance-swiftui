@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct TaskRow: View {
     var taskGroup: FurTaskGroup
     @Binding var navSelection: NavItems?

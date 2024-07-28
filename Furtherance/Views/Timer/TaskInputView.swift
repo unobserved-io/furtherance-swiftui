@@ -29,24 +29,6 @@ struct TaskInputView: View {
 #else
             .textFieldStyle(RoundedBorderTextFieldStyle())
 #endif
-            .onChange(of: taskTagsInput.debouncedText) { _, newVal in
-                if StopWatchHelper.shared.isRunning {
-                    if newVal != timerHelper.nameAndTags {
-                        if !newVal.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
-                           newVal.trimmingCharacters(in: .whitespaces).first != "#",
-                           newVal.trimmingCharacters(in: .whitespaces).first != "@",
-                           newVal.trimmingCharacters(in: .whitespaces).first != Character(chosenCurrency),
-                           TaskTagsInput.shared.text.count(where: { $0 == "@" }) < 2,
-                           TaskTagsInput.shared.text.count(where: { $0 == Character(chosenCurrency) }) < 2
-                        {
-                            timerHelper.updateTaskAndTagsIfChanged()
-#if os(iOS)
-                            timerHelper.updatePersistentTimerTaskName()
-#endif
-                        }
-                    }
-                }
-            }
     }
 }
 
