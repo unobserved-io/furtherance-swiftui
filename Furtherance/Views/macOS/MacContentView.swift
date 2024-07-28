@@ -33,7 +33,6 @@ struct MacContentView: View {
         NavigationSplitView {
             List(NavItems.allCases, id: \.self, selection: $navSelection) { navItem in
                 NavigationLink(navItem.rawValue.capitalized, value: navItem)
-//                    .badge(navItem == .report && storeModel.purchasedIds.isEmpty ? "PRO" : nil)
             }
             .navigationSplitViewColumnWidth(min: 180, ideal: 200)
             Spacer()
