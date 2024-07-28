@@ -85,6 +85,15 @@ struct ChartsView: View {
 	@State private var selectedTask: String = ""
 	@State private var matchingTasksByAttribute: Set<String> = []
 
+	private let hmsFormatter: DateComponentsFormatter = {
+		let formatter = DateComponentsFormatter()
+		formatter.maximumUnitCount = 3
+		formatter.unitsStyle = .abbreviated
+		formatter.zeroFormattingBehavior = .dropAll
+		formatter.allowedUnits = [.day, .hour, .minute, .second]
+		return formatter
+	}()
+
 	var body: some View {
 		if !storeModel.purchasedIds.isEmpty {
 			ScrollView {
@@ -184,7 +193,7 @@ struct ChartsView: View {
 							VStack {
 								VStack {
 									HStack(alignment: .lastTextBaseline) {
-										Text(formatTimeLong(getTotalTime()))
+										Text(getTotalTime())
 											.font(.system(size: 55))
 											.foregroundStyle(.accent)
 									}
@@ -712,12 +721,13 @@ struct ChartsView: View {
 		}
 	}
 
-	private func getTotalTime() -> Int {
-		var totalTaskTime = 0
-		totalTaskTime += tasksInTimeframe.map {
+	private func getTotalTime() -> String {
+		var totalTaskTime = DateComponents()
+		totalTaskTime.second = 0
+		totalTaskTime.second? += tasksInTimeframe.map {
 			Calendar.current.dateComponents([.second], from: $0.startTime ?? .distantPast, to: $0.stopTime ?? .distantFuture).second ?? 0
 		}.reduce(0,+)
-		return totalTaskTime
+		return hmsFormatter.string(from: totalTaskTime) ?? "00:00"
 	}
 
 	private func getTotalEarnings() -> Double {
