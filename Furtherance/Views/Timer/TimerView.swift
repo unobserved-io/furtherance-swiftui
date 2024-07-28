@@ -20,7 +20,8 @@ struct TimerView: View {
     
 	@ObservedObject var storeModel = StoreModel.shared
 	@State private var stopWatchHelper = StopWatchHelper.shared
-    
+	@StateObject var taskTagsInput = TaskTagsInput.shared
+
 	@AppStorage("pomodoro") private var pomodoro = false
 	@AppStorage("launchCount") private var launchCount: Int = 0
 	@AppStorage("totalInclusive") private var totalInclusive: Bool = false
@@ -120,7 +121,25 @@ struct TimerView: View {
 					}
 				}
 				.padding(.horizontal)
-                
+				.onChange(of: taskTagsInput.debouncedText) { _, newVal in
+					if StopWatchHelper.shared.isRunning {
+						if newVal != timerHelper.nameAndTags {
+							if !newVal.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+							   newVal.trimmingCharacters(in: .whitespaces).first != "#",
+							   newVal.trimmingCharacters(in: .whitespaces).first != "@",
+							   newVal.trimmingCharacters(in: .whitespaces).first != Character(chosenCurrency),
+							   TaskTagsInput.shared.text.filter({ $0 == "@" }).count < 2,
+							   TaskTagsInput.shared.text.filter({ $0 == Character(chosenCurrency) }).count < 2
+							{
+								timerHelper.updateTaskAndTagsIfChanged()
+#if os(iOS)
+								timerHelper.updatePersistentTimerTaskName()
+#endif
+							}
+						}
+					}
+				}
+
 				if stopWatchHelper.isRunning && !stopWatchHelper.pomodoroOnBreak {
 					StartTimeModifierView()
 				}

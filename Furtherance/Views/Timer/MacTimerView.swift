@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+@MainActor
 struct MacTimerView: View {
     @State private var stopWatchHelper = StopWatchHelper.shared
     @State private var showingTaskEmptyAlert = false
