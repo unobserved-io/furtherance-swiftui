@@ -9,7 +9,6 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 struct MacContentView: View {
-	@Binding var tasksCount: Int
 	@Binding var showExportCSV: Bool
 	@Binding var showInspector: Bool
 	@Binding var inspectorView: SelectedInspectorView
@@ -47,7 +46,7 @@ struct MacContentView: View {
 						navSelection: $navSelection
 					)
 					.environmentObject(clickedShortcut)
-				case .timer: TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
+				case .timer: TimerView(showExportCSV: $showExportCSV)
 				case .history: MacHistoryList(
 						showInspector: $showInspector,
 						inspectorView: $inspectorView,
@@ -58,7 +57,7 @@ struct MacContentView: View {
 				case .report: ReportView()
 				}
 			} else {
-				TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
+				TimerView(showExportCSV: $showExportCSV)
 			}
 		}
 		.inspector(isPresented: $showInspector) {
@@ -156,5 +155,5 @@ struct MacContentView: View {
 }
 
 #Preview {
-	MacContentView(tasksCount: .constant(5), showExportCSV: .constant(false), showInspector: .constant(false), inspectorView: .constant(.empty))
+	MacContentView(showExportCSV: .constant(false), showInspector: .constant(false), inspectorView: .constant(.empty))
 }

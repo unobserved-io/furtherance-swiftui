@@ -10,7 +10,6 @@ import SwiftData
 import SwiftUI
 
 struct TimerView: View {
-	@Binding var tasksCount: Int
 	@Binding var showExportCSV: Bool
     
 	@Environment(\.managedObjectContext) private var viewContext
@@ -71,7 +70,7 @@ struct TimerView: View {
 	@StateObject var clickedTask = ClickedTask(task: nil)
 	@State private var showTaskEditSheet = false
 	@State private var showingTaskEmptyAlert = false
-    
+
 	let timerHelper = TimerHelper.shared
 
 	#if os(macOS)
@@ -83,11 +82,6 @@ struct TimerView: View {
 		@State private var showImportCSV = false
 		@State private var showInvalidCSVAlert = false
 	#endif
-    
-	init(tasksCount: Binding<Int>, showExportCSV: Binding<Bool>) {
-		self._tasksCount = tasksCount
-		self._showExportCSV = showExportCSV
-	}
     
 	var body: some View {
 		NavigationStack(path: $navigator.path) {
@@ -220,7 +214,7 @@ struct TimerView: View {
 							} label: {
 								Label("Export as CSV", systemImage: "square.and.arrow.up")
 							}
-							.disabled(tasksCount == 0)
+							.disabled(tasksByDay.count == 0)
 							Button {
 								if storeModel.purchasedIds.isEmpty {
 									showProAlert.toggle()
@@ -297,10 +291,6 @@ struct TimerView: View {
 			}
 			.navigationBarTitleDisplayMode(.inline)
 			#endif
-			// Update tasks count every time tasks is changed
-			.onChange(of: tasksByDay.count) {
-				tasksCount = tasksByDay.count
-			}
 			.navigationDestination(for: ViewPath.self) { path in
 				if path == .group {
 					GroupView()
@@ -323,8 +313,6 @@ struct TimerView: View {
 			}
 			// Initial task count update when view is loaded
 			.onAppear {
-				tasksCount = tasksByDay.count
-                
 				#if os(iOS)
 					resumeOngoingTimer()
 				#endif
@@ -650,5 +638,5 @@ struct TimerView: View {
 }
 
 #Preview {
-	TimerView(tasksCount: .constant(5), showExportCSV: .constant(false))
+	TimerView(showExportCSV: .constant(false))
 }

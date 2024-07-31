@@ -60,6 +60,14 @@ struct FurtheranceApp: App {
 								showInspector = false
 								inspectorView = .empty
 							}
+							// Update tasksCount
+							let fetchRequest: NSFetchRequest<NSFetchRequestResult>
+							fetchRequest = NSFetchRequest(entityName: "FurTask")
+							do {
+								try tasksCount = PersistenceController.shared.container.viewContext.count(for: fetchRequest)
+							} catch {
+								print("Error requesting FurTask objects from database: \(error)")
+							}
 						}
 					}
 					Button("Cancel", role: .cancel) {}
@@ -133,6 +141,15 @@ struct FurtheranceApp: App {
 					} catch {
 						print("Failed to import data: \(error.localizedDescription)")
 					}
+
+					// Update tasksCount
+					let fetchRequest: NSFetchRequest<NSFetchRequestResult>
+					fetchRequest = NSFetchRequest(entityName: "FurTask")
+					do {
+						try tasksCount = PersistenceController.shared.container.viewContext.count(for: fetchRequest)
+					} catch {
+						print("Error requesting FurTask objects from database: \(error)")
+					}
 				}
 				.alert("Invalid CSV", isPresented: $showInvalidCSVAlert) {
 					Button("OK") {}
@@ -198,9 +215,9 @@ struct FurtheranceApp: App {
 
 	private var mainContentView: some View {
 		#if os(macOS)
-		MacContentView(tasksCount: $tasksCount, showExportCSV: $showExportCSV, showInspector: $showInspector, inspectorView: $inspectorView)
+		MacContentView(showExportCSV: $showExportCSV, showInspector: $showInspector, inspectorView: $inspectorView)
 		#else
-		TimerView(tasksCount: $tasksCount, showExportCSV: $showExportCSV)
+		TimerView(showExportCSV: $showExportCSV)
 		#endif
 	}
 }
