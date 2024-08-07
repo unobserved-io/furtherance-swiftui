@@ -992,7 +992,7 @@ struct ChartsView: View {
 				case .title:
 					$0.name == selectedTask
 				case .project:
-					$0.project == selectedTask.lowercased()
+					$0.project?.lowercased() == selectedTask.lowercased()
 				case .tags:
 					$0.tags == selectedTask
 				case .rate:
