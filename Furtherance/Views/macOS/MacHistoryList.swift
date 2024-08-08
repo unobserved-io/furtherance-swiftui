@@ -34,6 +34,7 @@ struct MacHistoryList: View {
 	@AppStorage("showSeconds") private var showSeconds = true
 	@AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
 	@AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
+	@AppStorage("lastDayOpened") private var lastDayOpened: String = localDateFormatter.string(from: Date.now)
 
 	@State private var showDeleteTaskDialog = false
 	@State private var showDeleteTaskGroupDialog = false
@@ -57,12 +58,8 @@ struct MacHistoryList: View {
 				ScrollView {
 					Form {
 						if limitHistory {
-							if tasksByDay.count > historyListLimit {
-								ForEach(0 ..< historyListLimit, id: \.self) { index in
-									showHistoryList(tasksByDay[index])
-								}
-							} else {
-								ForEach(0 ..< tasksByDay.count, id: \.self) { index in
+							ForEach(0 ..< historyListLimit, id: \.self) { index in
+								if tasksByDay.indices.contains(index) {
 									showHistoryList(tasksByDay[index])
 								}
 							}
@@ -97,6 +94,19 @@ struct MacHistoryList: View {
 		}
 		.onAppear {
 			inspectorView = .empty
+			let todaysDate = localDateFormatter.string(from: Date.now)
+			if lastDayOpened != todaysDate {
+				lastDayOpened = todaysDate
+			}
+		}
+		.onReceive(willBecomeActive) { _ in
+			let todaysDate = localDateFormatter.string(from: Date.now)
+			if lastDayOpened != todaysDate {
+				if !tasksByDay.isEmpty {
+					viewContext.refreshAllObjects()
+				}
+				lastDayOpened = todaysDate
+			}
 		}
 		.onDisappear {
 			showInspector = false
@@ -207,13 +217,6 @@ struct MacHistoryList: View {
 							}
 						}
 					}
-			}
-		}
-		.onReceive(willBecomeActive) { _ in
-			if !tasksByDay.isEmpty {
-				if !Calendar.current.isDateInToday(tasksByDay[0][0].stopTime ?? Date.now) {
-					viewContext.refreshAllObjects()
-				}
 			}
 		}
 	}
