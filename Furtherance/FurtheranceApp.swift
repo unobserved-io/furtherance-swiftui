@@ -17,6 +17,7 @@ struct FurtheranceApp: App {
 	#if os(macOS)
 	@NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 	#endif
+
 	@AppStorage("launchCount") private var launchCount = 0
 	@AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
 
@@ -31,7 +32,6 @@ struct FurtheranceApp: App {
 	@State private var addTaskSheet = false
 	@State private var showImportCSV = false
 	@State private var showInvalidCSVAlert = false
-	@State(initialValue: 0) var tasksCount: Int
 	@State(initialValue: false) var showExportCSV: Bool
 	@State(initialValue: false) var showInspector: Bool
 	@State(initialValue: .editTask) var inspectorView: SelectedInspectorView
@@ -59,14 +59,6 @@ struct FurtheranceApp: App {
 							if inspectorView == .editTask || inspectorView == .editTaskGroup {
 								showInspector = false
 								inspectorView = .empty
-							}
-							// Update tasksCount
-							let fetchRequest: NSFetchRequest<NSFetchRequestResult>
-							fetchRequest = NSFetchRequest(entityName: "FurTask")
-							do {
-								try tasksCount = PersistenceController.shared.container.viewContext.count(for: fetchRequest)
-							} catch {
-								print("Error requesting FurTask objects from database: \(error)")
 							}
 						}
 					}
@@ -141,15 +133,6 @@ struct FurtheranceApp: App {
 					} catch {
 						print("Failed to import data: \(error.localizedDescription)")
 					}
-
-					// Update tasksCount
-					let fetchRequest: NSFetchRequest<NSFetchRequestResult>
-					fetchRequest = NSFetchRequest(entityName: "FurTask")
-					do {
-						try tasksCount = PersistenceController.shared.container.viewContext.count(for: fetchRequest)
-					} catch {
-						print("Error requesting FurTask objects from database: \(error)")
-					}
 				}
 				.alert("Invalid CSV", isPresented: $showInvalidCSVAlert) {
 					Button("OK") {}
@@ -163,14 +146,15 @@ struct FurtheranceApp: App {
 		.commands {
 			CommandMenu("Database") {
 				Button("Export as CSV") {
-					if storeModel.purchasedIds.isEmpty {
-						showProAlert.toggle()
-					} else {
-						showExportCSV.toggle()
+					if getTasksCount() != 0 {
+						if storeModel.purchasedIds.isEmpty {
+							showProAlert.toggle()
+						} else {
+							showExportCSV.toggle()
+						}
 					}
 				}
 				.badge(storeModel.purchasedIds.isEmpty ? "Pro" : nil)
-				.disabled(tasksCount == 0)
 				Button("Import CSV") {
 					if storeModel.purchasedIds.isEmpty {
 						showProAlert.toggle()
@@ -180,16 +164,17 @@ struct FurtheranceApp: App {
 				}
 				.badge(storeModel.purchasedIds.isEmpty ? "Pro" : nil)
 				Button("Delete All") {
-					if showDeleteConfirmation {
-						showDeleteDialog = true
-						dialogTitle = "Delete all data?"
-						dialogMessage = "This will delete all of your saved tasks."
-						confirmBtn = "Delete"
-					} else {
-						deleteAllTasks()
+					if getTasksCount() != 0 {
+						if showDeleteConfirmation {
+							showDeleteDialog = true
+							dialogTitle = "Delete all data?"
+							dialogMessage = "This will delete all of your saved tasks."
+							confirmBtn = "Delete"
+						} else {
+							deleteAllTasks()
+						}
 					}
 				}
-				.disabled(tasksCount == 0)
 			}
 			#if os(macOS)
 			CommandGroup(replacing: CommandGroupPlacement.newItem) {}
@@ -219,5 +204,16 @@ struct FurtheranceApp: App {
 		#else
 		TimerView(showExportCSV: $showExportCSV)
 		#endif
+	}
+
+	private func getTasksCount() -> Int {
+		let fetchRequest: NSFetchRequest<NSFetchRequestResult>
+		fetchRequest = NSFetchRequest(entityName: "FurTask")
+		do {
+			return try PersistenceController.shared.container.viewContext.count(for: fetchRequest)
+		} catch {
+			print("Error requesting FurTask objects from database: \(error)")
+			return 0
+		}
 	}
 }
