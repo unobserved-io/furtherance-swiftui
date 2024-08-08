@@ -23,6 +23,7 @@ struct FurtheranceApp: App {
 
 	@ObservedObject var storeModel = StoreModel.shared
 
+	@State private var passStatusModel = PassStatusModel()
 	@State private var navigator = Navigator.shared
 	@State private var showDeleteDialog = false
 	@State private var showProAlert = false
@@ -44,6 +45,7 @@ struct FurtheranceApp: App {
 		WindowGroup {
 			mainContentView
 				.environment(\.managedObjectContext, persistenceController.container.viewContext)
+				.environment(passStatusModel)
 				.onAppear {
 					#if os(macOS)
 					NSWindow.allowsAutomaticWindowTabbing = false

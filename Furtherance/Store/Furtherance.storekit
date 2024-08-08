@@ -34,7 +34,7 @@
     "_applicationInternalID" : "1659277200",
     "_developerTeamID" : "Z5MKQX2NCZ",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 731536692.98863804,
+    "_lastSynchronizedDate" : 744829281.15218496,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -86,10 +86,39 @@
     ]
   },
   "subscriptionGroups" : [
+    {
+      "id" : "21523359",
+      "localizations" : [
 
+      ],
+      "name" : "furtherance-pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "10.0",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6618159397",
+          "introductoryOffer" : null,
+          "localizations" : [
+
+          ],
+          "productID" : "yearly10",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "pro-yearly",
+          "subscriptionGroupID" : "21523359",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
   ],
   "version" : {
-    "major" : 4,
+    "major" : 3,
     "minor" : 0
   }
 }
