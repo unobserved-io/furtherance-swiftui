@@ -21,7 +21,9 @@ struct ShortcutsView: View {
     @EnvironmentObject var clickedShortcut: ClickedShortcut
     
     @Query var shortcuts: [Shortcut]
-    
+
+	@ObservedObject var storeModel = StoreModel.shared
+
     @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
     
     @State private var hovering: UUID? = nil
@@ -37,7 +39,24 @@ struct ShortcutsView: View {
     
     var body: some View {
         NavigationStack {
-			if shortcuts.isEmpty {
+			if storeModel.purchasedIds.isEmpty {
+				Spacer()
+				ContentUnavailableView {
+					Label("Pro Only", image: "hare.slash")
+				} description: {
+					Text("Shortcuts are only available in the pro version.")
+					if let product = storeModel.products.first {
+						Button("Buy Pro \(product.displayPrice)") {
+							Task {
+								if storeModel.purchasedIds.isEmpty {
+									try await storeModel.purchase()
+								}
+							}
+						}
+					}
+				}
+				Spacer()
+			} else if shortcuts.isEmpty {
 				Spacer()
 				ContentUnavailableView(
 					"Create a Shortcut",
@@ -57,7 +76,7 @@ struct ShortcutsView: View {
             }
         }
 		.toolbar {
-			if !showInspector {
+			if !showInspector, !storeModel.purchasedIds.isEmpty {
 				ToolbarItem {
 					Button {
 						inspectorView = .addShortcut
