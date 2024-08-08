@@ -5,6 +5,7 @@
 //  Created by Ricky Kresslein on 8/3/24.
 //
 
+import SwiftData
 import SwiftUI
 
 struct MacHistoryList: View {
@@ -24,6 +25,7 @@ struct MacHistoryList: View {
 		animation: .default
 	)
 	var tasksByDay: SectionedFetchResults<String, FurTask>
+	@Query var shortcuts: [Shortcut]
 
 	@AppStorage("limitHistory") private var limitHistory = true
 	@AppStorage("historyListLimit") private var historyListLimit = 10
@@ -35,6 +37,7 @@ struct MacHistoryList: View {
 
 	@State private var showDeleteTaskDialog = false
 	@State private var showDeleteTaskGroupDialog = false
+	@State private var showShortcutExistsAlert = false
 	@State private var taskToDelete: FurTask? = nil
 	@State private var taskGroupToDelete: FurTaskGroup? = nil
 	@State private var stopWatchHelper = StopWatchHelper.shared
@@ -86,6 +89,11 @@ struct MacHistoryList: View {
 			Button("Cancel", role: .cancel) {}
 		} message: {
 			Text("This will delete all of the tasks in this group.")
+		}
+		.alert("Shortcut Exists", isPresented: $showShortcutExistsAlert) {
+			Button("OK") {}
+		} message: {
+			Text("A shortcut for that task already exists.")
 		}
 		.onAppear {
 			inspectorView = .empty
@@ -166,15 +174,19 @@ struct MacHistoryList: View {
 						}
 
 						Button("Create shortcut") {
-							let newShortcut = Shortcut(
-								name: taskGroup.name,
-								tags: taskGroup.tags,
-								project: taskGroup.project,
-								color: Color.random.hex ?? "A97BEAFF",
-								rate: taskGroup.rate
-							)
-							modelContext.insert(newShortcut)
-							navSelection = .shortcuts
+							if !shortcuts.contains(where: { $0.name == taskGroup.name && $0.project == taskGroup.project && $0.tags == taskGroup.tags && $0.rate == taskGroup.rate }) {
+								let newShortcut = Shortcut(
+									name: taskGroup.name,
+									tags: taskGroup.tags,
+									project: taskGroup.project,
+									color: Color.random.hex ?? "A97BEAFF",
+									rate: taskGroup.rate
+								)
+								modelContext.insert(newShortcut)
+								navSelection = .shortcuts
+							} else {
+								showShortcutExistsAlert.toggle()
+							}
 						}
 
 						Button("Delete") {

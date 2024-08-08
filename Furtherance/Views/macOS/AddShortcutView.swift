@@ -5,13 +5,16 @@
 //  Created by Ricky Kresslein on 19.07.2024.
 //
 
+import SwiftData
 import SwiftUI
 
 struct AddShortcutView: View {
     @Binding var showInspector: Bool
     
     @Environment(\.modelContext) private var modelContext
-    
+
+	@Query var shortcuts: [Shortcut]
+
     @AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
     
     @State private var titleField: String = ""
@@ -88,9 +91,13 @@ struct AddShortcutView: View {
                         if let rate = Double(rateField.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: ".")) {
                             unwrappedRate = rate
                         } else {
-                            error.append("Rate is not a valid number")
+                            error.append("Rate is not a valid number.")
                         }
                     }
+
+					if error.isEmpty && shortcuts.contains(where: { $0.name == titleField && $0.project == projectField && $0.tags == tagsField && $0.rate == unwrappedRate }) {
+						error.append("Shortcut already exists.")
+					}
 
                     // Save shortcut or show error
                     if error.isEmpty {
