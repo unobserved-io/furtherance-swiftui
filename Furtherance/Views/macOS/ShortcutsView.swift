@@ -36,31 +36,42 @@ struct ShortcutsView: View {
     private let timerHelper = TimerHelper.shared
     
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: Self.itemSpacing / 2.0) {
-                ForEach(shortcuts) { shortcut in
-                    shortcutTile(for: shortcut)
-                }
+        NavigationStack {
+			if shortcuts.isEmpty {
+				Spacer()
+				ContentUnavailableView(
+					"Create a Shortcut",
+					systemImage: "hare",
+					description: Text("Click the + icon above to create a shortcut.")
+				)
+				Spacer()
+			} else {
+            	ScrollView {
+            		LazyVGrid(columns: columns, spacing: Self.itemSpacing / 2.0) {
+						ForEach(shortcuts) { shortcut in
+							shortcutTile(for: shortcut)
+						}
+					}
+					.padding(.vertical, Self.itemSpacing / 2.0)
+            	}
             }
-            .padding(.vertical, Self.itemSpacing / 2.0)
-            .toolbar {
-                if !showInspector {
-                    ToolbarItem {
-                        Button {
-                            inspectorView = .addShortcut
-                            showInspector = true
-                        } label: {
-                            Label("Add shortcut", systemImage: "plus")
-                        }
-                    }
-                }
-            }
-            .onDisappear {
-                showInspector = false
-                inspectorView = .empty
-            }
-            Spacer()
         }
+		.toolbar {
+			if !showInspector {
+				ToolbarItem {
+					Button {
+						inspectorView = .addShortcut
+						showInspector = true
+					} label: {
+						Label("Add shortcut", systemImage: "plus")
+					}
+				}
+			}
+		}
+		.onDisappear {
+			showInspector = false
+			inspectorView = .empty
+		}
 		.alert("Delete?", isPresented: $showDeleteAlert) {
 			// Cancel is automatically shown when a button is 'destructive' on Mac
 			Button("Delete", role: .destructive) {
