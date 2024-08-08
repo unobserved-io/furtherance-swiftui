@@ -60,6 +60,7 @@ struct ChartsView: View {
 	@AppStorage("showBreakdownBySelection") private var showBreakdownBySelection = true
 	@AppStorage("showSelectionByTimeChart") private var showSelectionByTimeChart = true
 	@AppStorage("showSelectionByEarningsChart") private var showSelectionByEarningsChart = true
+	@AppStorage("showSelectionEarnings") private var showSelectionEarnings = true
 
 	@State var rangeStartDate: Date = Calendar.current.date(byAdding: .day, value: -6, to: Date.now.startOfDay) ?? Date.now
 	@State var rangeEndDate: Date = .now.endOfDay
@@ -512,9 +513,8 @@ struct ChartsView: View {
 							}
 						}
 
-						if showBreakdownBySelection && (showSelectionByTimeChart || showSelectionByEarningsChart) {
-							// MARK: Charts by selection
-
+						// MARK: Charts by selection
+						if showBreakdownBySelection {
 							Divider()
 
 							VStack(spacing: Self.titleToChartSpacing) {
@@ -547,6 +547,45 @@ struct ChartsView: View {
 									.labelsHidden()
 									.onChange(of: selectedTask) {
 										getDataForSelectedTaskForTime()
+									}
+								}
+
+								// MARK: Total time and earnings for selection
+								HStack {
+									VStack {
+										VStack {
+											HStack(alignment: .lastTextBaseline) {
+												Text(getSelectionTotalTime())
+													.font(.system(size: 55))
+													.foregroundStyle(.accent)
+											}
+											Text("Total time")
+												.font(.title2)
+										}
+										.frame(maxWidth: .infinity)
+										.padding()
+									}
+									.background(.accent.opacity(0.2))
+									.clipShape(RoundedRectangle(cornerRadius: 15))
+									.frame(alignment: .center)
+
+									if showSelectionEarnings {
+										VStack {
+											VStack {
+												HStack(alignment: .lastTextBaseline) {
+													Text(getSelectionTotalEarnings(), format: .currency(code: getCurrencyCode(for: chosenCurrency)))
+														.font(.system(size: 55))
+														.foregroundStyle(.accent)
+												}
+												Text("Earned")
+													.font(.title2)
+											}
+											.frame(maxWidth: .infinity)
+											.padding()
+										}
+										.background(.accent.opacity(0.2))
+										.clipShape(RoundedRectangle(cornerRadius: 15))
+										.frame(alignment: .center)
 									}
 								}
 
@@ -736,6 +775,17 @@ struct ChartsView: View {
 			($0.rate / 3600.0) * Double(Calendar.current.dateComponents([.second], from: $0.startTime ?? .distantPast, to: $0.stopTime ?? .distantFuture).second ?? 0)
 		}.reduce(0,+)
 		return totalEarnings
+	}
+
+	private func getSelectionTotalTime() -> String {
+		var totalTaskTime = DateComponents()
+		totalTaskTime.second = 0
+		totalTaskTime.second? += groupedSelectedTaskData.map { $0.time }.reduce(0,+)
+		return hmsFormatter.string(from: totalTaskTime) ?? "00:00"
+	}
+
+	private func getSelectionTotalEarnings() -> Double {
+		return groupedSelectedTaskData.map { $0.earnings }.reduce(0,+)
 	}
 
 	private func processAllData() {

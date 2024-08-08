@@ -19,6 +19,8 @@ struct ReportSettingsView: View {
 	@AppStorage("showBreakdownBySelection") private var showBreakdownBySelection = true
 	@AppStorage("showSelectionByTimeChart") private var showSelectionByTimeChart = true
 	@AppStorage("showSelectionByEarningsChart") private var showSelectionByEarningsChart = true
+	@AppStorage("showSelectionEarnings") private var showSelectionEarnings = true
+
 
 	var body: some View {
 		ScrollView {
@@ -69,7 +71,7 @@ struct ReportSettingsView: View {
 					.padding()
 
 					HStack {
-						Toggle("Selection By Time", isOn: $showSelectionByTimeChart)
+						Toggle("Selection Earnings", isOn: $showSelectionEarnings)
 							.disabled(
 								storeModel.purchasedIds.isEmpty || !showBreakdownBySelection
 							)
@@ -78,7 +80,16 @@ struct ReportSettingsView: View {
 					.padding()
 
 					HStack {
-						Toggle("Selection By Earnings", isOn: $showSelectionByEarningsChart)
+						Toggle("Selection By Time Chart", isOn: $showSelectionByTimeChart)
+							.disabled(
+								storeModel.purchasedIds.isEmpty || !showBreakdownBySelection
+							)
+					}
+					.frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
+					.padding()
+
+					HStack {
+						Toggle("Selection By Earnings Chart", isOn: $showSelectionByEarningsChart)
 							.disabled(
 								storeModel.purchasedIds.isEmpty || !showBreakdownBySelection
 							)
