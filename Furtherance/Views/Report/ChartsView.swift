@@ -12,6 +12,8 @@ struct ChartsView: View {
 	static let titleToChartSpacing: CGFloat? = 30
 	static let chartFrameHeight: CGFloat? = 300
 
+	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
+
 	@ObservedObject var storeModel = StoreModel.shared
 
 	@FetchRequest(
@@ -96,7 +98,7 @@ struct ChartsView: View {
 	}()
 
 	var body: some View {
-		if !storeModel.purchasedIds.isEmpty {
+		if !(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty) {
 			ScrollView {
 				VStack(spacing: 20) {
 					// MARK: Date range selector

@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AdvancedSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
+	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
+	
     @State private var stopWatchHelper = StopWatchHelper.shared
 
     @ObservedObject var storeModel = StoreModel.shared
@@ -35,7 +37,7 @@ struct AdvancedSettingsView: View {
                         Toggle("Idle Detection", isOn: $idleDetect)
                             .toggleStyle(.switch)
                             .labelsHidden()
-                            .disabled(storeModel.purchasedIds.isEmpty)
+                            .disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
                     }
                     .onChange(of: idleDetect) { _, newVal in
                         if newVal {
@@ -60,7 +62,7 @@ struct AdvancedSettingsView: View {
                             .bold()
                         Stepper("\(idleLimit)", value: $idleLimit, in: 1 ... 999)
                             .labelsHidden()
-                            .disabled(storeModel.purchasedIds.isEmpty || !idleDetect)
+                            .disabled((passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty) || !idleDetect)
                     }
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
                     .padding()
@@ -83,7 +85,7 @@ struct AdvancedSettingsView: View {
                             .toggleStyle(.switch)
                             .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                             .labelsHidden()
-                            .disabled(storeModel.purchasedIds.isEmpty)
+                            .disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -99,7 +101,7 @@ struct AdvancedSettingsView: View {
                             .toggleStyle(.switch)
                             .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                             .labelsHidden()
-                            .disabled(storeModel.purchasedIds.isEmpty)
+                            .disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -115,7 +117,7 @@ struct AdvancedSettingsView: View {
                             .bold()
                         Stepper("\(historyListLimit)", value: $historyListLimit, in: 10 ... 1000, step: 10)
                             .labelsHidden()
-                            .disabled(storeModel.purchasedIds.isEmpty || !limitHistory)
+                            .disabled((passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty) || !limitHistory)
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)

@@ -195,6 +195,7 @@ struct FurtheranceApp: App {
 		#if os(macOS)
 		Settings {
 			SettingsView()
+				.environment(passStatusModel)
 		}
 		.defaultSize(width: 400, height: 450)
 		#endif

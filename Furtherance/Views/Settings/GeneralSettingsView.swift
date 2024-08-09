@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct GeneralSettingsView: View {
-    @ObservedObject var storeModel = StoreModel.shared
     @Environment(\.colorScheme) var colorScheme
+	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
+
+	@ObservedObject var storeModel = StoreModel.shared
+
     @State private var stopWatchHelper = StopWatchHelper.shared
 
     @AppStorage("defaultView") private var defaultView: NavItems = .timer
@@ -58,7 +61,7 @@ struct GeneralSettingsView: View {
                         Toggle("Show Icon Badge", isOn: $showIconBadge)
                             .toggleStyle(.switch)
                             .labelsHidden()
-                            .disabled(storeModel.purchasedIds.isEmpty)
+                            .disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
                     }
                     .onChange(of: showIconBadge) { _, newVal in
                         if newVal {
@@ -102,7 +105,7 @@ struct GeneralSettingsView: View {
                             .toggleStyle(.switch)
                             .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                             .labelsHidden()
-                            .disabled(storeModel.purchasedIds.isEmpty)
+                            .disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -118,7 +121,7 @@ struct GeneralSettingsView: View {
                             .toggleStyle(.switch)
                             .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                             .labelsHidden()
-                            .disabled(storeModel.purchasedIds.isEmpty)
+                            .disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -134,7 +137,7 @@ struct GeneralSettingsView: View {
                             .toggleStyle(.switch)
                             .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                             .labelsHidden()
-                            .disabled(storeModel.purchasedIds.isEmpty)
+                            .disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -150,7 +153,7 @@ struct GeneralSettingsView: View {
                             .toggleStyle(.switch)
                             .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                             .labelsHidden()
-                            .disabled(storeModel.purchasedIds.isEmpty)
+                            .disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -166,7 +169,7 @@ struct GeneralSettingsView: View {
                             .toggleStyle(.switch)
                             .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                             .labelsHidden()
-                            .disabled(storeModel.purchasedIds.isEmpty)
+                            .disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)

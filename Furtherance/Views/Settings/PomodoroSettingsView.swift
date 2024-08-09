@@ -9,7 +9,8 @@ import SwiftUI
 
 struct PomodoroSettingsView: View {
     @Environment(\.colorScheme) var colorScheme
-    
+	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
+
     @ObservedObject var storeModel = StoreModel.shared
     
     @AppStorage("pomodoro") private var pomodoro = false
@@ -93,7 +94,7 @@ struct PomodoroSettingsView: View {
                             .bold()
                         Stepper("\(pomodoroMoreTime)", value: $pomodoroMoreTime, in: 1 ... 180)
                             .labelsHidden()
-                            .disabled(!pomodoro || storeModel.purchasedIds.isEmpty)
+                            .disabled(!pomodoro || (passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty))
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -119,7 +120,7 @@ struct PomodoroSettingsView: View {
                             .toggleStyle(.switch)
                             .tint(colorScheme == .light ? switchColorLightTheme : switchColorDarkTheme)
                             .labelsHidden()
-                            .disabled(!pomodoro || storeModel.purchasedIds.isEmpty)
+                            .disabled(!pomodoro || (passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty))
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -141,7 +142,7 @@ struct PomodoroSettingsView: View {
                             .bold()
                         Stepper("\(pomodoroBigBreakInterval)", value: $pomodoroBigBreakInterval, in: 1 ... 50)
                             .labelsHidden()
-                            .disabled(!pomodoro || !pomodoroBigBreak || storeModel.purchasedIds.isEmpty)
+                            .disabled(!pomodoro || !pomodoroBigBreak || (passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty))
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -157,7 +158,7 @@ struct PomodoroSettingsView: View {
                             .bold()
                         Stepper("\(pomodoroBigBreakLength)", value: $pomodoroBigBreakLength, in: 1 ... 180)
                             .labelsHidden()
-                            .disabled(!pomodoro || !pomodoroBigBreak || storeModel.purchasedIds.isEmpty)
+                            .disabled(!pomodoro || !pomodoroBigBreak || (passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty))
                     }
 #if os(macOS)
                     .frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -173,7 +174,7 @@ struct PomodoroSettingsView: View {
                             Button("Reset", role: .destructive) {
                                 stopWatchHelper.pomodoroSessions = 0
                             }
-                            .disabled(stopWatchHelper.isRunning || storeModel.purchasedIds.isEmpty)
+                            .disabled(stopWatchHelper.isRunning || (passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty))
                             .buttonStyle(.borderedProminent)
                         }
 #if os(macOS)

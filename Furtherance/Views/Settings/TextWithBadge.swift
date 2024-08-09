@@ -10,6 +10,8 @@ import SwiftUI
 struct TextWithBadge: View {
     var content: String
 
+	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
+
     @ObservedObject var storeModel = StoreModel.shared
 
     init(_ content: String) {
@@ -19,7 +21,7 @@ struct TextWithBadge: View {
     var body: some View {
         HStack {
             Text(content)
-            if storeModel.purchasedIds.isEmpty {
+            if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
                 Text("PRO")
                     .padding(.vertical, 3.0)
                     .padding(.horizontal, 8.0)

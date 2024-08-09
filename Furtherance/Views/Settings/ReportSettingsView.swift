@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct ReportSettingsView: View {
-	@ObservedObject var storeModel = StoreModel.shared
 	@Environment(\.colorScheme) var colorScheme
+	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
+
+	@ObservedObject var storeModel = StoreModel.shared
 
 	@AppStorage("showTotalEarnings") private var showTotalEarnings = true
 	@AppStorage("showTotalEarningsChart") private var showTotalEarningsChart = true
@@ -28,42 +30,42 @@ struct ReportSettingsView: View {
 				Section(header: TextWithBadge("Toggle Charts")) {
 					HStack {
 						Toggle("Total Earnings", isOn: $showTotalEarnings)
-							.disabled(storeModel.purchasedIds.isEmpty)
+							.disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
 					}
 					.frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
 					.padding()
 
 					HStack {
 						Toggle("Total Earnings Chart", isOn: $showTotalEarningsChart)
-							.disabled(storeModel.purchasedIds.isEmpty)
+							.disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
 					}
 					.frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
 					.padding()
 
 					HStack {
 						Toggle("Total Time Chart", isOn: $showTotalTimeChart)
-							.disabled(storeModel.purchasedIds.isEmpty)
+							.disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
 					}
 					.frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
 					.padding()
 
 					HStack {
 						Toggle("Average Earned Per Task", isOn: $showAvgEarnedPerTaskChart)
-							.disabled(storeModel.purchasedIds.isEmpty)
+							.disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
 					}
 					.frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
 					.padding()
 
 					HStack {
 						Toggle("Average Time Per Task", isOn: $showAvgTimePerTaskChart)
-							.disabled(storeModel.purchasedIds.isEmpty)
+							.disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
 					}
 					.frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
 					.padding()
 
 					HStack {
 						Toggle("Breakdown By Selection Section", isOn: $showBreakdownBySelection)
-							.disabled(storeModel.purchasedIds.isEmpty)
+							.disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
 					}
 					.frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
 					.padding()
@@ -71,7 +73,7 @@ struct ReportSettingsView: View {
 					HStack {
 						Toggle("Selection Earnings", isOn: $showSelectionEarnings)
 							.disabled(
-								storeModel.purchasedIds.isEmpty || !showBreakdownBySelection
+								(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty) || !showBreakdownBySelection
 							)
 					}
 					.frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -80,7 +82,7 @@ struct ReportSettingsView: View {
 					HStack {
 						Toggle("Selection By Time Chart", isOn: $showSelectionByTimeChart)
 							.disabled(
-								storeModel.purchasedIds.isEmpty || !showBreakdownBySelection
+								(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty) || !showBreakdownBySelection
 							)
 					}
 					.frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
@@ -89,7 +91,7 @@ struct ReportSettingsView: View {
 					HStack {
 						Toggle("Selection By Earnings Chart", isOn: $showSelectionByEarningsChart)
 							.disabled(
-								storeModel.purchasedIds.isEmpty || !showBreakdownBySelection
+								(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty) || !showBreakdownBySelection
 							)
 					}
 					.frame(maxWidth: .infinity, maxHeight: 15, alignment: .leading)
