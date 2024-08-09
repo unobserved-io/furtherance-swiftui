@@ -457,7 +457,7 @@ struct TimerView: View {
 	}
 
 	private var todaysTotalTimeDisplay: some View {
-		if totalInclusive, stopWatchHelper.isRunning {
+		if totalInclusive, stopWatchHelper.isRunning, !stopWatchHelper.pomodoroOnBreak {
 			Text(
 				timerInterval: (Calendar.current.date(byAdding: .second, value: -getTotalTimeToday(), to: stopWatchHelper.startTime) ?? .now) ... stopWatchHelper.stopTime,
 				countsDown: false
@@ -481,7 +481,7 @@ struct TimerView: View {
 			Spacer()
 			if showDailySum {
 				if taskSection.id == "today", totalInclusive {
-					if stopWatchHelper.isRunning {
+					if stopWatchHelper.isRunning, !stopWatchHelper.pomodoroOnBreak {
 						let adjustedStartTime = Calendar.current.date(byAdding: .second, value: -totalSectionTime(taskSection), to: stopWatchHelper.startTime)
 						Text(
 							timerInterval: (adjustedStartTime ?? .now) ... stopWatchHelper.stopTime,

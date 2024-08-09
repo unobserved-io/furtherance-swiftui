@@ -226,7 +226,7 @@ struct MacHistoryList: View {
 			Spacer()
 			if showDailySum {
 				if taskSection.id == "today", totalInclusive {
-					if stopWatchHelper.isRunning {
+					if stopWatchHelper.isRunning, !stopWatchHelper.pomodoroOnBreak {
 						let adjustedStartTime = Calendar.current.date(byAdding: .second, value: -totalSectionTime(taskSection), to: stopWatchHelper.startTime)
 						Text(
 							timerInterval: (adjustedStartTime ?? .now) ... stopWatchHelper.stopTime,
