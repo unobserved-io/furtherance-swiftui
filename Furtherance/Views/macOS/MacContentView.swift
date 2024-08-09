@@ -26,6 +26,18 @@ struct MacContentView: View {
 	@StateObject var autosave = Autosave()
 
 	@AppStorage("defaultView") private var defaultView: NavItems = .timer
+	@AppStorage("pomodoroMoreTime") private var pomodoroMoreTime = 5
+	@AppStorage("pomodoroBigBreak") private var pomodoroBigBreak = false
+	@AppStorage("idleDetect") private var idleDetect = false
+	@AppStorage("totalInclusive") private var totalInclusive = false
+	@AppStorage("limitHistory") private var limitHistory = true
+	@AppStorage("historyListLimit") private var historyListLimit = 10
+	@AppStorage("showIconBadge") private var showIconBadge = false
+	@AppStorage("showDailySum") private var showDailySum = true
+	@AppStorage("showTags") private var showTags = true
+	@AppStorage("showProject") private var showProject = true
+	@AppStorage("showEarnings") private var showEarnings = true
+	@AppStorage("showSeconds") private var showSeconds = true
 
 	@State private var navSelection: NavItems? = .timer
 	@State private var status: EntitlementTaskState<PassStatus> = .loading
@@ -116,7 +128,13 @@ struct MacContentView: View {
 			case .success(let status):
 				passStatusModel.passStatus = status
 				if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
-					resetPaywalledFeatures()
+					Timer.scheduledTimer(withTimeInterval: 600, repeats: false) { _ in
+						Task {
+							if await storeModel.purchasedIds.isEmpty {
+								await resetPaywalledFeatures()
+							}
+						}
+					}
 				}
 			case .loading: break
 			@unknown default: break
@@ -182,8 +200,19 @@ struct MacContentView: View {
 		return "\(task.name ?? "Unknown"),\(task.project ?? ""),\(task.tags ?? ""),\(task.rate),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
 	}
 
-	private func resetPaywalledFeatures() {
-		// TODO: Reset paywalled settings
+	private func resetPaywalledFeatures() async {
+		pomodoroMoreTime = 5
+		pomodoroBigBreak = false
+		idleDetect = false
+		totalInclusive = false
+		limitHistory = true
+		historyListLimit = 10
+		showIconBadge = false
+		showDailySum = true
+		showTags = true
+		showProject = true
+		showEarnings = true
+		showSeconds = true
 	}
 }
 
