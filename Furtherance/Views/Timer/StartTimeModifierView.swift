@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct StartTimeModifierView: View {
+	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
+
 	@ObservedObject var storeModel = StoreModel.shared
 
 	@AppStorage("pomodoro") private var pomodoro = false
@@ -30,9 +32,9 @@ struct StartTimeModifierView: View {
 				displayedComponents: [.hourAndMinute]
 			)
 			.labelsHidden()
-			.disabled(StopWatchHelper.shared.pomodoroExtended || storeModel.purchasedIds.isEmpty)
+			.disabled(StopWatchHelper.shared.pomodoroExtended || (passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty))
 
-			if storeModel.purchasedIds.isEmpty {
+			if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
 				Text("PRO")
 					.padding(.vertical, 3.0)
 					.padding(.horizontal, 8.0)

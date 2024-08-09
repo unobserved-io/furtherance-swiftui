@@ -14,6 +14,7 @@ struct TimerView: View {
 
 	@Environment(\.managedObjectContext) private var viewContext
 	@Environment(\.colorScheme) var colorScheme
+	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
 
 	@Bindable var navigator = Navigator.shared
 
@@ -398,8 +399,8 @@ struct TimerView: View {
 			Button {
 				stopWatchHelper.pomodoroMoreMinutes()
 			} label: {
-				Text("^[\(pomodoroMoreTime) More Minute](inflect: true)\(storeModel.purchasedIds.isEmpty ? " (Pro)" : "")")
-			}.disabled(storeModel.purchasedIds.isEmpty)
+				Text("^[\(pomodoroMoreTime) More Minute](inflect: true)\(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty ? " (Pro)" : "")")
+			}.disabled(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty)
 			Button("Stop") {
 				timerHelper.stop(at: stopWatchHelper.stopTime)
 			}

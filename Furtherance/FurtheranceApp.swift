@@ -72,19 +72,7 @@ struct FurtheranceApp: App {
 					AddTaskView().environment(\.managedObjectContext, persistenceController.container.viewContext)
 				}
 				.alert("Upgrade to Pro", isPresented: $showProAlert) {
-					Button("Cancel") {}
-					if let product = storeModel.products.first {
-						Button(action: {
-							Task {
-								if storeModel.purchasedIds.isEmpty {
-									try await storeModel.purchase()
-								}
-							}
-						}) {
-							Text("Buy Pro \(product.displayPrice)")
-						}
-						.keyboardShortcut(.defaultAction)
-					}
+					Button("Ok") {}
 				} message: {
 					Text("That feature is only available in Furtherance Pro.")
 				}
@@ -149,22 +137,22 @@ struct FurtheranceApp: App {
 			CommandMenu("Database") {
 				Button("Export as CSV") {
 					if getTasksCount() != 0 {
-						if storeModel.purchasedIds.isEmpty {
+						if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
 							showProAlert.toggle()
 						} else {
 							showExportCSV.toggle()
 						}
 					}
 				}
-				.badge(storeModel.purchasedIds.isEmpty ? "Pro" : nil)
+				.badge(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty ? "Pro" : nil)
 				Button("Import CSV") {
-					if storeModel.purchasedIds.isEmpty {
+					if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
 						showProAlert.toggle()
 					} else {
 						showImportCSV.toggle()
 					}
 				}
-				.badge(storeModel.purchasedIds.isEmpty ? "Pro" : nil)
+				.badge(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty ? "Pro" : nil)
 				Button("Delete All") {
 					if getTasksCount() != 0 {
 						if showDeleteConfirmation {
