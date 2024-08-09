@@ -755,15 +755,6 @@ struct ChartsView: View {
 				Label("Pro Only", image: "chart.line.slash")
 			} description: {
 				Text("Charts are only available in the pro version. The \"List\" report is free.")
-				if let product = storeModel.products.first {
-					Button("Buy Pro \(product.displayPrice)") {
-						Task {
-							if storeModel.purchasedIds.isEmpty {
-								try await storeModel.purchase()
-							}
-						}
-					}
-				}
 			}
 			Spacer()
 		}

@@ -5,6 +5,7 @@
 //  Created by Ricky Kresslein on 18.07.2024.
 //
 
+import StoreKit
 import SwiftData
 import SwiftUI
 
@@ -18,8 +19,9 @@ struct ShortcutsView: View {
     
     @Environment(\.self) var environment
     @Environment(\.modelContext) private var modelContext
+	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
     @EnvironmentObject var clickedShortcut: ClickedShortcut
-    
+
     @Query var shortcuts: [Shortcut]
 
 	@ObservedObject var storeModel = StoreModel.shared
@@ -28,6 +30,7 @@ struct ShortcutsView: View {
     
     @State private var hovering: UUID? = nil
     @State private var showDeleteAlert: Bool = false
+    @State private var showManageSubscriptionSheet: Bool = false
 	@State private var shortcutToDelete: Shortcut? = nil
 
     @StateObject var taskTagsInput = TaskTagsInput.shared
@@ -39,21 +42,12 @@ struct ShortcutsView: View {
     
     var body: some View {
         NavigationStack {
-			if storeModel.purchasedIds.isEmpty {
+			if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
 				Spacer()
 				ContentUnavailableView {
 					Label("Pro Only", image: "hare.slash")
 				} description: {
 					Text("Shortcuts are only available in the pro version.")
-					if let product = storeModel.products.first {
-						Button("Buy Pro \(product.displayPrice)") {
-							Task {
-								if storeModel.purchasedIds.isEmpty {
-									try await storeModel.purchase()
-								}
-							}
-						}
-					}
 				}
 				Spacer()
 			} else if shortcuts.isEmpty {

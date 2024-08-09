@@ -5,6 +5,7 @@
 //  Created by Ricky Kresslein on 8/3/24.
 //
 
+import StoreKit
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -14,6 +15,8 @@ struct MacContentView: View {
 	@Binding var inspectorView: SelectedInspectorView
 
 	@Environment(\.managedObjectContext) private var viewContext
+	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
+	@Environment(\.passIDs) private var passIDs
 
 	@ObservedObject var storeModel = StoreModel.shared
 
@@ -25,12 +28,17 @@ struct MacContentView: View {
 	@AppStorage("defaultView") private var defaultView: NavItems = .timer
 
 	@State private var navSelection: NavItems? = .timer
+	@State private var status: EntitlementTaskState<PassStatus> = .loading
 
 	// TODO: Create one observable object for everything here that needs to be changed by multiple views
 	var body: some View {
 		NavigationSplitView {
 			List(NavItems.allCases, id: \.self, selection: $navSelection) { navItem in
-				NavigationLink(navItem.rawValue.capitalized, value: navItem)
+				if navItem != .buyPro {
+					NavigationLink(navItem.rawValue.capitalized, value: navItem)
+				} else if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
+					NavigationLink("Buy Pro", value: navItem)
+				}
 			}
 			.navigationSplitViewColumnWidth(min: 180, ideal: 200)
 			Spacer()
@@ -55,6 +63,7 @@ struct MacContentView: View {
 					.environmentObject(clickedGroup)
 					.environmentObject(clickedTask)
 				case .report: ReportView()
+				case .buyPro: ProSubscribeView(navSelection: $navSelection)
 				}
 			} else {
 				TimerView(showExportCSV: $showExportCSV)
@@ -91,6 +100,26 @@ struct MacContentView: View {
 			case .editShortcut:
 				EditShortcutView(showInspector: $showInspector)
 					.environmentObject(clickedShortcut)
+			}
+		}
+		.subscriptionStatusTask(for: "21523359") { taskStatus in
+			self.status = await taskStatus.map { statuses in
+				await ProductSubscription.shared.status(
+					for: statuses,
+					ids: passIDs
+				)
+			}
+			switch self.status {
+			case .failure(let error):
+				passStatusModel.passStatus = .notSubscribed
+				print("Failed to check subscription status: \(error)")
+			case .success(let status):
+				passStatusModel.passStatus = status
+				if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
+					resetPaywalledFeatures()
+				}
+			case .loading: break
+			@unknown default: break
 			}
 		}
 		.alert("Autosave Restored", isPresented: $autosave.showAlert) {
@@ -151,6 +180,10 @@ struct MacContentView: View {
 		let startString = localDateTimeFormatter.string(from: task.startTime ?? Date.now)
 		let stopString = localDateTimeFormatter.string(from: task.stopTime ?? Date.now)
 		return "\(task.name ?? "Unknown"),\(task.project ?? ""),\(task.tags ?? ""),\(task.rate),\(startString),\(stopString),\(Int(totalSeconds ?? 0))\n"
+	}
+
+	private func resetPaywalledFeatures() {
+		// TODO: Reset paywalled settings
 	}
 }
 

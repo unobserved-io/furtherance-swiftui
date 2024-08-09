@@ -34,7 +34,7 @@
     "_applicationInternalID" : "1659277200",
     "_developerTeamID" : "Z5MKQX2NCZ",
     "_failTransactionsEnabled" : false,
-    "_lastSynchronizedDate" : 744829281.15218496,
+    "_lastSynchronizedDate" : 744870175.64700699,
     "_locale" : "en_US",
     "_storefront" : "USA",
     "_storeKitErrors" : [
@@ -104,9 +104,18 @@
           "familyShareable" : false,
           "groupNumber" : 1,
           "internalID" : "6618159397",
-          "introductoryOffer" : null,
+          "introductoryOffer" : {
+            "internalID" : "C669A908",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
           "localizations" : [
-
+            {
+              "description" : "Unlock all the features with Furtherance Pro.",
+              "displayName" : "Pro",
+              "locale" : "en_US"
+            }
           ],
           "productID" : "yearly10",
           "recurringSubscriptionPeriod" : "P1Y",

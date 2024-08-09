@@ -53,6 +53,7 @@
 		9C9DB0652A54405A00E0DC2B /* Assets-iOS.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C9DB0642A54405A00E0DC2B /* Assets-iOS.xcassets */; platformFilter = ios; };
 		9C9F8EB32B99E7620064BF69 /* TextWithBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C9F8EB22B99E7620064BF69 /* TextWithBadge.swift */; };
 		9CA00DCC2C652C3400B32944 /* ProductSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA00DCB2C652C3400B32944 /* ProductSubscription.swift */; };
+		9CA00DCE2C65C35C00B32944 /* ProSubscribeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA00DCD2C65C35C00B32944 /* ProSubscribeView.swift */; };
 		9CA84E1129A7721200A28FDA /* FurtheranceApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */; };
 		9CA84E1329A7721200A28FDA /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1229A7721200A28FDA /* TimerView.swift */; };
 		9CA84E1A29A7721300A28FDA /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA84E1929A7721300A28FDA /* PersistenceController.swift */; };
@@ -120,6 +121,7 @@
 		9C9DB0642A54405A00E0DC2B /* Assets-iOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-iOS.xcassets"; sourceTree = "<group>"; };
 		9C9F8EB22B99E7620064BF69 /* TextWithBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextWithBadge.swift; sourceTree = "<group>"; };
 		9CA00DCB2C652C3400B32944 /* ProductSubscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductSubscription.swift; sourceTree = "<group>"; };
+		9CA00DCD2C65C35C00B32944 /* ProSubscribeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProSubscribeView.swift; sourceTree = "<group>"; };
 		9CA84E1029A7721200A28FDA /* FurtheranceApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FurtheranceApp.swift; sourceTree = "<group>"; };
 		9CA84E1229A7721200A28FDA /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		9CA84E1429A7721300A28FDA /* Assets-macOS.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets-macOS.xcassets"; sourceTree = "<group>"; };
@@ -237,6 +239,7 @@
 				9C40667D2C6526F100A5CDAA /* PassStatusModel.swift */,
 				9C40667F2C65274000A5CDAA /* PassStatus.swift */,
 				9CA00DCB2C652C3400B32944 /* ProductSubscription.swift */,
+				9CA00DCD2C65C35C00B32944 /* ProSubscribeView.swift */,
 			);
 			path = Store;
 			sourceTree = "<group>";
@@ -500,6 +503,7 @@
 				9C94FF3C2B6EC5F7007EC064 /* TaskInputView.swift in Sources */,
 				9C9F8EB32B99E7620064BF69 /* TextWithBadge.swift in Sources */,
 				9C4B2C772B6512530099CB9A /* StartFurtheranceTimerIntent.swift in Sources */,
+				9CA00DCE2C65C35C00B32944 /* ProSubscribeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
