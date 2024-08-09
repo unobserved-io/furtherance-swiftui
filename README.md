@@ -3,13 +3,14 @@ Furtherance is a time tracking app.
 It allows you to track time spent on different activities without worrying about your data being captured and sold.
 
 <p align="center">
-    <img width="500px" src="https://unobserved.io/assets/screenshots/furtherance-mac.png" alt="Furtherance screenshot"/>
+    <img width="700px" src="https://unobserved.io/assets/screenshots/furtherance-mac-2.png" alt="Furtherance screenshot"/>
 </p>
 
 ## Features
-* Tasks are stored using SwiftData (local or in the cloud if iCloud Drive is enabled)
-* Tasks are grouped by name and date.
-* Tasks can be edited after they are created (name, time, and date).
+* Tasks are stored using SwiftData (local or in the cloud if iCloud Drive is enabled).
+* All tasks have a name. Optionally they can also have a project, tags, and an hourly rate.
+* History is grouped by name and date.
+* Tasks can be edited after they are created and while the timer is running.
 * Settings to customize the view and defaults to your liking.
 * Features can be added! Just open an issue.
 
@@ -23,7 +24,7 @@ It allows you to track time spent on different activities without worrying about
 The easiest way to build Furtherance is with [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12). Just open the .xcodeproj file and click Run.
 
 ### Use
-Type in the name of the task you are working on, add some #tags, and press start. That's really all there is to it.
+Type in the name of the task you are working on, optionally add a `@Project`, some `#tags`, and a `$rate`, and press start. That's really all there is to it.
 
 ## Contribute
 
@@ -42,7 +43,7 @@ Thank you so much!
 ## Project Details
 
 ### Built With
-Written in Swift using SwifUI for a native macOS/iOS experience.
+Written in Swift 6 using SwifUI for a native macOS/iOS experience.
 
 ### License
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
