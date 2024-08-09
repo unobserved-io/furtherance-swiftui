@@ -25,6 +25,19 @@ struct ProSubscribeView: View {
 						.padding(.bottom)
 
 					VStack(alignment: .listRowSeparatorLeading, spacing: 12.0) {
+						// Idle detection
+						HStack {
+							Image(systemName: "cursorarrow.motionlines")
+								.font(.system(size: 38))
+								.foregroundStyle(.accent)
+							VStack(alignment: .leading) {
+								Text("Idle Detection")
+									.bold()
+								Text("When you forget to stop the timer")
+									.font(.caption)
+							}
+						}
+
 						// Charts
 						HStack {
 							Image(systemName: "chart.xyaxis.line")
@@ -66,13 +79,13 @@ struct ProSubscribeView: View {
 
 						// More to come
 						HStack {
-							Image(systemName: "visionpro.fill")
-								.font(.system(size: 32))
+							Image(systemName: "gearshape.fill")
+								.font(.system(size: 38))
 								.foregroundStyle(.accent)
 							VStack(alignment: .leading) {
-								Text("More to come")
+								Text("Settings")
 									.bold()
-								Text("Future access to new features")
+								Text("Access all pro settings")
 									.font(.caption)
 							}
 						}
