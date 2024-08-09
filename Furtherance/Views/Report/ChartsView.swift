@@ -284,7 +284,10 @@ struct ChartsView: View {
 												.onContinuousHover { hoverPhase in
 													switch hoverPhase {
 													case let .active(hoverLocation):
-														updateSelectedEarningsOnHover(at: hoverLocation.x, proxy: proxy)
+														if let plotFrame = proxy.plotFrame {
+															let origin = geometry[plotFrame].origin
+															updateSelectedEarningsOnHover(at: hoverLocation.x - origin.x, proxy: proxy)
+														}
 													case .ended:
 														selectedEarningsDate = nil
 													}
@@ -348,7 +351,11 @@ struct ChartsView: View {
 												.onContinuousHover { hoverPhase in
 													switch hoverPhase {
 													case let .active(hoverLocation):
-														updateSelectedTimeOnHover(at: hoverLocation.x, proxy: proxy)
+														if let plotFrame = proxy.plotFrame {
+															let origin = geometry[plotFrame].origin
+															updateSelectedTimeOnHover(at: hoverLocation.x - origin.x, proxy: proxy)
+														}
+//														updateSelectedTimeOnHover(at: hoverLocation.x, proxy: proxy)
 													case .ended:
 														selectedTimeDate = nil
 													}
@@ -427,7 +434,10 @@ struct ChartsView: View {
 												.onContinuousHover { hoverPhase in
 													switch hoverPhase {
 													case let .active(hoverLocation):
-														updateAverageEarningsOnHover(at: hoverLocation.x, proxy: proxy)
+														if let plotFrame = proxy.plotFrame {
+															let origin = geometry[plotFrame].origin
+															updateAverageEarningsOnHover(at: hoverLocation.x - origin.x, proxy: proxy)
+														}
 													case .ended:
 														averageEarningsDate = nil
 													}
@@ -499,7 +509,10 @@ struct ChartsView: View {
 												.onContinuousHover { hoverPhase in
 													switch hoverPhase {
 													case let .active(hoverLocation):
-														updateAverageTimeOnHover(at: hoverLocation.x, proxy: proxy)
+														if let plotFrame = proxy.plotFrame {
+															let origin = geometry[plotFrame].origin
+															updateAverageTimeOnHover(at: hoverLocation.x - origin.x, proxy: proxy)
+														}
 													case .ended:
 														averageTimeDate = nil
 													}
@@ -649,7 +662,10 @@ struct ChartsView: View {
 													.onContinuousHover { hoverPhase in
 														switch hoverPhase {
 														case let .active(hoverLocation):
-															updateSelectedTimeForSelectedTaskOnHover(at: hoverLocation.x, proxy: proxy)
+															if let plotFrame = proxy.plotFrame {
+																let origin = geometry[plotFrame].origin
+																updateSelectedTimeForSelectedTaskOnHover(at: hoverLocation.x - origin.x, proxy: proxy)
+															}
 														case .ended:
 															timeDateForSelectedTask = nil
 														}
@@ -726,7 +742,10 @@ struct ChartsView: View {
 													.onContinuousHover { hoverPhase in
 														switch hoverPhase {
 														case let .active(hoverLocation):
-															updateEarningsForSelectedTaskOnHover(at: hoverLocation.x, proxy: proxy)
+															if let plotFrame = proxy.plotFrame {
+																let origin = geometry[plotFrame].origin
+																updateEarningsForSelectedTaskOnHover(at: hoverLocation.x - origin.x, proxy: proxy)
+															}
 														case .ended:
 															earningsDateForSelectedTask = nil
 														}
