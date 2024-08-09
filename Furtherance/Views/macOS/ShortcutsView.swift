@@ -70,7 +70,7 @@ struct ShortcutsView: View {
 			}
 		}
 		.toolbar {
-			if !showInspector, passStatusModel.passStatus != .notSubscribed, !storeModel.purchasedIds.isEmpty {
+			if !showInspector, (passStatusModel.passStatus != .notSubscribed || !storeModel.purchasedIds.isEmpty) {
 				ToolbarItem {
 					Button {
 						inspectorView = .addShortcut
