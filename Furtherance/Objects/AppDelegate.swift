@@ -5,11 +5,11 @@
 //  Created by Ricky Kresslein on 6/23/23.
 //
 #if os(macOS)
-import SwiftUI
+	import SwiftUI
 
-class AppDelegate: NSObject, NSApplicationDelegate {
-    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
-        return true
-    }
-}
+	class AppDelegate: NSObject, NSApplicationDelegate {
+		func applicationShouldTerminateAfterLastWindowClosed(_: NSApplication) -> Bool {
+			true
+		}
+	}
 #endif

@@ -48,13 +48,13 @@ struct MacContentView: View {
 			List(NavItems.allCases, id: \.self, selection: $navSelection) { navItem in
 				if navItem != .buyPro {
 					NavigationLink(navItem.rawValue.capitalized, value: navItem)
-				} else if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
+				} else if passStatusModel.passStatus == .notSubscribed, storeModel.purchasedIds.isEmpty {
 					NavigationLink("Buy Pro", value: navItem)
 				}
 			}
 			.navigationSplitViewColumnWidth(min: 180, ideal: 200)
 			Spacer()
-			if StopWatchHelper.shared.isRunning && navSelection != .timer {
+			if StopWatchHelper.shared.isRunning, navSelection != .timer {
 				TimeDisplayView()
 			}
 		} detail: {
@@ -115,19 +115,19 @@ struct MacContentView: View {
 			}
 		}
 		.subscriptionStatusTask(for: "21523359") { taskStatus in
-			self.status = await taskStatus.map { statuses in
+			status = await taskStatus.map { statuses in
 				await ProductSubscription.shared.status(
 					for: statuses,
 					ids: passIDs
 				)
 			}
-			switch self.status {
-			case .failure(let error):
+			switch status {
+			case let .failure(error):
 				passStatusModel.passStatus = .notSubscribed
 				print("Failed to check subscription status: \(error)")
-			case .success(let status):
+			case let .success(status):
 				passStatusModel.passStatus = status
-				if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
+				if passStatusModel.passStatus == .notSubscribed, storeModel.purchasedIds.isEmpty {
 					Timer.scheduledTimer(withTimeInterval: 600, repeats: false) { _ in
 						Task {
 							if await storeModel.purchasedIds.isEmpty {
@@ -159,10 +159,9 @@ struct MacContentView: View {
 			contentType: UTType.commaSeparatedText,
 			defaultFilename: "Furtherance.csv"
 		) { _ in }
-#if os(macOS)
+		#if os(macOS)
 			.frame(minWidth: 360, idealWidth: 450, minHeight: 170, idealHeight: 700)
-#endif
-
+		#endif
 	}
 
 	private func checkForAutosave() async {

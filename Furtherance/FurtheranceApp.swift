@@ -15,7 +15,7 @@ struct FurtheranceApp: App {
 	let persistenceController = PersistenceController.shared
 
 	#if os(macOS)
-	@NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+		@NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 	#endif
 
 	@AppStorage("launchCount") private var launchCount = 0
@@ -48,7 +48,7 @@ struct FurtheranceApp: App {
 				.environment(passStatusModel)
 				.onAppear {
 					#if os(macOS)
-					NSWindow.allowsAutomaticWindowTabbing = false
+						NSWindow.allowsAutomaticWindowTabbing = false
 					#endif
 					Task {
 						try await storeModel.fetchProducts()
@@ -179,33 +179,33 @@ struct FurtheranceApp: App {
 				}
 			}
 			#if os(macOS)
-			CommandGroup(replacing: CommandGroupPlacement.newItem) {}
-			CommandGroup(replacing: CommandGroupPlacement.windowList) {}
-			CommandGroup(replacing: CommandGroupPlacement.windowArrangement) {}
-			CommandGroup(replacing: CommandGroupPlacement.singleWindowList) {}
-			CommandGroup(before: CommandGroupPlacement.newItem) {
-				Button("Add Task") {
-					addTaskSheet.toggle()
+				CommandGroup(replacing: CommandGroupPlacement.newItem) {}
+				CommandGroup(replacing: CommandGroupPlacement.windowList) {}
+				CommandGroup(replacing: CommandGroupPlacement.windowArrangement) {}
+				CommandGroup(replacing: CommandGroupPlacement.singleWindowList) {}
+				CommandGroup(before: CommandGroupPlacement.newItem) {
+					Button("Add Task") {
+						addTaskSheet.toggle()
+					}
+					.keyboardShortcut("N", modifiers: EventModifiers.command)
 				}
-				.keyboardShortcut("N", modifiers: EventModifiers.command)
-			}
 			#endif
 		}
 
 		#if os(macOS)
-		Settings {
-			SettingsView()
-				.environment(passStatusModel)
-		}
-		.defaultSize(width: 400, height: 450)
+			Settings {
+				SettingsView()
+					.environment(passStatusModel)
+			}
+			.defaultSize(width: 400, height: 450)
 		#endif
 	}
 
 	private var mainContentView: some View {
 		#if os(macOS)
-		MacContentView(showExportCSV: $showExportCSV, showInspector: $showInspector, inspectorView: $inspectorView)
+			MacContentView(showExportCSV: $showExportCSV, showInspector: $showInspector, inspectorView: $inspectorView)
 		#else
-		TimerView(showExportCSV: $showExportCSV)
+			TimerView(showExportCSV: $showExportCSV)
 		#endif
 	}
 

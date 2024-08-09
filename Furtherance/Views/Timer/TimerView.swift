@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  TimerView.swift
 //  Furtherance
 //
 //  Created by Ricky Kresslein on 2/23/23.
@@ -11,12 +11,12 @@ import SwiftUI
 
 struct TimerView: View {
 	@Binding var showExportCSV: Bool
-    
+
 	@Environment(\.managedObjectContext) private var viewContext
 	@Environment(\.colorScheme) var colorScheme
-    
+
 	@Bindable var navigator = Navigator.shared
-    
+
 	@ObservedObject var storeModel = StoreModel.shared
 	@State private var stopWatchHelper = StopWatchHelper.shared
 	@StateObject var taskTagsInput = TaskTagsInput.shared
@@ -33,7 +33,7 @@ struct TimerView: View {
 	@AppStorage("pomodoroBigBreak") private var pomodoroBigBreak: Bool = false
 	@AppStorage("pomodoroBigBreakInterval") private var pomodoroBigBreakInterval: Int = 4
 	@AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
-    
+
 	@AppStorage("ptIsRunning") private var ptIsRunning: Bool = false
 	@AppStorage("ptIsIntermission") private var ptIsIntermission: Bool = false
 	@AppStorage("ptIsExtended") private var ptIsExtended: Bool = false
@@ -52,7 +52,7 @@ struct TimerView: View {
 		animation: .default
 	)
 	var tasksByDay: SectionedFetchResults<String, FurTask>
-    
+
 	@FetchRequest(
 		entity: FurTask.entity(),
 		sortDescriptors: [NSSortDescriptor(keyPath: \FurTask.startTime, ascending: false)],
@@ -82,20 +82,20 @@ struct TimerView: View {
 		@State private var showImportCSV = false
 		@State private var showInvalidCSVAlert = false
 	#endif
-    
+
 	var body: some View {
 		NavigationStack(path: $navigator.path) {
 			VStack {
 				Spacer()
 
 				TimeDisplayView()
-                    
+
 				HStack {
 					TaskInputView()
 						.onSubmit {
 							startStopPress()
 						}
-                    
+
 					Button {
 						if stopWatchHelper.pomodoroOnBreak {
 							timerHelper.pomodoroStopAfterBreak()
@@ -126,15 +126,15 @@ struct TimerView: View {
 							   TaskTagsInput.shared.text.filter({ $0 == Character(chosenCurrency) }).count < 2
 							{
 								timerHelper.updateTaskAndTagsIfChanged()
-#if os(iOS)
-								timerHelper.updatePersistentTimerTaskName()
-#endif
+								#if os(iOS)
+									timerHelper.updatePersistentTimerTaskName()
+								#endif
 							}
 						}
 					}
 				}
 
-				if stopWatchHelper.isRunning && !stopWatchHelper.pomodoroOnBreak {
+				if stopWatchHelper.isRunning, !stopWatchHelper.pomodoroOnBreak {
 					StartTimeModifierView()
 				}
 
@@ -186,7 +186,7 @@ struct TimerView: View {
 							} label: {
 								Label("Settings", systemImage: "gearshape")
 							}
-                                
+
 							Button {
 								if storeModel.purchasedIds.isEmpty {
 									showProAlert.toggle()
@@ -196,14 +196,14 @@ struct TimerView: View {
 							} label: {
 								Label("Reports", systemImage: "list.bullet.clipboard")
 							}
-                                
+
 							Button {
 								showAddTaskSheet.toggle()
 							} label: {
 								Label("Add Task", systemImage: "plus")
 							}
 						}
-                            
+
 						Section {
 							Button {
 								if storeModel.purchasedIds.isEmpty {
@@ -246,7 +246,7 @@ struct TimerView: View {
 							var furTasks = [FurTask]()
 							for row in rows {
 								let columns = row.components(separatedBy: ",")
-                                    
+
 								if columns.count == 5 {
 									let task = FurTask(context: viewContext)
 									task.id = UUID()
@@ -473,9 +473,9 @@ struct TimerView: View {
 			timerHelper.start()
 		}
 	}
-    
+
 	private func sectionHeader(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> some View {
-		return HStack {
+		HStack {
 			Text(taskSection.id.localizedCapitalized)
 			Spacer()
 			if showDailySum {
@@ -497,7 +497,7 @@ struct TimerView: View {
 		.font(.headline)
 		.padding(.top).padding(.bottom)
 	}
-    
+
 	private func totalSectionTime(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> Int {
 		var totalTime = 0
 		for task in taskSection {
@@ -505,7 +505,7 @@ struct TimerView: View {
 		}
 		return totalTime
 	}
-    
+
 	private func totalSectionTimeFormatted(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> String {
 		let totalTime: Int = totalSectionTime(taskSection)
 		if showSeconds {
@@ -514,14 +514,14 @@ struct TimerView: View {
 			return formatTimeLongWithoutSeconds(totalTime)
 		}
 	}
-    
+
 	private func sortTasks(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> [FurTaskGroup] {
 		var newGroups = [FurTaskGroup]()
 		for task in taskSection {
 			var foundGroup = false
-            
+
 			for taskGroup in newGroups {
-				if taskGroup.name == task.name && taskGroup.tags == task.tags {
+				if taskGroup.name == task.name, taskGroup.tags == task.tags {
 					taskGroup.add(task: task)
 					foundGroup = true
 				}
@@ -532,10 +532,10 @@ struct TimerView: View {
 		}
 		return newGroups
 	}
-    
+
 	#if os(iOS)
 		private func showHistoryList(_ section: SectionedFetchResults<String, FurTask>.Section) -> some View {
-			return Section(header: sectionHeader(section)) {
+			Section(header: sectionHeader(section)) {
 				ForEach(sortTasks(section)) { taskGroup in
 					TaskRow(taskGroup: taskGroup)
 						.padding(.bottom, 5)
@@ -570,13 +570,13 @@ struct TimerView: View {
 			}
 		}
 	#endif
-    
+
 	private func resumeOngoingTimer() {
 		/// Continue running timer if it was running when the app was closed and it is less than 48 hours old
 		#if os(iOS)
 			if !stopWatchHelper.isRunning, ptIsRunning {
 				let ptStartDate = Date(timeIntervalSinceReferenceDate: ptStartTime)
-                    
+
 				stopWatchHelper.startTime = ptStartDate
 				timerHelper.startTime = ptStartDate
 				timerHelper.taskName = ptTaskName
@@ -623,7 +623,7 @@ struct TimerView: View {
 	}
 
 	private func getTotalTimeToday() -> Int {
-		return todaysTasks
+		todaysTasks
 			.reduce(0) {
 				$0 + (
 					Calendar.current

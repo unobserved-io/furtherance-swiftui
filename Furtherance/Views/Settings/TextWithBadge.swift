@@ -8,30 +8,30 @@
 import SwiftUI
 
 struct TextWithBadge: View {
-    var content: String
+	var content: String
 
 	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
 
-    @ObservedObject var storeModel = StoreModel.shared
+	@ObservedObject var storeModel = StoreModel.shared
 
-    init(_ content: String) {
-        self.content = content
-    }
+	init(_ content: String) {
+		self.content = content
+	}
 
-    var body: some View {
-        HStack {
-            Text(content)
-            if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
-                Text("PRO")
-                    .padding(.vertical, 3.0)
-                    .padding(.horizontal, 8.0)
-                    .foregroundStyle(.background)
-                    .background(RoundedRectangle(cornerRadius: 20.0).fill(.accent))
-            }
-        }
-    }
+	var body: some View {
+		HStack {
+			Text(content)
+			if passStatusModel.passStatus == .notSubscribed, storeModel.purchasedIds.isEmpty {
+				Text("PRO")
+					.padding(.vertical, 3.0)
+					.padding(.horizontal, 8.0)
+					.foregroundStyle(.background)
+					.background(RoundedRectangle(cornerRadius: 20.0).fill(.accent))
+			}
+		}
+	}
 }
 
 #Preview {
-    TextWithBadge("Text")
+	TextWithBadge("Text")
 }

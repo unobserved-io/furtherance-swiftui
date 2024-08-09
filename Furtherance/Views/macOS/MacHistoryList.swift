@@ -135,7 +135,7 @@ struct MacHistoryList: View {
 	}
 
 	private func showHistoryList(_ section: SectionedFetchResults<String, FurTask>.Section) -> some View {
-		return Section(header: sectionHeader(section)) {
+		Section(header: sectionHeader(section)) {
 			ForEach(sortTasks(section)) { taskGroup in
 				TaskRow(taskGroup: taskGroup, navSelection: $navSelection)
 					.padding(.bottom, 5)
@@ -222,7 +222,7 @@ struct MacHistoryList: View {
 	}
 
 	private func sectionHeader(_ taskSection: SectionedFetchResults<String, FurTask>.Element) -> some View {
-		return HStack {
+		HStack {
 			Text(taskSection.id.localizedCapitalized)
 			Spacer()
 			if showDailySum {
@@ -275,7 +275,7 @@ struct MacHistoryList: View {
 	}
 
 	private func deleteTask(_ task: FurTask?) {
-		if let task = task {
+		if let task {
 			if showInspector, inspectorView == .editTask, clickedTask.task == task {
 				showInspector = false
 				clickedTask.task = nil
@@ -291,7 +291,7 @@ struct MacHistoryList: View {
 	}
 
 	private func deleteAllTasks(in taskGroup: FurTaskGroup?) {
-		if let taskGroup = taskGroup {
+		if let taskGroup {
 			if let clickedTaskGroup = clickedGroup.taskGroup {
 				if showInspector,
 				   inspectorView == .editTaskGroup,
@@ -319,9 +319,9 @@ struct MacHistoryList: View {
 		   group1.tags == group2.tags,
 		   group1.project == group2.project
 		{
-			return true
+			true
 		} else {
-			return false
+			false
 		}
 	}
 }

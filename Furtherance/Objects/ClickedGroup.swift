@@ -8,9 +8,9 @@
 import Foundation
 
 class ClickedGroup: ObservableObject {
-    @Published var taskGroup: FurTaskGroup?
+	@Published var taskGroup: FurTaskGroup?
 
-    init(taskGroup: FurTaskGroup?) {
-        self.taskGroup = taskGroup
-    }
+	init(taskGroup: FurTaskGroup?) {
+		self.taskGroup = taskGroup
+	}
 }

@@ -1,5 +1,5 @@
 //
-//  ReportView.swift
+//  ChartsView.swift
 //  Furtherance
 //
 //  Created by Ricky Kresslein on 22.07.2024.
@@ -230,8 +230,9 @@ struct ChartsView: View {
 							}
 						}
 
-						if groupedTaskData.contains(where: { $0.earnings > 0 }) && showTotalEarningsChart {
+						if groupedTaskData.contains(where: { $0.earnings > 0 }), showTotalEarningsChart {
 							// MARK: Total earnings chart
+
 							VStack(spacing: Self.titleToChartSpacing) {
 								Text("Earnings")
 									.font(.title)
@@ -282,7 +283,7 @@ struct ChartsView: View {
 											#if os(macOS)
 												.onContinuousHover { hoverPhase in
 													switch hoverPhase {
-													case .active(let hoverLocation):
+													case let .active(hoverLocation):
 														updateSelectedEarningsOnHover(at: hoverLocation.x, proxy: proxy)
 													case .ended:
 														selectedEarningsDate = nil
@@ -346,7 +347,7 @@ struct ChartsView: View {
 											#if os(macOS)
 												.onContinuousHover { hoverPhase in
 													switch hoverPhase {
-													case .active(let hoverLocation):
+													case let .active(hoverLocation):
 														updateSelectedTimeOnHover(at: hoverLocation.x, proxy: proxy)
 													case .ended:
 														selectedTimeDate = nil
@@ -366,7 +367,7 @@ struct ChartsView: View {
 
 						// MARK: Average earnings per task
 
-						if groupedTaskData.contains(where: { $0.earnings > 0 }) && showAvgEarnedPerTaskChart {
+						if groupedTaskData.contains(where: { $0.earnings > 0 }), showAvgEarnedPerTaskChart {
 							VStack(spacing: Self.titleToChartSpacing) {
 								Text("Average earned per task")
 									.font(.title)
@@ -425,7 +426,7 @@ struct ChartsView: View {
 											#if os(macOS)
 												.onContinuousHover { hoverPhase in
 													switch hoverPhase {
-													case .active(let hoverLocation):
+													case let .active(hoverLocation):
 														updateAverageEarningsOnHover(at: hoverLocation.x, proxy: proxy)
 													case .ended:
 														averageEarningsDate = nil
@@ -497,7 +498,7 @@ struct ChartsView: View {
 											#if os(macOS)
 												.onContinuousHover { hoverPhase in
 													switch hoverPhase {
-													case .active(let hoverLocation):
+													case let .active(hoverLocation):
 														updateAverageTimeOnHover(at: hoverLocation.x, proxy: proxy)
 													case .ended:
 														averageTimeDate = nil
@@ -516,6 +517,7 @@ struct ChartsView: View {
 						}
 
 						// MARK: Charts by selection
+
 						if showBreakdownBySelection {
 							Divider()
 
@@ -553,6 +555,7 @@ struct ChartsView: View {
 								}
 
 								// MARK: Total time and earnings for selection
+
 								HStack {
 									VStack {
 										VStack {
@@ -645,7 +648,7 @@ struct ChartsView: View {
 												#if os(macOS)
 													.onContinuousHover { hoverPhase in
 														switch hoverPhase {
-														case .active(let hoverLocation):
+														case let .active(hoverLocation):
 															updateSelectedTimeForSelectedTaskOnHover(at: hoverLocation.x, proxy: proxy)
 														case .ended:
 															timeDateForSelectedTask = nil
@@ -663,7 +666,7 @@ struct ChartsView: View {
 								}
 
 								if groupedSelectedTaskData
-									.contains(where: { $0.earnings > 0 }) && showSelectionByEarningsChart
+									.contains(where: { $0.earnings > 0 }), showSelectionByEarningsChart
 								{
 									Text("Selection By Earnings")
 										.font(.title)
@@ -722,7 +725,7 @@ struct ChartsView: View {
 												#if os(macOS)
 													.onContinuousHover { hoverPhase in
 														switch hoverPhase {
-														case .active(let hoverLocation):
+														case let .active(hoverLocation):
 															updateEarningsForSelectedTaskOnHover(at: hoverLocation.x, proxy: proxy)
 														case .ended:
 															earningsDateForSelectedTask = nil
@@ -782,12 +785,12 @@ struct ChartsView: View {
 	private func getSelectionTotalTime() -> String {
 		var totalTaskTime = DateComponents()
 		totalTaskTime.second = 0
-		totalTaskTime.second? += groupedSelectedTaskData.map { $0.time }.reduce(0,+)
+		totalTaskTime.second? += groupedSelectedTaskData.map(\.time).reduce(0,+)
 		return hmsFormatter.string(from: totalTaskTime) ?? "00:00"
 	}
 
 	private func getSelectionTotalEarnings() -> Double {
-		return groupedSelectedTaskData.map { $0.earnings }.reduce(0,+)
+		groupedSelectedTaskData.map(\.earnings).reduce(0,+)
 	}
 
 	private func processAllData() {
@@ -932,13 +935,13 @@ struct ChartsView: View {
 	private func getComponentType() -> Calendar.Component {
 		switch groupingType {
 		case .days:
-			return .day
+			.day
 		case .weeks:
-			return .weekOfYear
+			.weekOfYear
 		case .months:
-			return .month
+			.month
 		case .years:
-			return .year
+			.year
 		}
 	}
 
@@ -1028,7 +1031,7 @@ struct ChartsView: View {
 			matchingTasksByAttribute = Set(
 				tasksInTimeframe.map { $0.project?.lowercased() ?? ""
 				})
-			.filter { !$0.isEmpty }
+				.filter { !$0.isEmpty }
 		case .tags:
 			matchingTasksByAttribute = Set(tasksInTimeframe.map { $0.tags ?? "" }).filter { !$0.isEmpty }
 		case .rate:
@@ -1063,13 +1066,13 @@ class GroupOfTasksByTime: Identifiable {
 	var id = UUID()
 
 	init(from task: FurTask, readableDate: String) {
-		self.time = (Calendar.current.dateComponents([.second], from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now).second ?? 0)
+		time = (Calendar.current.dateComponents([.second], from: task.startTime ?? Date.now, to: task.stopTime ?? Date.now).second ?? 0)
 		if task.rate > 0 {
-			self.earnings = (task.rate / 3600.0) * Double(time)
+			earnings = (task.rate / 3600.0) * Double(time)
 		} else {
-			self.earnings = 0.0
+			earnings = 0.0
 		}
-		self.date = task.startTime ?? .now
+		date = task.startTime ?? .now
 		self.readableDate = readableDate
 	}
 

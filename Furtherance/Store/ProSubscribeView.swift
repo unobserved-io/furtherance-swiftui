@@ -1,5 +1,5 @@
 //
-//  BuyProView.swift
+//  ProSubscribeView.swift
 //  Furtherance
 //
 //  Created by Ricky Kresslein on 09.08.2024.
@@ -10,11 +10,11 @@ import SwiftUI
 
 struct ProSubscribeView: View {
 	@Binding var navSelection: NavItems?
-	
+
 	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
 	@Environment(\.passIDs) private var passIDs
 
-    var body: some View {
+	var body: some View {
 		ScrollView {
 			SubscriptionStoreView(groupID: passIDs.group) {
 				VStack {
@@ -105,7 +105,7 @@ struct ProSubscribeView: View {
 				}
 			}
 		}
-    }
+	}
 }
 
 #Preview {

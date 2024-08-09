@@ -18,31 +18,31 @@ struct ReportView: View {
 	@State private var viewChoice: ViewChoice = .charts
 
 	var body: some View {
-			Picker("", selection: $viewChoice) {
-				Text("Charts")
-					.tag(ViewChoice.charts)
-				Text("List").tag(ViewChoice.list)
-			}
-			.pickerStyle(.segmented)
-			.padding()
+		Picker("", selection: $viewChoice) {
+			Text("Charts")
+				.tag(ViewChoice.charts)
+			Text("List").tag(ViewChoice.list)
+		}
+		.pickerStyle(.segmented)
+		.padding()
 
-			Group {
-				switch viewChoice {
-				case .charts:
-					ChartsView()
-				case .list:
-					ReportListView()
-				}
+		Group {
+			switch viewChoice {
+			case .charts:
+				ChartsView()
+			case .list:
+				ReportListView()
 			}
+		}
 		.onAppear {
-#if os(iOS)
-			// Reset segmented pickers to be even (Necessary for long languages)
-			UISegmentedControl.appearance().apportionsSegmentWidthsByContent = false
-#endif
+			#if os(iOS)
+				// Reset segmented pickers to be even (Necessary for long languages)
+				UISegmentedControl.appearance().apportionsSegmentWidthsByContent = false
+			#endif
 		}
 	}
 }
 
 #Preview {
-    ReportView()
+	ReportView()
 }

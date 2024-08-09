@@ -9,12 +9,12 @@ import AppIntents
 import Foundation
 
 struct TestFurtheranceTaskIntent: AppIntent {
-    static var title: LocalizedStringResource = "New Furtherance Task"
-    static var openAppWhenRun: Bool = true
+	static var title: LocalizedStringResource = "New Furtherance Task"
+	static var openAppWhenRun: Bool = true
 
-    @MainActor
-    func perform() async throws -> some IntentResult {
-        Navigator.shared.openView(.home)
-        return .result()
-    }
+	@MainActor
+	func perform() async throws -> some IntentResult {
+		Navigator.shared.openView(.home)
+		return .result()
+	}
 }

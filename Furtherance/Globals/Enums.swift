@@ -8,19 +8,19 @@
 import Foundation
 
 enum SelectedInspectorView {
-    case empty
-    case editTaskGroup
-    case editTask
-    case addShortcut
-    case editShortcut
+	case empty
+	case editTaskGroup
+	case editTask
+	case addShortcut
+	case editShortcut
 }
 
 enum NavItems: String, Hashable, CaseIterable, Identifiable {
-    case shortcuts
-    case timer
-    case history
-    case report
+	case shortcuts
+	case timer
+	case history
+	case report
 	case buyPro
 
-    var id: Self { self }
+	var id: Self { self }
 }

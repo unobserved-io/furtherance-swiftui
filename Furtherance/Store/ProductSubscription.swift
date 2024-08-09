@@ -28,9 +28,9 @@ actor ProductSubscription {
 
 		let transaction: Transaction
 		switch effectiveStatus.transaction {
-		case .verified(let t):
+		case let .verified(t):
 			transaction = t
-		case .unverified(_, let error):
+		case let .unverified(_, error):
 			print("Error occured in status(for:ids:): \(error)")
 			return .notSubscribed
 		}
@@ -48,4 +48,3 @@ actor ProductSubscription {
 		return PassStatus(productID: transaction.productID, ids: ids) ?? .notSubscribed
 	}
 }
-

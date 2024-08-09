@@ -23,7 +23,6 @@ struct ReportSettingsView: View {
 	@AppStorage("showSelectionByEarningsChart") private var showSelectionByEarningsChart = true
 	@AppStorage("showSelectionEarnings") private var showSelectionEarnings = true
 
-
 	var body: some View {
 		ScrollView {
 			Form {
@@ -98,9 +97,9 @@ struct ReportSettingsView: View {
 					.padding()
 				}
 			}
-#if os(macOS)
+			#if os(macOS)
 			.padding(20)
-#endif
+			#endif
 		}
 	}
 }

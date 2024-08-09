@@ -8,9 +8,9 @@
 import Foundation
 
 class ClickedTask: ObservableObject {
-    @Published var task: FurTask?
+	@Published var task: FurTask?
 
-    init(task: FurTask?) {
-        self.task = task
-    }
+	init(task: FurTask?) {
+		self.task = task
+	}
 }

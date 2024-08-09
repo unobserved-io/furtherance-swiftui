@@ -1,5 +1,5 @@
 //
-//  Persistence.swift
+//  PersistenceController.swift
 //  Furtherance
 //
 //  Created by Ricky Kresslein on 2/23/23.
@@ -43,7 +43,7 @@ struct PersistenceController {
 				NSPersistentStoreDescription(url: localStoreLocation)
 			localStoreDescription.configuration = "Development"
 			container.persistentStoreDescriptions = [
-				localStoreDescription
+				localStoreDescription,
 			]
 		}
 

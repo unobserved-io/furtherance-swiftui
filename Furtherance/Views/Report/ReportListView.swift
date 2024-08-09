@@ -1,5 +1,5 @@
 //
-//  ReportsView.swift
+//  ReportListView.swift
 //  Furtherance
 //
 //  Created by Ricky Kresslein on 3/12/23.
@@ -229,7 +229,7 @@ struct ReportListView: View {
 		for task in allTasks {
 			var match = false
 
-			if filterBy == .task && !filterInput.isEmpty {
+			if filterBy == .task, !filterInput.isEmpty {
 				if exactMatch {
 					if task.name?.lowercased() == filterInput.lowercased() {
 						match = true
@@ -239,7 +239,7 @@ struct ReportListView: View {
 						match = true
 					}
 				}
-			} else if filterBy == .tags && !filterInput.isEmpty {
+			} else if filterBy == .tags, !filterInput.isEmpty {
 				// Breakdown tags to see if they match one of the filter input
 				if exactMatch {
 					if task.tags == filterInput.lowercased() {
@@ -250,7 +250,7 @@ struct ReportListView: View {
 						match = true
 					}
 				}
-			} else if filterBy == .project && !filterInput.isEmpty {
+			} else if filterBy == .project, !filterInput.isEmpty {
 				// Breakdown tags to see if they match one of the filter input
 				if exactMatch {
 					if task.project?.lowercased() == filterInput.lowercased() {
@@ -288,7 +288,7 @@ struct ReportListView: View {
 		for task in allTasks {
 			var match = false
 
-			if filterBy == .task && !filterInput.isEmpty {
+			if filterBy == .task, !filterInput.isEmpty {
 				if exactMatch {
 					if task.name?.lowercased() == filterInput.lowercased() {
 						match = true
@@ -298,7 +298,7 @@ struct ReportListView: View {
 						match = true
 					}
 				}
-			} else if filterBy == .tags && !filterInput.isEmpty {
+			} else if filterBy == .tags, !filterInput.isEmpty {
 				// Breakdown tags to see if they match one of the filter input
 				if exactMatch {
 					if task.tags == filterInput.lowercased() {
@@ -309,7 +309,7 @@ struct ReportListView: View {
 						match = true
 					}
 				}
-			} else if filterBy == .project && !filterInput.isEmpty {
+			} else if filterBy == .project, !filterInput.isEmpty {
 				// Breakdown tags to see if they match one of the filter input
 				if exactMatch {
 					if task.project?.lowercased() == filterInput.lowercased() {
@@ -351,7 +351,7 @@ struct ReportListView: View {
 		for task in allTasks {
 			var match = false
 
-			if filterBy == .task && !filterInput.isEmpty {
+			if filterBy == .task, !filterInput.isEmpty {
 				if exactMatch {
 					if task.name?.lowercased() == filterInput.lowercased() {
 						match = true
@@ -361,7 +361,7 @@ struct ReportListView: View {
 						match = true
 					}
 				}
-			} else if filterBy == .tags && !filterInput.isEmpty {
+			} else if filterBy == .tags, !filterInput.isEmpty {
 				// Breakdown tags to see if they match one of the filter input
 				if exactMatch {
 					if task.tags == filterInput.lowercased() {
@@ -372,7 +372,7 @@ struct ReportListView: View {
 						match = true
 					}
 				}
-			} else if filterBy == .project && !filterInput.isEmpty {
+			} else if filterBy == .project, !filterInput.isEmpty {
 				// Breakdown tags to see if they match one of the filter input
 				if exactMatch {
 					if task.project?.lowercased() == filterInput.lowercased() {
@@ -410,7 +410,7 @@ struct ReportListView: View {
 		for task in allTasks {
 			var match = false
 
-			if filterBy == .task && !filterInput.isEmpty {
+			if filterBy == .task, !filterInput.isEmpty {
 				if exactMatch {
 					if task.name?.lowercased() == filterInput.lowercased() {
 						match = true
@@ -420,7 +420,7 @@ struct ReportListView: View {
 						match = true
 					}
 				}
-			} else if filterBy == .tags && !filterInput.isEmpty {
+			} else if filterBy == .tags, !filterInput.isEmpty {
 				// Breakdown tags to see if they match one of the filter input
 				if exactMatch {
 					if task.tags == filterInput.lowercased() {
@@ -443,7 +443,7 @@ struct ReportListView: View {
 	}
 
 	private func sectionHeader(heading: String, totalSeconds: Int) -> some View {
-		return HStack {
+		HStack {
 			Text(heading)
 			Spacer()
 			Text(formatTimeLong(totalSeconds))

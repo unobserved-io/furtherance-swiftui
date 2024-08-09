@@ -8,9 +8,9 @@
 import Foundation
 
 class ClickedShortcut: ObservableObject {
-    @Published var shortcut: Shortcut?
+	@Published var shortcut: Shortcut?
 
-    init(shortcut: Shortcut?) {
-        self.shortcut = shortcut
-    }
+	init(shortcut: Shortcut?) {
+		self.shortcut = shortcut
+	}
 }
