@@ -24,6 +24,7 @@ struct FurtheranceApp: App {
 	@ObservedObject var storeModel = StoreModel.shared
 
 	@State private var passStatusModel = PassStatusModel()
+	@State private var inspectorModel = InspectorModel()
 	@State private var navigator = Navigator.shared
 	@State private var showDeleteDialog = false
 	@State private var showProAlert = false
@@ -34,8 +35,6 @@ struct FurtheranceApp: App {
 	@State private var showImportCSV = false
 	@State private var showInvalidCSVAlert = false
 	@State(initialValue: false) var showExportCSV: Bool
-	@State(initialValue: false) var showInspector: Bool
-	@State(initialValue: .editTask) var inspectorView: SelectedInspectorView
 
 	init() {
 		launchCount += 1
@@ -46,6 +45,7 @@ struct FurtheranceApp: App {
 			mainContentView
 				.environment(\.managedObjectContext, persistenceController.container.viewContext)
 				.environment(passStatusModel)
+				.environment(inspectorModel)
 				.onAppear {
 					#if os(macOS)
 						NSWindow.allowsAutomaticWindowTabbing = false
@@ -58,9 +58,9 @@ struct FurtheranceApp: App {
 					Button(confirmBtn, role: .destructive) {
 						if confirmBtn == "Delete" {
 							deleteAllTasks()
-							if inspectorView == .editTask || inspectorView == .editTaskGroup {
-								showInspector = false
-								inspectorView = .empty
+							if inspectorModel.view == .editTask || inspectorModel.view == .editTaskGroup {
+								inspectorModel.show = false
+								inspectorModel.view = .empty
 							}
 						}
 					}
@@ -137,7 +137,7 @@ struct FurtheranceApp: App {
 			CommandMenu("Database") {
 				Button("Export as CSV") {
 					if getTasksCount() != 0 {
-						if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
+						if passStatusModel.passStatus == .notSubscribed, storeModel.purchasedIds.isEmpty {
 							showProAlert.toggle()
 						} else {
 							showExportCSV.toggle()
@@ -146,7 +146,7 @@ struct FurtheranceApp: App {
 				}
 				.badge(passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty ? "Pro" : nil)
 				Button("Import CSV") {
-					if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
+					if passStatusModel.passStatus == .notSubscribed, storeModel.purchasedIds.isEmpty {
 						showProAlert.toggle()
 					} else {
 						showImportCSV.toggle()
@@ -191,7 +191,7 @@ struct FurtheranceApp: App {
 
 	private var mainContentView: some View {
 		#if os(macOS)
-			MacContentView(showExportCSV: $showExportCSV, showInspector: $showInspector, inspectorView: $inspectorView)
+			MacContentView(showExportCSV: $showExportCSV)
 		#else
 			TimerView(showExportCSV: $showExportCSV)
 		#endif

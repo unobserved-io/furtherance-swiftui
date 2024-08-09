@@ -11,12 +11,11 @@ import SwiftUI
 struct MacHistoryList: View {
 	@Environment(\.modelContext) private var modelContext
 	@Environment(\.managedObjectContext) private var viewContext
+	@Environment(InspectorModel.self) var inspectorModel: InspectorModel
 
 	@EnvironmentObject var clickedGroup: ClickedGroup
 	@EnvironmentObject var clickedTask: ClickedTask
 
-	@Binding var showInspector: Bool
-	@Binding var inspectorView: SelectedInspectorView
 	@Binding var navSelection: NavItems?
 
 	@SectionedFetchRequest(
@@ -93,7 +92,7 @@ struct MacHistoryList: View {
 			Text("A shortcut for that task already exists.")
 		}
 		.onAppear {
-			inspectorView = .empty
+			inspectorModel.view = .empty
 			let todaysDate = localDateFormatter.string(from: Date.now)
 			if lastDayOpened != todaysDate {
 				lastDayOpened = todaysDate
@@ -109,8 +108,8 @@ struct MacHistoryList: View {
 			}
 		}
 		.onDisappear {
-			showInspector = false
-			inspectorView = .empty
+			inspectorModel.show = false
+			inspectorModel.view = .empty
 		}
 		.toolbar {
 			ToolbarItem {
@@ -119,10 +118,10 @@ struct MacHistoryList: View {
 				}
 			}
 
-			if !showInspector {
+			if !inspectorModel.show {
 				ToolbarItem {
 					Button {
-						showInspector = true
+						inspectorModel.show = true
 					} label: {
 						Image(systemName: "sidebar.trailing")
 					}
@@ -143,12 +142,12 @@ struct MacHistoryList: View {
 					.onTapGesture {
 						if taskGroup.tasks.count > 1 {
 							clickedGroup.taskGroup = taskGroup
-							inspectorView = .editTaskGroup
-							showInspector = true
+							inspectorModel.view = .editTaskGroup
+							inspectorModel.show = true
 						} else {
 							clickedTask.task = taskGroup.tasks.first
-							inspectorView = .editTask
-							showInspector = true
+							inspectorModel.view = .editTask
+							inspectorModel.show = true
 						}
 					}
 					.contextMenu {
@@ -174,12 +173,12 @@ struct MacHistoryList: View {
 						Button("Edit") {
 							if taskGroup.tasks.count > 1 {
 								clickedGroup.taskGroup = taskGroup
-								inspectorView = .editTaskGroup
-								showInspector = true
+								inspectorModel.view = .editTaskGroup
+								inspectorModel.show = true
 							} else {
 								clickedTask.task = taskGroup.tasks.first
-								inspectorView = .editTask
-								showInspector = true
+								inspectorModel.view = .editTask
+								inspectorModel.show = true
 							}
 						}
 
@@ -276,8 +275,8 @@ struct MacHistoryList: View {
 
 	private func deleteTask(_ task: FurTask?) {
 		if let task {
-			if showInspector, inspectorView == .editTask, clickedTask.task == task {
-				showInspector = false
+			if inspectorModel.show, inspectorModel.view == .editTask, clickedTask.task == task {
+				inspectorModel.show = false
 				clickedTask.task = nil
 			}
 			viewContext.delete(task)
@@ -293,11 +292,11 @@ struct MacHistoryList: View {
 	private func deleteAllTasks(in taskGroup: FurTaskGroup?) {
 		if let taskGroup {
 			if let clickedTaskGroup = clickedGroup.taskGroup {
-				if showInspector,
-				   inspectorView == .editTaskGroup,
+				if inspectorModel.show,
+				   inspectorModel.view == .editTaskGroup,
 				   areTaskGroupsEqual(group1: taskGroup, group2: clickedTaskGroup)
 				{
-					showInspector = false
+					inspectorModel.show = false
 					clickedGroup.taskGroup = nil
 				}
 			}
@@ -327,5 +326,5 @@ struct MacHistoryList: View {
 }
 
 #Preview {
-	MacHistoryList(showInspector: .constant(false), inspectorView: .constant(SelectedInspectorView.editTask), navSelection: .constant(NavItems.history))
+	MacHistoryList(navSelection: .constant(NavItems.history))
 }

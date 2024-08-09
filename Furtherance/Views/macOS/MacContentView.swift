@@ -11,11 +11,10 @@ import UniformTypeIdentifiers
 
 struct MacContentView: View {
 	@Binding var showExportCSV: Bool
-	@Binding var showInspector: Bool
-	@Binding var inspectorView: SelectedInspectorView
 
 	@Environment(\.managedObjectContext) private var viewContext
 	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
+	@Environment(InspectorModel.self) var inspectorModel: InspectorModel
 	@Environment(\.passIDs) private var passIDs
 
 	@ObservedObject var storeModel = StoreModel.shared
@@ -44,6 +43,7 @@ struct MacContentView: View {
 
 	// TODO: Create one observable object for everything here that needs to be changed by multiple views
 	var body: some View {
+		@Bindable var inspectorModel = inspectorModel
 		NavigationSplitView {
 			List(NavItems.allCases, id: \.self, selection: $navSelection) { navItem in
 				if navItem != .buyPro {
@@ -61,15 +61,11 @@ struct MacContentView: View {
 			if let selectedItem = navSelection {
 				switch selectedItem {
 				case .shortcuts: ShortcutsView(
-						showInspector: $showInspector,
-						inspectorView: $inspectorView,
 						navSelection: $navSelection
 					)
 					.environmentObject(clickedShortcut)
 				case .timer: TimerView(showExportCSV: $showExportCSV)
 				case .history: MacHistoryList(
-						showInspector: $showInspector,
-						inspectorView: $inspectorView,
 						navSelection: $navSelection
 					)
 					.environmentObject(clickedGroup)
@@ -81,18 +77,18 @@ struct MacContentView: View {
 				TimerView(showExportCSV: $showExportCSV)
 			}
 		}
-		.inspector(isPresented: $showInspector) {
-			switch inspectorView {
+		.inspector(isPresented: $inspectorModel.show) {
+			switch inspectorModel.view {
 			case .empty:
 				ContentUnavailableView("Nothing selected", systemImage: "cursorarrow.rays")
 					.toolbar {
-						if showInspector {
+						if inspectorModel.show {
 							ToolbarItem {
 								Spacer()
 							}
 							ToolbarItem {
 								Button {
-									showInspector = false
+									inspectorModel.show = false
 								} label: {
 									Image(systemName: "sidebar.trailing")
 										.help("Hide inspector")
@@ -101,16 +97,16 @@ struct MacContentView: View {
 						}
 					}
 			case .editTaskGroup:
-				GroupView(showInspector: $showInspector)
+				GroupView()
 					.environmentObject(clickedGroup)
 			case .editTask:
-				TaskEditView(showInspector: $showInspector)
+				TaskEditView()
 					.environmentObject(clickedTask)
 					.padding()
 			case .addShortcut:
-				AddShortcutView(showInspector: $showInspector)
+				AddShortcutView()
 			case .editShortcut:
-				EditShortcutView(showInspector: $showInspector)
+				EditShortcutView()
 					.environmentObject(clickedShortcut)
 			}
 		}
@@ -216,5 +212,5 @@ struct MacContentView: View {
 }
 
 #Preview {
-	MacContentView(showExportCSV: .constant(false), showInspector: .constant(false), inspectorView: .constant(.empty))
+	MacContentView(showExportCSV: .constant(false))
 }

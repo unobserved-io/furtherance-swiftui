@@ -7,14 +7,6 @@
 
 import Foundation
 
-enum SelectedInspectorView {
-	case empty
-	case editTaskGroup
-	case editTask
-	case addShortcut
-	case editShortcut
-}
-
 enum NavItems: String, Hashable, CaseIterable, Identifiable {
 	case shortcuts
 	case timer

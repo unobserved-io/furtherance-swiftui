@@ -13,14 +13,13 @@ struct ShortcutsView: View {
 	private static let itemSpacing = 60.0
 	private static let itemSize = CGSize(width: 200, height: 170)
 
-	@Binding var showInspector: Bool
-	@Binding var inspectorView: SelectedInspectorView
 	@Binding var navSelection: NavItems?
 
 	@Environment(\.self) var environment
 	@Environment(\.modelContext) private var modelContext
 	@Environment(PassStatusModel.self) var passStatusModel: PassStatusModel
 	@EnvironmentObject var clickedShortcut: ClickedShortcut
+	@Environment(InspectorModel.self) var inspectorModel: InspectorModel
 
 	@Query var shortcuts: [Shortcut]
 
@@ -70,11 +69,11 @@ struct ShortcutsView: View {
 			}
 		}
 		.toolbar {
-			if !showInspector, (passStatusModel.passStatus != .notSubscribed || !storeModel.purchasedIds.isEmpty) {
+			if !inspectorModel.show, passStatusModel.passStatus != .notSubscribed || !storeModel.purchasedIds.isEmpty {
 				ToolbarItem {
 					Button {
-						inspectorView = .addShortcut
-						showInspector = true
+						inspectorModel.view = .addShortcut
+						inspectorModel.show = true
 					} label: {
 						Label("Add shortcut", systemImage: "plus")
 					}
@@ -82,8 +81,8 @@ struct ShortcutsView: View {
 			}
 		}
 		.onDisappear {
-			showInspector = false
-			inspectorView = .empty
+			inspectorModel.show = false
+			inspectorModel.view = .empty
 		}
 		.alert("Delete?", isPresented: $showDeleteAlert) {
 			// Cancel is automatically shown when a button is 'destructive' on Mac
@@ -142,8 +141,8 @@ struct ShortcutsView: View {
 		.contextMenu {
 			Button("Edit") {
 				clickedShortcut.shortcut = shortcut
-				inspectorView = .editShortcut
-				showInspector = true
+				inspectorModel.view = .editShortcut
+				inspectorModel.show = true
 			}
 
 			Button("Delete") {

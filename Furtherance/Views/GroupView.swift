@@ -9,10 +9,10 @@ import SwiftUI
 
 struct GroupView: View {
 	@Environment(\.managedObjectContext) private var viewContext
-	@EnvironmentObject var clickedGroup: ClickedGroup
 	@Environment(\.presentationMode) var presentationMode
+	@Environment(InspectorModel.self) var inspectorModel: InspectorModel
 
-	@Binding var showInspector: Bool
+	@EnvironmentObject var clickedGroup: ClickedGroup
 
 	@AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
 	@AppStorage("showSeconds") private var showSeconds = true
@@ -58,10 +58,6 @@ struct GroupView: View {
 		GridItem(.flexible()),
 		GridItem(.flexible(maximum: 50)),
 	]
-
-	init(showInspector: Binding<Bool> = .constant(false)) {
-		_showInspector = showInspector
-	}
 
 	var body: some View {
 		NavigationStack {
@@ -113,7 +109,6 @@ struct GroupView: View {
 						#if os(macOS)
 							NavigationLink {
 								TaskEditView(
-									showInspector: $showInspector,
 									showGroupToolbar: $showToolbar
 								).environmentObject(clickedTask)
 							} label: {
@@ -167,7 +162,7 @@ struct GroupView: View {
 			}
 		}
 		.toolbar {
-			if showToolbar, showInspector {
+			if showToolbar, inspectorModel.show {
 				ToolbarItem {
 					Button {
 						overallEditSheet.toggle()
@@ -201,7 +196,7 @@ struct GroupView: View {
 				}
 				ToolbarItem {
 					Button {
-						showInspector = false
+						inspectorModel.show = false
 					} label: {
 						Image(systemName: "sidebar.trailing")
 							.help("Hide inspector")
@@ -238,7 +233,7 @@ struct GroupView: View {
 		.confirmationDialog("Delete all?", isPresented: $showDeleteDialog) {
 			Button("Delete", role: .destructive) {
 				deleteAllTasksInGroup()
-				showInspector = false
+				inspectorModel.show = false
 				clickedGroup.taskGroup = nil
 				clickedTask.task = nil
 			}

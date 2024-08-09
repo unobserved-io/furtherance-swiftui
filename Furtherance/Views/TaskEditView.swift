@@ -9,10 +9,12 @@ import SwiftUI
 
 struct TaskEditView: View {
 	@Environment(\.managedObjectContext) private var viewContext
-	@EnvironmentObject var clickedTask: ClickedTask
+	@Environment(InspectorModel.self) var inspectorModel: InspectorModel
 	@Environment(\.dismiss) var dismiss
 
-	@Binding var showInspector: Bool
+	@EnvironmentObject var clickedTask: ClickedTask
+	@EnvironmentObject var clickedGroup: ClickedGroup
+
 	@Binding var showGroupToolbar: Bool
 
 	@AppStorage("showDeleteConfirmation") private var showDeleteConfirmation = true
@@ -33,8 +35,7 @@ struct TaskEditView: View {
 		GridItem(.fixed(70)),
 	]
 
-	init(showInspector: Binding<Bool> = .constant(false), showGroupToolbar: Binding<Bool> = .constant(true)) {
-		_showInspector = showInspector
+	init(showGroupToolbar: Binding<Bool> = .constant(true)) {
 		_showGroupToolbar = showGroupToolbar
 	}
 
@@ -126,7 +127,7 @@ struct TaskEditView: View {
 							// True only if not coming from group
 							if showGroupToolbar {
 								resetChanges()
-								showInspector = false
+								inspectorModel.show = false
 							} else {
 								dismiss()
 								showGroupToolbar = true
@@ -208,7 +209,7 @@ struct TaskEditView: View {
 										try viewContext.save()
 										// True only if not coming from group
 										if showGroupToolbar {
-											showInspector = false
+											inspectorModel.show = false
 										} else {
 											dismiss()
 											showGroupToolbar = true
@@ -246,7 +247,7 @@ struct TaskEditView: View {
 			Button("Cancel", role: .cancel) {}
 		}
 		.toolbar {
-			if showInspector {
+			if inspectorModel.show {
 				if !showGroupToolbar {
 					ToolbarItem {
 						Button {
@@ -277,7 +278,7 @@ struct TaskEditView: View {
 
 				ToolbarItem {
 					Button {
-						showInspector = false
+						inspectorModel.show = false
 					} label: {
 						Image(systemName: "sidebar.trailing")
 					}
@@ -306,7 +307,19 @@ struct TaskEditView: View {
 			viewContext.delete(task)
 			do {
 				try viewContext.save()
-				showInspector = false
+				// True only if not coming from group
+				if showGroupToolbar {
+					inspectorModel.show = false
+				} else {
+					refreshGroup()
+					dismiss()
+					if clickedGroup.taskGroup?.tasks.count ?? 0 <= 1 {
+						inspectorModel.show = false
+						inspectorModel.view = .empty
+					} else {
+						showGroupToolbar = true
+					}
+				}
 			} catch {
 				print("Error deleting task \(error)")
 			}
@@ -323,10 +336,33 @@ struct TaskEditView: View {
 			rateField = String(format: "%.2f", task.rate)
 		}
 	}
+
+	private func refreshGroup() {
+		clickedGroup.taskGroup = clickedGroup.taskGroup
+		if clickedGroup.taskGroup != nil {
+			for task in clickedGroup.taskGroup?.tasks ?? [] {
+				let taskDate = localDateFormatter.string(from: task.startTime ?? Date.now)
+				if task.id == nil {
+					if let index = clickedGroup.taskGroup?.tasks.firstIndex(of: task) {
+						clickedGroup.taskGroup?.tasks.remove(at: index)
+					}
+				} else {
+					if task.name != clickedGroup.taskGroup?.name
+						|| task.tags != clickedGroup.taskGroup?.tags
+						|| taskDate != clickedGroup.taskGroup?.date
+					{
+						if let index = clickedGroup.taskGroup?.tasks.firstIndex(of: task) {
+							clickedGroup.taskGroup?.tasks.remove(at: index)
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 struct TaskEditView_Previews: PreviewProvider {
 	static var previews: some View {
-		TaskEditView(showInspector: .constant(false))
+		TaskEditView()
 	}
 }

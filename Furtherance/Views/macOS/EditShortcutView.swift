@@ -10,9 +10,9 @@ import SwiftUI
 struct EditShortcutView: View {
 	private static let defaultColor: String = Color.accentColor.hex ?? "A97BEAFF"
 
-	@Binding var showInspector: Bool
-
+	@Environment(InspectorModel.self) var inspectorModel: InspectorModel
 	@Environment(\.modelContext) private var modelContext
+
 	@EnvironmentObject var clickedShortcut: ClickedShortcut
 
 	@AppStorage("chosenCurrency") private var chosenCurrency: String = "$"
@@ -61,7 +61,7 @@ struct EditShortcutView: View {
 			HStack(spacing: 20) {
 				Button("Cancel") {
 					resetChanges()
-					showInspector = false
+					inspectorModel.show = false
 				}
 
 				.keyboardShortcut(.cancelAction)
@@ -123,7 +123,7 @@ struct EditShortcutView: View {
 								shortcut.colorHex = pickedColor
 							}
 
-							showInspector = false
+							inspectorModel.show = false
 						} else {
 							for (index, element) in error.enumerated() {
 								if index == 0 {
@@ -147,7 +147,7 @@ struct EditShortcutView: View {
 			resetChanges()
 		}
 		.toolbar {
-			if showInspector {
+			if inspectorModel.show {
 				Text("Edit Shortcut")
 					.font(.title)
 			}
@@ -167,5 +167,5 @@ struct EditShortcutView: View {
 }
 
 #Preview {
-	EditShortcutView(showInspector: .constant(false))
+	EditShortcutView()
 }

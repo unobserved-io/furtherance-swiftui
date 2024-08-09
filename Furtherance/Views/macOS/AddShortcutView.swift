@@ -9,9 +9,8 @@ import SwiftData
 import SwiftUI
 
 struct AddShortcutView: View {
-	@Binding var showInspector: Bool
-
 	@Environment(\.modelContext) private var modelContext
+	@Environment(InspectorModel.self) var inspectorModel: InspectorModel
 
 	@Query var shortcuts: [Shortcut]
 
@@ -51,7 +50,7 @@ struct AddShortcutView: View {
 
 			HStack(spacing: 20) {
 				Button("Cancel") {
-					showInspector = false
+					inspectorModel.show = false
 					resetChanges()
 				}
 
@@ -103,7 +102,7 @@ struct AddShortcutView: View {
 					if error.isEmpty {
 						let newShortcut = Shortcut(name: titleField, tags: tagsField, project: projectField, color: pickedColor.hex ?? "A97BEAFF", rate: unwrappedRate)
 						modelContext.insert(newShortcut)
-						showInspector = false
+						inspectorModel.show = false
 						resetChanges()
 					} else {
 						for (index, element) in error.enumerated() {
@@ -124,7 +123,7 @@ struct AddShortcutView: View {
 			.padding(.top, 15)
 		}
 		.toolbar {
-			if showInspector {
+			if inspectorModel.show {
 				Text("New Shortcut")
 					.font(.title)
 			}
@@ -143,5 +142,5 @@ struct AddShortcutView: View {
 }
 
 #Preview {
-	AddShortcutView(showInspector: .constant(false))
+	AddShortcutView()
 }

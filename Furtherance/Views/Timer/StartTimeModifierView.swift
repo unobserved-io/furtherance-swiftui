@@ -34,7 +34,7 @@ struct StartTimeModifierView: View {
 			.labelsHidden()
 			.disabled(StopWatchHelper.shared.pomodoroExtended || (passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty))
 
-			if passStatusModel.passStatus == .notSubscribed && storeModel.purchasedIds.isEmpty {
+			if passStatusModel.passStatus == .notSubscribed, storeModel.purchasedIds.isEmpty {
 				Text("PRO")
 					.padding(.vertical, 3.0)
 					.padding(.horizontal, 8.0)
