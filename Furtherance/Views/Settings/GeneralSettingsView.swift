@@ -25,8 +25,6 @@ struct GeneralSettingsView: View {
     var body: some View {
         ScrollView {
             Form {
-                BuyProView()
-
                 Section("Interface ") {
                     HStack {
                         Text("Default View")

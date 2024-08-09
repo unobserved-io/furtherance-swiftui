@@ -27,8 +27,6 @@ struct AdvancedSettingsView: View {
     var body: some View {
         ScrollView {
             Form {
-                BuyProView()
-
 #if os(macOS)
                 Section(header: TextWithBadge("Idle")) {
                     HStack {

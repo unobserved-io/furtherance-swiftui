@@ -26,8 +26,6 @@ struct PomodoroSettingsView: View {
     var body: some View {
         ScrollView {
             Form {
-                BuyProView()
-                
                 Section {
                     HStack {
                         Text("Countdown Timer")

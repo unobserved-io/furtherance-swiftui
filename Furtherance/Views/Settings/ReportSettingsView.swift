@@ -25,8 +25,6 @@ struct ReportSettingsView: View {
 	var body: some View {
 		ScrollView {
 			Form {
-				BuyProView()
-
 				Section(header: TextWithBadge("Toggle Charts")) {
 					HStack {
 						Toggle("Total Earnings", isOn: $showTotalEarnings)
