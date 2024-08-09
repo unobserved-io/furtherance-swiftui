@@ -77,7 +77,7 @@ struct ProSubscribeView: View {
 							}
 						}
 
-						// More to come
+						// Settings
 						HStack {
 							Image(systemName: "gearshape.fill")
 								.font(.system(size: 38))
