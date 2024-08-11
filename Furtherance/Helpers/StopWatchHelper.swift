@@ -369,6 +369,14 @@ class StopWatchHelper {
 		// TODO: Redo as async function
 		func setOneSecondTimer() {
 			if idleDetect || showIconBadge {
+				if showIconBadge {
+					let center = UNUserNotificationCenter.current()
+					center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+						if let error {
+							print(error.localizedDescription)
+						}
+					}
+				}
 				oneSecondTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
 					Task {
 						if await self.idleDetect, await !self.pomodoroOnBreak {
