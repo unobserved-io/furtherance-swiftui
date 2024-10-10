@@ -1,3 +1,5 @@
+**This version of Furtherance has been replaced by the new, cross-platform version, which you can find [here](https://github.com/unobserved-io/Furtherance).**
+
 # Furtherance
 Furtherance is a time tracking app.
 It allows you to track time spent on different activities without worrying about your data being captured and sold.
@@ -18,7 +20,7 @@ It allows you to track time spent on different activities without worrying about
 
 ### Install
 
-<a href="https://apps.apple.com/app/furtherance/id1659277200"><img width='240' alt="Download Furtherance on the App Store" src="https://furtherance.app/images/app-store-black.svg"/></a>
+With [Homebrew](https://formulae.brew.sh/cask/furtherance): `brew install --cask furtherance`
 
 ### Build
 The easiest way to build Furtherance is with [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12). Just open the .xcodeproj file and click Run.
@@ -28,15 +30,9 @@ Type in the name of the task you are working on, optionally add a `@Project`, so
 
 ## Contribute
 
-### Translations
-If you speak another language, it would be greatly appreciated if you could help translate Furtherance to make it available to more people! You can add translations in the Xcode project.
-
-### Monetary support
-To support this project financially, you can make an in-app purchase of the "Pro" version, and/or leave a tip.
 If you've gotten value from Furtherance, you can tip me via:
 * [Ko-fi](https://ko-fi.com/unobserved)
 * [PayPal](https://www.paypal.com/donate/?hosted_button_id=TLYY8YZ424VRL)
-* **Bitcoin**: bc1q70czd5evhsxnjcd45cj2n4s3dr6qmhvrlljjlk
 
 Thank you so much!
 
@@ -49,4 +45,4 @@ Written in Swift 6 using SwifUI for a native macOS/iOS experience.
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](LICENSE) file for details.
 
 ### Author
-This project is created and maintained by [Ricky Kresslein](https://kressle.in) under [Unobserved](https://unobserved.io). More information at [Furtherance.app](https://furtherance.app).
+This project was created by [Ricky Kresslein](https://kressle.in) under [Unobserved](https://unobserved.io). More information at [Furtherance.app](https://furtherance.app).
